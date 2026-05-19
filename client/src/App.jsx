@@ -32,13 +32,13 @@ function App() {
         Toque el departamento para tomar su turno
       </p>
 
-      {/* Contenedor de Botones (Flexbox para que se pongan uno al lado del otro) */}
-      <div className="flex flex-row gap-8 mb-12">
+      {/* Contenedor de Botones (Grid responsivo de 1 a 4 columnas) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 max-w-7xl w-full px-4 justify-items-center">
         
         {/* Botón 1: Carnicería y Charcutería (Rojo) */}
         <button
           onClick={() => generarTicket('Carniceria y Charcuteria')}
-          className="bg-red-600 hover:bg-red-500 text-white font-black text-3xl py-12 px-6 rounded-3xl shadow-[0_10px_0_0_#7f1d1d] active:shadow-none active:translate-y-[10px] transition-all flex flex-col items-center justify-center gap-4 w-80 h-72"
+          className="bg-red-600 hover:bg-red-500 text-white font-black text-3xl py-12 px-6 rounded-3xl shadow-[0_10px_0_0_#7f1d1d] active:shadow-none active:translate-y-[10px] transition-all flex flex-col items-center justify-center gap-4 w-full max-w-xs h-72"
         >
           <span className="text-7xl">🥩</span>
           <span className="text-center leading-tight">Carnicería y<br/>Charcutería</span>
@@ -47,7 +47,7 @@ function App() {
         {/* Botón 2: Pollería (Naranja/Ámbar) */}
         <button
           onClick={() => generarTicket('Polleria')}
-          className="bg-amber-500 hover:bg-amber-400 text-white font-black text-3xl py-12 px-6 rounded-3xl shadow-[0_10px_0_0_#b45309] active:shadow-none active:translate-y-[10px] transition-all flex flex-col items-center justify-center gap-4 w-80 h-72"
+          className="bg-amber-500 hover:bg-amber-400 text-white font-black text-3xl py-12 px-6 rounded-3xl shadow-[0_10px_0_0_#b45309] active:shadow-none active:translate-y-[10px] transition-all flex flex-col items-center justify-center gap-4 w-full max-w-xs h-72"
         >
           <span className="text-7xl">🍗</span>
           <span>Pollería</span>
@@ -56,10 +56,19 @@ function App() {
         {/* Botón 3: Pescadería (Azul) */}
         <button
           onClick={() => generarTicket('Pescaderia')}
-          className="bg-blue-600 hover:bg-blue-500 text-white font-black text-3xl py-12 px-6 rounded-3xl shadow-[0_10px_0_0_#1e3a8a] active:shadow-none active:translate-y-[10px] transition-all flex flex-col items-center justify-center gap-4 w-80 h-72"
+          className="bg-blue-600 hover:bg-blue-500 text-white font-black text-3xl py-12 px-6 rounded-3xl shadow-[0_10px_0_0_#1e3a8a] active:shadow-none active:translate-y-[10px] transition-all flex flex-col items-center justify-center gap-4 w-full max-w-xs h-72"
         >
           <span className="text-7xl">🐟</span>
           <span>Pescadería</span>
+        </button>
+
+        {/* Botón 4: Fruver y Verdulería (Verde) */}
+        <button
+          onClick={() => generarTicket('Fruver y Verduleria')}
+          className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-3xl py-12 px-6 rounded-3xl shadow-[0_10px_0_0_#064e3b] active:shadow-none active:translate-y-[10px] transition-all flex flex-col items-center justify-center gap-4 w-full max-w-xs h-72"
+        >
+          <span className="text-7xl">🥦</span>
+          <span className="text-center leading-tight">Fruver y<br/>Verdulería</span>
         </button>
 
       </div>
