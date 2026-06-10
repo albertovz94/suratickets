@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\TicketStatusUpdatedNotification;
 
 class TicketDetail extends Component
 {
@@ -42,6 +43,12 @@ class TicketDetail extends Component
             'assigned_to' => $this->assigned_to,
             'resolution_summary' => $this->resolution_summary,
         ]);
+
+        // Enviar notificación al creador si alguien más lo modificó
+        if ($this->ticket->creator_id !== Auth::id()) {
+            $message = "El estado de tu ticket ha cambiado a: " . ucfirst(str_replace('_', ' ', $this->status));
+            $this->ticket->creator->notify(new TicketStatusUpdatedNotification($this->ticket, $message));
+        }
 
         session()->flash('message', 'Ticket actualizado exitosamente.');
         

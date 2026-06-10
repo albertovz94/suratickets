@@ -41,13 +41,14 @@ class TicketForm extends Component
         Ticket::create($validatedData);
 
         session()->flash('message', 'Ticket creado exitosamente.');
-        return $this->redirect(route('dashboard'), navigate: true);
+        $this->reset(['title', 'description', 'area_departamento', 'equipo_afectado', 'priority']);
+        $this->dispatch('close-ticket-modal');
     }
 
     public function render()
     {
         return view('livewire.tickets.ticket-form', [
             'sucursales' => Sucursal::all()
-        ])->layout('layouts.app');
+        ]);
     }
 }

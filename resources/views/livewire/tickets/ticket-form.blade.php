@@ -1,16 +1,6 @@
 <div>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Crear Nuevo Ticket') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 bg-gray-50">
-                    <form wire:submit.prevent="save" class="space-y-6 max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
-                        <div>
+    <form wire:submit.prevent="save" class="space-y-6">
+        <div>
                             <x-input-label for="title" value="Título del Problema" />
                             <x-text-input wire:model="title" id="title" type="text" class="mt-1 block w-full" required autofocus />
                             <x-input-error :messages="$errors->get('title')" class="mt-2" />
@@ -60,17 +50,13 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-end mt-4">
-                            <a href="{{ route('dashboard') }}" wire:navigate class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-4">
-                                Cancelar
-                            </a>
-                            <x-primary-button>
-                                Crear Ticket
-                            </x-primary-button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        <div class="flex items-center justify-end mt-4 pt-4 border-t border-gray-200">
+            <button type="button" @click="$dispatch('close-ticket-modal')" class="text-sm text-gray-600 hover:text-gray-900 focus:outline-none mr-4">
+                Cancelar
+            </button>
+            <x-primary-button>
+                Crear Ticket
+            </x-primary-button>
         </div>
-    </div>
+    </form>
 </div>

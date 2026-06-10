@@ -14,6 +14,13 @@ class TicketList extends Component
     public $search = '';
     public $status = '';
     public $priority = '';
+    public $activeTab = 'activos';
+
+    public function setTab($tab)
+    {
+        $this->activeTab = $tab;
+        $this->resetPage();
+    }
 
     public function updatingSearch()
     {
@@ -35,6 +42,12 @@ class TicketList extends Component
             ->when($this->priority, function ($q) {
                 $q->where('priority', $this->priority);
             });
+
+        if ($this->activeTab === 'activos') {
+            $query->whereNotIn('status', ['cerrado', 'resuelto']);
+        } else {
+            $query->whereIn('status', ['cerrado', 'resuelto']);
+        }
 
         if (Auth::user()->rol !== 'admin') {
             $query->where('creator_id', Auth::id());
