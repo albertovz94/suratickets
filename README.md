@@ -94,3 +94,51 @@ Si otro desarrollador o Agente de IA necesita levantar el entorno, estos son los
 *   **Modelos y Migraciones:** `app/Models/Ticket.php` (y User, Sucursal).
 *   **Notificaciones y Observers:** `app/Notifications/` y `app/Observers/TicketObserver.php`.
 *   **Autenticación:** Las vistas de Breeze (`resources/views/livewire/pages/auth/`) fueron modificadas para usar `username`. El archivo clave de lógica es `app/Livewire/Forms/LoginForm.php`.
+
+---
+
+## 📜 Historial de Cambios (Changelog)
+
+Este proyecto se desarrolló en fases iterativas. A continuación, se detalla el progreso acumulado y los archivos que fueron modificados o creados en cada paso para mantener un estricto control de versiones.
+
+### Fase 1: Inicialización y Arquitectura Base
+*   **Objetivo:** Levantar el proyecto de Laravel 11 con Livewire, configurar la base de datos y la autenticación básica de Breeze.
+*   **Archivos Afectados / Creados:**
+    *   `composer.json` y `package.json` (Instalación de Laravel, Livewire y dependencias).
+    *   `.env` (Configuración de conexión a base de datos MySQL).
+    *   Instalación de Laravel Breeze (`php artisan breeze:install`).
+
+### Fase 2: Modelado de Datos (Migraciones)
+*   **Objetivo:** Crear la estructura de la base de datos para Sucursales, Tickets y adaptar Usuarios.
+*   **Archivos Afectados / Creados:**
+    *   `database/migrations/..._create_sucursals_table.php`: Creación de la tabla de sucursales.
+    *   `database/migrations/..._create_tickets_table.php`: Estructura principal de los tickets (título, descripción, prioridad, estados, asignaciones).
+    *   `database/migrations/..._add_fields_to_users_table.php`: Se añadieron los campos `rol`, `username` y `sucursal_id` a la tabla `users`.
+    *   Modelos de Eloquent: `app/Models/Ticket.php`, `app/Models/Sucursal.php`, `app/Models/User.php`.
+
+### Fase 3: Lógica de Negocio y Notificaciones Backend
+*   **Objetivo:** Implementar los Seeders de prueba y el sistema asíncrono para enviar correos de emergencia (Tickets Críticos) usando colas y el patrón Observer.
+*   **Archivos Afectados / Creados:**
+    *   `database/seeders/SucursalSeeder.php`, `UserSeeder.php`, `TicketSeeder.php`, `DatabaseSeeder.php`.
+    *   `app/Observers/TicketObserver.php`: Se conecta al evento "created" o "updated" del modelo Ticket para evaluar prioridades.
+    *   `app/Notifications/TicketCriticoNotification.php`: Plantilla mailable del correo y configuración `ShouldQueue`.
+    *   `bootstrap/providers.php`: Registro del Observer.
+
+### Fase 4: Autenticación con Username, Tiempo Real y UI (Livewire)
+*   **Objetivo:** Refactorizar el Login para usar `username`, construir el Dashboard reactivo con tablas filtrables, el formulario de tickets y la Campanita de notificaciones In-App usando Polling.
+*   **Archivos Afectados / Creados:**
+    *   `app/Livewire/Forms/LoginForm.php` y `resources/views/livewire/pages/auth/login.blade.php`: Cambio de lógica de validación de `email` a `username`.
+    *   `app/Livewire/Layout/NotificationBell.php`: Componente de Livewire con `wire:poll.5s` para notificaciones In-App en tiempo real.
+    *   `app/Livewire/Tickets/TicketList.php` (y `.blade.php`): Tabla dinámica para listar tickets, con filtros condicionales dependiendo del rol (Administrador vs Usuario) y `wire:poll.10s`.
+    *   `app/Livewire/Tickets/TicketForm.php` (y `.blade.php`): Pantalla para creación de tickets.
+    *   `resources/views/dashboard.blade.php` y `resources/views/livewire/layout/navigation.blade.php`: Inserción de los componentes visuales.
+    *   `routes/web.php`: Nuevas rutas `/tickets/create` y `/tickets/{ticket}`.
+
+### Fase 5: Vista de Detalle, Políticas de Seguridad y Middleware
+*   **Objetivo:** Implementar la pantalla donde el administrador puede cambiar los estados y asignar tickets, y proteger la aplicación para que los usuarios no puedan violar los permisos (Ej. Error 403).
+*   **Archivos Afectados / Creados:**
+    *   `app/Livewire/Tickets/TicketDetail.php` (y `.blade.php`): Panel de gestión de un ticket individual.
+    *   `app/Policies/TicketPolicy.php`: Archivo que dicta qué usuario puede ver o modificar qué ticket (Ej. usuarios normales solo ven los que ellos mismos crearon).
+    *   `app/Http/Middleware/CheckRole.php`: Filtro de protección global de rutas que evalúa si un usuario posee o no privilegios de administrador.
+    *   `bootstrap/app.php`: Registro del alias de middleware `role`.
+    *   `README.md`: Documentación formal de la arquitectura y el proceso de instalación.
