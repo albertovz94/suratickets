@@ -16,4 +16,8 @@ Route::get('/tickets/create', \App\Livewire\Tickets\TicketForm::class)
     ->middleware(['auth', 'verified'])
     ->name('tickets.create');
 
+Route::get('/tickets/{ticket}', \App\Livewire\Tickets\TicketDetail::class)
+    ->middleware(['auth', 'verified'])
+    ->name('tickets.show');
+
 require __DIR__.'/auth.php';

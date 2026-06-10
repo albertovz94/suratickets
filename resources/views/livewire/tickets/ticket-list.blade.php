@@ -26,10 +26,11 @@
         <ul role="list" class="divide-y divide-gray-200">
             @forelse($tickets as $ticket)
             <li>
-                <div class="px-4 py-4 sm:px-6 hover:bg-gray-50 transition cursor-pointer">
-                    <div class="flex items-center justify-between">
-                        <p class="text-sm font-medium text-indigo-600 truncate">{{ $ticket->title }}</p>
-                        <div class="ml-2 flex-shrink-0 flex gap-2">
+                <a href="{{ route('tickets.show', $ticket) }}" wire:navigate class="block hover:bg-gray-50 transition cursor-pointer">
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-indigo-600 truncate">{{ $ticket->title }}</p>
+                            <div class="ml-2 flex-shrink-0 flex gap-2">
                             @if($ticket->priority === 'critica')
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                                     Crítico
@@ -53,7 +54,7 @@
                             <p>Actualizado {{ $ticket->updated_at->diffForHumans() }}</p>
                         </div>
                     </div>
-                </div>
+                </a>
             </li>
             @empty
             <li class="px-4 py-4 sm:px-6 text-gray-500 text-center">No se encontraron tickets con los filtros actuales.</li>
