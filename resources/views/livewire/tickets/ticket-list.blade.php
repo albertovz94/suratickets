@@ -5,7 +5,7 @@
                 Tickets Activos
             </button>
             <button wire:click="setTab('historial')" class="{{ $activeTab === 'historial' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                Cerrados / Resueltos
+                Historial (Resueltos)
             </button>
         </nav>
     </div>
@@ -17,11 +17,8 @@
             <select wire:model.live="status" class="form-select rounded-md shadow-sm border-gray-300">
                 <option value="">Todos los estados</option>
                 <option value="abierto">Abierto</option>
-                <option value="asignado">Asignado</option>
                 <option value="en_proceso">En Proceso</option>
-                <option value="pendiente">Pendiente</option>
                 <option value="resuelto">Resuelto</option>
-                <option value="cerrado">Cerrado</option>
             </select>
             <select wire:model.live="priority" class="form-select rounded-md shadow-sm border-gray-300">
                 <option value="">Todas las prioridades</option>
@@ -37,22 +34,26 @@
         <ul role="list" class="divide-y divide-gray-200">
             @forelse($tickets as $ticket)
             <li>
-                <a href="{{ route('tickets.show', $ticket) }}" wire:navigate class="block hover:bg-gray-50 transition cursor-pointer">
+                <div class="block hover:bg-gray-50 transition">
                     <div class="px-4 py-4 sm:px-6">
                         <div class="flex items-center justify-between">
                             <p class="text-sm font-medium text-indigo-600 truncate">{{ $ticket->title }}</p>
-                            <div class="ml-2 flex-shrink-0 flex gap-2">
-                            @if($ticket->priority === 'critica')
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                    Crítico
+                            <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0 flex items-center gap-4">
+                                <button type="button" wire:click="$dispatch('open-ticket-modal', { ticketId: {{ $ticket->id }} })" class="text-sm font-medium text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-2 rounded-md transition-colors duration-150">
+                                    Ver Detalles &rarr;
+                                </button>
+                                @if($ticket->priority === 'critica')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                        Crítico
+                                    </span>
+                                @endif
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
                                 </span>
-                            @endif
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
-                            </span>
+                            </div>
                         </div>
                     </div>
-                    <div class="mt-2 sm:flex sm:justify-between">
+                    <div class="px-4 pb-4 sm:px-6 sm:flex sm:justify-between">
                         <div class="sm:flex flex-col gap-1">
                             <p class="flex items-center text-sm text-gray-500">
                                 <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -60,9 +61,9 @@
                                 </svg>
                                 {{ $ticket->sucursal->nombre }} - {{ $ticket->area_departamento }}
                             </p>
-                            @if(in_array($ticket->status, ['resuelto', 'cerrado']) && $ticket->assignedTo)
-                                <p class="flex items-center text-sm text-emerald-600 font-medium">
-                                    Resuelto por: {{ $ticket->assignedTo->username }}
+                            @if($ticket->assignedTo)
+                                <p class="flex items-center text-sm {{ $ticket->status === 'resuelto' ? 'text-emerald-600' : 'text-indigo-600' }} font-medium">
+                                    {{ $ticket->status === 'resuelto' ? 'Resuelto por:' : 'Asignado a:' }} {{ $ticket->assignedTo->username }}
                                 </p>
                             @endif
                         </div>
@@ -70,7 +71,7 @@
                             <p>Actualizado {{ $ticket->updated_at->diffForHumans() }}</p>
                         </div>
                     </div>
-                </a>
+                </div>
             </li>
             @empty
             <li class="px-4 py-4 sm:px-6 text-gray-500 text-center">No se encontraron tickets con los filtros actuales.</li>

@@ -33,7 +33,7 @@ class NotificationBell extends Component
     {
         $notifications = collect();
         if (Auth::check()) {
-            $notifications = Auth::user()->unreadNotifications()->take(5)->get();
+            $notifications = Auth::user()->notifications()->take(10)->get();
         }
 
         return view('livewire.layout.notification-bell', [

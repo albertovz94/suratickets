@@ -5,7 +5,9 @@ namespace App\Livewire\Tickets;
 use Livewire\Component;
 use App\Models\Ticket;
 use App\Models\Sucursal;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\TicketStatusUpdatedNotification;
 
 class TicketForm extends Component
 {
@@ -38,7 +40,23 @@ class TicketForm extends Component
         $validatedData['creator_id'] = Auth::id();
         $validatedData['status'] = 'abierto';
 
-        Ticket::create($validatedData);
+        // Auto-asignación inteligente
+        $bestAdmin = User::where('rol', 'admin')
+            ->withCount(['assignedTickets' => function ($query) {
+                $query->whereIn('status', ['abierto', 'en_proceso']);
+            }])
+            ->orderBy('assigned_tickets_count', 'asc')
+            ->first();
+
+        if ($bestAdmin) {
+            $validatedData['assigned_to'] = $bestAdmin->id;
+        }
+
+        $ticket = Ticket::create($validatedData);
+
+        if ($bestAdmin) {
+            $bestAdmin->notify(new TicketStatusUpdatedNotification($ticket, "Se te ha asignado un nuevo ticket: " . $ticket->title));
+        }
 
         session()->flash('message', 'Ticket creado exitosamente.');
         $this->reset(['title', 'description', 'area_departamento', 'equipo_afectado', 'priority']);

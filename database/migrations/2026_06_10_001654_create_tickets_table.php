@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('area_departamento');
             $table->string('equipo_afectado');
             $table->enum('priority', ['baja', 'media', 'alta', 'critica'])->default('media');
-            $table->enum('status', ['abierto', 'asignado', 'en_proceso', 'pendiente', 'resuelto', 'cerrado'])->default('abierto');
+            $table->enum('status', ['abierto', 'en_proceso', 'resuelto'])->default('abierto');
             $table->foreignId('creator_id')->constrained('users');
             $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
             $table->text('resolution_summary')->nullable();

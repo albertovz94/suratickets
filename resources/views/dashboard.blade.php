@@ -5,8 +5,8 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" x-data="{ showTicketModal: false }" @close-ticket-modal.window="showTicketModal = false">
+    <div class="py-12" x-data="{ showTicketModal: false }" @close-ticket-modal.window="showTicketModal = false">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 bg-gray-50">
                     <div class="flex justify-between items-center mb-4">
@@ -17,6 +17,8 @@
                 </div>
             </div>
         </div>
+
+        <livewire:tickets.ticket-detail />
 
         <!-- Ticket Modal -->
         <div x-show="showTicketModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">

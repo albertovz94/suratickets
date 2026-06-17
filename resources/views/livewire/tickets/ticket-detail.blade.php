@@ -1,20 +1,36 @@
-<div>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Detalle de Ticket #') }}{{ $ticket->id }}
-        </h2>
-    </x-slot>
+<div x-data="{ show: @entangle('showDetailModal') }" 
+     x-show="show" 
+     style="display: none;" 
+     class="fixed inset-0 z-50 overflow-y-auto" 
+     aria-labelledby="modal-title" role="dialog" aria-modal="true">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 bg-gray-50">
-                    
-                    @if (session()->has('message'))
-                        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                            <span class="block sm:inline">{{ session('message') }}</span>
-                        </div>
-                    @endif
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="show" 
+             x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" 
+             x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" 
+             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div x-show="show" 
+             @click.away="show = false; $wire.closeModal()"
+             x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+            
+            @if($ticket)
+            <div class="bg-gray-50 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="flex justify-between items-center mb-4 border-b pb-4">
+                    <h3 class="text-xl leading-6 font-semibold text-gray-900" id="modal-title">
+                        Detalle de Ticket #{{ $ticket->id }}
+                    </h3>
+                    <button @click="show = false" wire:click="closeModal" type="button" class="text-gray-400 hover:text-gray-500">
+                        <span class="sr-only">Cerrar</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Columna Izquierda: Información del Ticket -->
@@ -73,18 +89,7 @@
                                     <h3 class="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Gestión de Ticket</h3>
                                     
                                     <form wire:submit.prevent="updateTicket" class="space-y-4">
-                                        <div>
-                                            <x-input-label for="status" value="Estado" />
-                                            <select wire:model="status" id="status" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                                <option value="abierto">Abierto</option>
-                                                <option value="asignado">Asignado</option>
-                                                <option value="en_proceso">En Proceso</option>
-                                                <option value="pendiente">Pendiente</option>
-                                                <option value="resuelto">Resuelto</option>
-                                                <option value="cerrado">Cerrado</option>
-                                            </select>
-                                            <x-input-error :messages="$errors->get('status')" class="mt-2" />
-                                        </div>
+                                            <!-- Status removed due to automation -->
 
                                         <div>
                                             <x-input-label for="assigned_to" value="Asignar a" />
@@ -124,15 +129,14 @@
                             @endif
                             
                             <div class="mt-4">
-                                <a href="{{ route('dashboard') }}" wire:navigate class="text-sm text-indigo-600 hover:text-indigo-900 flex items-center">
-                                    &larr; Volver al Listado
-                                </a>
+                                <button @click="show = false" wire:click="closeModal" type="button" class="text-sm text-indigo-600 hover:text-indigo-900 flex items-center">
+                                    &larr; Cerrar Ventana
+                                </button>
                             </div>
                         </div>
                     </div>
-
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 </div>
