@@ -1,0 +1,109 @@
+/* === Google Fonts === */
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === Custom Animations === */
+@keyframes pulse-bell {
+    0%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+    30% { transform: rotate(6deg); }
+    40% { transform: rotate(-4deg); }
+    50% { transform: rotate(2deg); }
+    60% { transform: rotate(0deg); }
+}
+
+@keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* === Reusable Component Classes === */
+@layer components {
+    /* Status Badges */
+    .badge-status {
+        @apply px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full font-mono tracking-wide;
+    }
+
+    .badge-abierto {
+        @apply bg-blue-100 text-blue-800;
+    }
+
+    .badge-asignado {
+        @apply bg-purple-100 text-purple-800;
+    }
+
+    .badge-en_proceso {
+        @apply bg-amber-100 text-amber-800;
+    }
+
+    .badge-pendiente {
+        @apply bg-orange-100 text-orange-800;
+    }
+
+    .badge-resuelto {
+        @apply bg-emerald-100 text-emerald-800;
+    }
+
+    .badge-cerrado {
+        @apply bg-gray-100 text-gray-600;
+    }
+
+    /* Priority Badges */
+    .badge-baja {
+        @apply bg-green-100 text-green-800;
+    }
+
+    .badge-media {
+        @apply bg-yellow-100 text-yellow-800;
+    }
+
+    .badge-alta {
+        @apply bg-orange-100 text-orange-800;
+    }
+
+    .badge-critica {
+        @apply bg-red-100 text-red-800;
+    }
+
+    /* Card */
+    .card-suraki {
+        @apply bg-white rounded-xl shadow-sm border border-suraki-neutral-dark overflow-hidden transition-shadow duration-200 hover:shadow-md;
+    }
+
+    /* Glass Panel */
+    .glass-panel {
+        @apply bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20;
+    }
+
+    /* Form inputs consistent style */
+    .input-suraki {
+        @apply border-suraki-neutral-dark focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm transition-colors duration-150;
+    }
+}
+
+/* === Scrollbar Styling === */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F7FAFC;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #CBD5E0;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #A0AEC0;
+}
