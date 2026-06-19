@@ -27,7 +27,7 @@ new #[Layout('layouts.guest')] class extends Component
 <div class="animate-fade-in w-full max-w-sm mx-auto">
     <!-- Header with Icon -->
     <div class="flex flex-col items-center mb-8">
-        <div class="relative flex items-center justify-center w-24 h-24 mb-4 rounded-full shadow-[0_0_20px_rgba(228,63,69,0.4)] border-4 border-white/50 backdrop-blur-sm overflow-hidden p-3 animate-float-glow" style="background-color: #e43f45;">
+        <div class="relative flex items-center justify-center w-24 h-24 mb-4 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.1)] border-4 border-gray-100 bg-white overflow-hidden p-3 animate-float-glow">
             <!-- Icon Image -->
             <img src="{{ asset('icono.png') }}" alt="Icono Login" class="w-full h-full object-contain filter drop-shadow-md">
         </div>
@@ -84,10 +84,19 @@ new #[Layout('layouts.guest')] class extends Component
         </div>
 
         <!-- Submit Button -->
-        <div class="pt-4">
-            <button type="submit" class="w-full flex justify-center items-center px-4 py-3.5 text-white font-bold text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 uppercase tracking-widest shadow-[0_4px_14px_0_rgba(208,55,61,0.39)] hover:shadow-[0_6px_20px_rgba(208,55,61,0.23)] hover:-translate-y-0.5" style="background-color: #d0373d;" onmouseover="this.style.backgroundColor='#b92c31'" onmouseout="this.style.backgroundColor='#d0373d'">
-                {{ __('INGRESAR') }}
+        <div class="pt-4 pb-4">
+            <button type="submit" class="blob-btn">
+                <span style="position:relative; z-index: 10;">{{ __('INGRESAR') }}</span>
+                <span class="blob-btn__inner">
+                    <span class="blob-btn__blobs">
+                        <span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span>
+                    </span>
+                </span>
             </button>
         </div>
+
     </form>
 </div>

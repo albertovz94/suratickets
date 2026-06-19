@@ -9,9 +9,6 @@
 
         <!-- Fonts -->
         <link rel="icon" type="image/png" href="{{ asset('icono.png') }}">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -75,6 +72,15 @@
                     </main>
                 </div>
             </div>
-        </div>
+        <!-- SVG Filter for gooey effect -->
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none;">
+            <defs>
+                <filter id="goo">
+                    <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
+                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
+                    <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+                </filter>
+            </defs>
+        </svg>
     </body>
 </html>

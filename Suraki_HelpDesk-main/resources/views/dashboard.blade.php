@@ -245,9 +245,13 @@
 
     <!-- Chart.js and Initialization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js" data-navigate-once></script>
-    <script>
-        document.addEventListener('livewire:navigated', function() {
-            if (typeof Chart === 'undefined') return;
+    <script data-navigate-once>
+        function initDashboardCharts() {
+            // Retry if Chart.js hasn't loaded yet
+            if (typeof Chart === 'undefined') {
+                setTimeout(initDashboardCharts, 100);
+                return;
+            }
 
             const trendCanvas = document.getElementById('trendChart');
             const distCanvas = document.getElementById('distChart');
@@ -269,7 +273,7 @@
             
             // Create Gradient
             let gradient = trendCtx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(185, 28, 28, 0.2)'); // Red with opacity
+            gradient.addColorStop(0, 'rgba(185, 28, 28, 0.2)');
             gradient.addColorStop(1, 'rgba(185, 28, 28, 0)');
 
             window.trendChartInstance = new Chart(trendCtx, {
@@ -279,16 +283,16 @@
                     datasets: [{
                         label: 'Tickets',
                         data: monthlyData,
-                        borderColor: '#b91c1c', // suraki-primary
+                        borderColor: '#b91c1c',
                         backgroundColor: gradient,
                         borderWidth: 3,
                         pointBackgroundColor: '#ffffff',
                         pointBorderColor: '#b91c1c',
                         pointBorderWidth: 2,
-                        pointRadius: 3, // Puntos visibles para mejor interacción
+                        pointRadius: 3,
                         pointHoverRadius: 6,
                         fill: true,
-                        tension: 0.4 // Curved line
+                        tension: 0.4
                     }]
                 },
                 options: {
@@ -303,8 +307,8 @@
                         tooltip: {
                             backgroundColor: '#1f2937',
                             padding: 12,
-                            titleFont: { family: 'Hanken Grotesk', size: 14 },
-                            bodyFont: { family: 'Inter', size: 13 },
+                            titleFont: { family: 'Poppins', size: 14 },
+                            bodyFont: { family: 'Poppins', size: 13 },
                             displayColors: false,
                             callbacks: {
                                 label: function(context) { return context.parsed.y + ' Tickets'; }
@@ -315,11 +319,11 @@
                         y: {
                             beginAtZero: true,
                             grid: { display: false, drawBorder: false },
-                            ticks: { font: { family: 'JetBrains Mono', size: 11 }, color: '#6b7280', maxTicksLimit: 5 }
+                            ticks: { font: { family: 'Poppins', size: 11 }, color: '#6b7280', maxTicksLimit: 5 }
                         },
                         x: {
                             grid: { display: false, drawBorder: false },
-                            ticks: { font: { family: 'Inter', size: 12 }, color: '#6b7280' }
+                            ticks: { font: { family: 'Poppins', size: 12 }, color: '#6b7280' }
                         }
                     }
                 }
@@ -344,11 +348,11 @@
                         maintainAspectRatio: false,
                         cutout: '70%',
                         plugins: {
-                            legend: { display: false }, // Custom legend used in HTML
+                            legend: { display: false },
                             tooltip: {
                                 backgroundColor: '#1f2937',
                                 padding: 10,
-                                bodyFont: { family: 'Inter', size: 13 },
+                                bodyFont: { family: 'Poppins', size: 13 },
                                 callbacks: {
                                     label: function(context) {
                                         return context.label + ': ' + context.parsed + ' tickets';
@@ -359,9 +363,18 @@
                     }
                 });
             } else {
-                // Si no hay datos, mostrar algo
                 distCanvas.parentElement.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-sm text-gray-400">Sin datos</div>';
             }
-        });
+        }
+
+        // Initialize on SPA navigation (Livewire)
+        document.addEventListener('livewire:navigated', initDashboardCharts);
+
+        // Initialize on first full page load (fallback)
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initDashboardCharts();
+        } else {
+            document.addEventListener('DOMContentLoaded', initDashboardCharts);
+        }
     </script>
 </x-app-layout>
