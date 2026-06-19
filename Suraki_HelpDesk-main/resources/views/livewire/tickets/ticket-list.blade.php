@@ -41,8 +41,8 @@
                                 <span class="badge-status badge-{{ $ticket->priority }}">
                                     {{ ucfirst($ticket->priority) }}
                                 </span>
-                                <span class="badge-status badge-{{ $ticket->estatus }}">
-                                    {{ ucfirst(str_replace('_', ' ', $ticket->estatus)) }}
+                                <span class="badge-status badge-{{ $ticket->status }}">
+                                    {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
                                 </span>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                                     <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-suraki-tertiary/50" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5M3.75 3v18m16.5-18v18M5.25 3h13.5M5.25 21h13.5m-13.5-18v18M18.75 3v18m-11.25-4.5h7.5m-7.5-3h7.5m-7.5-3h7.5m-7.5-3h7.5" />
                                     </svg>
-                                    {{ $ticket->sucursal->nombre }} — {{ $ticket->area_departamento }}
+                                    {{ optional($ticket->sucursal)->nombre }} — {{ optional($ticket->departamento)->nombre }}
                                 </p>
                             </div>
                             <div class="mt-2 flex items-center text-sm text-suraki-tertiary/70 sm:mt-0">

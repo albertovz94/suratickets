@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Sucursal extends Model
+class Departamento extends Model
 {
-    protected $table = 'sucursales';
-    protected $fillable = ['nombre', 'direccion', 'telefono', 'activa'];
+    protected $table = 'departamentos';
+    protected $fillable = ['nombre'];
 
     public function users()
     {

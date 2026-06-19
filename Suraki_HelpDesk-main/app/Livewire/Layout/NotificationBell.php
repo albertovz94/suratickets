@@ -14,6 +14,7 @@ class NotificationBell extends Component
         $this->updateCount();
     }
 
+    #[\Livewire\Attributes\On('profile-updated')]
     public function updateCount()
     {
         if (Auth::check()) {

@@ -16,6 +16,24 @@
                             <p class="text-sm text-suraki-tertiary mt-1">Completa todos los campos para registrar tu incidencia.</p>
                         </div>
 
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <x-input-label for="sucursal_id" value="Sucursal" />
+                                <select wire:model="sucursal_id" id="sucursal_id" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm transition-colors duration-150" required>
+                                    <option value="">Seleccione Sucursal</option>
+                                    @foreach($sucursales as $sucursal)
+                                        <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('sucursal_id')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label value="Fecha y Hora de Solicitud" />
+                                <x-text-input type="text" class="mt-1 block w-full bg-suraki-neutral/50 text-suraki-tertiary cursor-not-allowed" wire:model="fecha_hora" disabled />
+                            </div>
+                        </div>
+
                         <div>
                             <x-input-label for="title" value="Título del Problema" />
                             <x-text-input wire:model="title" id="title" type="text" class="mt-1 block w-full" required autofocus placeholder="Ej. No enciende la computadora" />
@@ -30,28 +48,14 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <x-input-label for="sucursal_id" value="Sucursal" />
-                                <select wire:model="sucursal_id" id="sucursal_id" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm transition-colors duration-150" required>
-                                    <option value="">Seleccione Sucursal</option>
-                                    @foreach($sucursales as $sucursal)
-                                        <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
+                                <x-input-label for="departamento_id" value="Área o Departamento" />
+                                <select wire:model="departamento_id" id="departamento_id" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm transition-colors duration-150" required>
+                                    <option value="">Seleccione un Área</option>
+                                    @foreach($departamentos as $departamento)
+                                        <option value="{{ $departamento->id }}">{{ $departamento->nombre }}</option>
                                     @endforeach
                                 </select>
-                                <x-input-error :messages="$errors->get('sucursal_id')" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="area_departamento" value="Área o Departamento" />
-                                <x-text-input wire:model="area_departamento" id="area_departamento" type="text" class="mt-1 block w-full" placeholder="Ej. Caja 1, Gerencia" required />
-                                <x-input-error :messages="$errors->get('area_departamento')" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <x-input-label for="equipo_afectado" value="Equipo Afectado" />
-                                <x-text-input wire:model="equipo_afectado" id="equipo_afectado" type="text" class="mt-1 block w-full" placeholder="Ej. PC-01, Impresora" required />
-                                <x-input-error :messages="$errors->get('equipo_afectado')" class="mt-2" />
+                                <x-input-error :messages="$errors->get('departamento_id')" class="mt-2" />
                             </div>
 
                             <div>
@@ -70,7 +74,7 @@
                             <a href="{{ route('dashboard') }}" wire:navigate class="text-sm text-suraki-tertiary hover:text-suraki-secondary transition-colors duration-150 mr-4">
                                 Cancelar
                             </a>
-                            <x-primary-button>
+                            <x-primary-button wire:loading.attr="disabled">
                                 <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>

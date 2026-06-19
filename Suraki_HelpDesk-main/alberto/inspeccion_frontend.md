@@ -41,12 +41,12 @@ Aquí se concentra la mayor parte de la interfaz donde interactúa el usuario y 
 
 Utiliza este espacio para marcar tu progreso:
 
-- [ ] **Configurar Paleta de Colores:** Identificar los colores corporativos y agregarlos a `tailwind.config.js`.
-- [ ] **Tipografía Moderna:** Importar una fuente premium (ej. Inter, Outfit o Roboto) en `resources/css/app.css`.
-- [ ] **Rediseño del Login:** Aplicar un layout moderno, con esquinas redondeadas y efectos "glassmorphism" (vidrio esmerilado) si aplica.
-- [ ] **UI de Tabla de Tickets:** Eliminar bordes pesados, agregar "hover effects" sutiles a cada fila, y separar visualmente las columnas.
-- [ ] **Badges de Estado:** Diseñar componentes bonitos para los estados (Ej: píldoras redondeadas de color Rojo suave para Crítico, Verde para Resuelto).
-- [ ] **Modo Responsivo:** Asegurarse de que el formulario y la tabla se adapten perfectamente a las pantallas de los celulares de los usuarios en sucursal.
+- [x] **Configurar Paleta de Colores:** Identificar los colores corporativos y agregarlos a `tailwind.config.js`.
+- [x] **Tipografía Moderna:** Importar una fuente premium (ej. Inter, Outfit o Roboto) en `resources/css/app.css`.
+- [x] **Rediseño del Login:** Aplicar un layout moderno, con esquinas redondeadas y efectos "glassmorphism" (vidrio esmerilado) si aplica.
+- [x] **UI de Tabla de Tickets:** Eliminar bordes pesados, agregar "hover effects" sutiles a cada fila, y separar visualmente las columnas.
+- [x] **Badges de Estado:** Diseñar componentes bonitos para los estados (Ej: píldoras redondeadas de color Rojo suave para Crítico, Verde para Resuelto).
+- [x] **Modo Responsivo:** Asegurarse de que el formulario y la tabla se adapten perfectamente a las pantallas de los celulares de los usuarios en sucursal.
 
 ---
 *Documento creado y mantenido por: Alberto para las mejoras UI/UX del proyecto.*

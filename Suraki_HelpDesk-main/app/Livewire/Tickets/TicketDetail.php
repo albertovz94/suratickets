@@ -6,13 +6,15 @@ use Livewire\Component;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
 
 class TicketDetail extends Component
 {
     public Ticket $ticket;
     public $status;
     public $assigned_to;
-    public $resolution_summary;
+    public $resolution_summary; // This can stay for backward compatibility or be removed if not used
+    public $newMessage = '';
 
     public function mount(Ticket $ticket)
     {
@@ -34,7 +36,7 @@ class TicketDetail extends Component
         $this->validate([
             'status' => 'required|in:abierto,asignado,en_proceso,pendiente,resuelto,cerrado',
             'assigned_to' => 'nullable|exists:users,id',
-            'resolution_summary' => 'nullable|string',
+            'resolution_summary' => 'nullable|string|max:2000',
         ]);
 
         $this->ticket->update([
@@ -49,12 +51,37 @@ class TicketDetail extends Component
         $this->ticket->refresh();
     }
 
+    #[Computed]
+    public function admins()
+    {
+        return User::where('rol', 'admin')->get();
+    }
+
+    #[Computed]
+    public function ticketMessages()
+    {
+        return $this->ticket->messages()->with('user')->get();
+    }
+
+    public function sendMessage()
+    {
+        $this->validate([
+            'newMessage' => 'required|string|max:2000',
+        ]);
+
+        $this->ticket->messages()->create([
+            'user_id' => Auth::id(),
+            'message' => $this->newMessage,
+        ]);
+
+        $this->newMessage = '';
+        $this->ticket->refresh();
+    }
+
     public function render()
     {
-        $admins = User::where('rol', 'admin')->get();
-
         return view('livewire.tickets.ticket-detail', [
-            'admins' => $admins
+            'admins' => $this->admins()
         ])->layout('layouts.app');
     }
 }
