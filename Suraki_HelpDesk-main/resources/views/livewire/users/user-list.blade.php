@@ -151,6 +151,7 @@
                                 <th class="px-6 py-4">Usuario</th>
                                 <th class="px-6 py-4">Correo / Usuario</th>
                                 <th class="px-6 py-4">Rol</th>
+                                <th class="px-6 py-4">Sucursal</th>
                                 <th class="px-6 py-4">Departamento</th>
                                 <th class="px-6 py-4">Estado</th>
                                 <th class="px-6 py-4 text-center">Acciones</th>
@@ -193,6 +194,9 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
+                                        <p class="text-sm text-suraki-secondary">{{ optional($user->sucursal)->nombre ?? 'Sin sucursal' }}</p>
+                                    </td>
+                                    <td class="px-6 py-4">
                                         <p class="text-sm text-suraki-secondary">{{ optional($user->departamento)->nombre ?? 'Sin departamento' }}</p>
                                     </td>
                                     <td class="px-6 py-4">
@@ -230,7 +234,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-8 text-center text-sm text-suraki-tertiary">
+                                    <td colspan="8" class="px-6 py-8 text-center text-sm text-suraki-tertiary">
                                         No se encontraron usuarios que coincidan con la búsqueda.
                                     </td>
                                 </tr>

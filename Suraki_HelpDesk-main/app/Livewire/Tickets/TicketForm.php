@@ -20,8 +20,6 @@ class TicketForm extends Component
     protected $rules = [
         'title' => 'required|string|max:255',
         'description' => 'required|string|max:2000',
-        'sucursal_id' => 'required|exists:sucursales,id',
-        'departamento_id' => 'required|exists:departamentos,id',
         'priority' => 'required|in:baja,media,alta,critica',
     ];
 
@@ -43,6 +41,8 @@ class TicketForm extends Component
         $validatedData = $this->validate();
         $validatedData['creator_id'] = Auth::id();
         $validatedData['status'] = 'abierto';
+        $validatedData['sucursal_id'] = Auth::user()->sucursal_id;
+        $validatedData['departamento_id'] = Auth::user()->departamento_id;
 
         Ticket::create($validatedData);
 

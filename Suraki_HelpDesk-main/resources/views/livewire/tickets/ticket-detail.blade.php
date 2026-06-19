@@ -114,6 +114,17 @@
                             El ticket está <strong>{{ $ticket->status }}</strong>. No se pueden enviar más mensajes.
                         </div>
                     @endif
+                    
+                    <!-- Plan de Acción Destacado -->
+                    @if($ticket->resolution_summary && in_array($ticket->status, ['resuelto', 'cerrado']))
+                        <div class="bg-green-50 p-6 rounded-xl border border-green-200 mt-6 shadow-sm">
+                            <h4 class="text-sm font-heading font-bold text-green-800 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Plan de Acción / Resolución Final
+                            </h4>
+                            <p class="text-sm text-green-700 whitespace-pre-wrap">{{ $ticket->resolution_summary }}</p>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- COLUMNA DERECHA: Información y Contacto -->
@@ -131,12 +142,21 @@
                                 <span class="text-suraki-tertiary">Creado</span>
                                 <span class="font-medium text-suraki-secondary">{{ $ticket->created_at->format('M d, H:i A') }}</span>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-suraki-tertiary">SLA Status / Tiempo</span>
-                                <span class="font-medium text-red-600 flex items-center gap-1">
-                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                                    {{ $ticket->created_at->diffForHumans() }}
+                            <div class="flex justify-between items-center">
+                                <span class="text-suraki-tertiary text-xs">
+                                    {{ in_array($ticket->status, ['resuelto', 'cerrado']) ? 'Tiempo de Resolución' : 'Tiempo Transcurrido' }}
                                 </span>
+                                @if(in_array($ticket->status, ['resuelto', 'cerrado']))
+                                    <span class="font-medium text-green-600 flex items-center gap-1 text-sm">
+                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        {{ $ticket->created_at->diffForHumans($ticket->updated_at, true) }}
+                                    </span>
+                                @else
+                                    <span class="font-medium text-red-600 flex items-center gap-1 text-sm">
+                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                        {{ $ticket->created_at->diffForHumans() }}
+                                    </span>
+                                @endif
                             </div>
                         </div>
 
@@ -216,6 +236,11 @@
                                         <option value="{{ $admin->id }}">{{ $admin->name }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                            <div>
+                                <x-input-label for="resolution_summary" value="Plan de Acción / Diagnóstico Final" />
+                                <textarea wire:model="resolution_summary" id="resolution_summary" rows="3" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary rounded-lg shadow-sm text-sm" placeholder="Describe la solución o causa raíz..."></textarea>
+                                <x-input-error :messages="$errors->get('resolution_summary')" class="mt-2" />
                             </div>
                             <x-primary-button class="w-full justify-center text-sm py-2">Actualizar Estado</x-primary-button>
                         </form>

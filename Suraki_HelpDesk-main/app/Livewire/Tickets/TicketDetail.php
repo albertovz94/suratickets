@@ -36,7 +36,9 @@ class TicketDetail extends Component
         $this->validate([
             'status' => 'required|in:abierto,asignado,en_proceso,pendiente,resuelto,cerrado',
             'assigned_to' => 'nullable|exists:users,id',
-            'resolution_summary' => 'nullable|string|max:2000',
+            'resolution_summary' => 'required_if:status,resuelto,cerrado|nullable|string|max:2000',
+        ], [
+            'resolution_summary.required_if' => 'El Plan de Acción / Diagnóstico es obligatorio al resolver o cerrar el ticket.'
         ]);
 
         $this->ticket->update([

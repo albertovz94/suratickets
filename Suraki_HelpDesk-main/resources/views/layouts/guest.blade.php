@@ -32,7 +32,7 @@
                 <div class="relative z-10">
                     <div class="mb-4 flex items-center gap-3">
                         <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center p-2 backdrop-blur-sm border border-white/20">
-                            <img src="{{ asset('images/logo.png') }}" alt="Suraki Logo" class="w-full h-full object-contain">
+                            <img src="{{ asset('icono.png') }}" alt="Suraki Logo" class="w-full h-full object-contain">
                         </div>
                         <span class="text-white font-heading text-2xl font-bold tracking-tight">Suraki</span>
                     </div>
@@ -61,7 +61,7 @@
             <div class="flex-1 flex flex-col justify-center items-center px-6 py-12 bg-suraki-neutral">
                 <!-- Mobile Logo (visible on small screens) -->
                 <div class="lg:hidden mb-8 flex justify-center">
-                    <img src="{{ asset('images/logo.png') }}" alt="Suraki HelpDesk Logo" class="w-auto h-14 object-contain">
+                    <img src="{{ asset('icono.png') }}" alt="Suraki HelpDesk Logo" class="w-auto h-14 object-contain">
                 </div>
 
                 <div class="w-full sm:max-w-md">
