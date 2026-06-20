@@ -24,48 +24,79 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div>
+<div class="animate-fade-in w-full max-w-sm mx-auto">
+    <!-- Header with Icon -->
+    <div class="flex flex-col items-center mb-8">
+        <div class="relative flex items-center justify-center w-24 h-24 mb-4 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.1)] border-4 border-gray-100 bg-white overflow-hidden p-3 animate-float-glow">
+            <!-- Icon Image -->
+            <img src="{{ asset('icono.png') }}" alt="Icono Login" class="w-full h-full object-contain filter drop-shadow-md">
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Iniciar Sesión</h2>
+        <p class="text-gray-500 text-sm mt-1">Accede a tu cuenta</p>
+    </div>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form wire:submit="login">
+    <form wire:submit="login" class="space-y-4">
         <!-- Username -->
         <div>
-            <x-input-label for="username" :value="__('Usuario')" />
-            <x-text-input wire:model="form.username" id="username" class="block mt-1 w-full" type="text" name="username" required autofocus autocomplete="username" />
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-indigo-900" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input wire:model="form.username" id="username" class="block w-full pl-12 pr-4 py-3 border border-orange-200 rounded-xl focus:ring-[#ff5a5f] focus:border-[#ff5a5f] bg-gray-50/50 text-gray-900 transition-colors" type="text" name="username" required autofocus autocomplete="username" placeholder="Usuario" />
+            </div>
             <x-input-error :messages="$errors->get('form.username')" class="mt-2" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input wire:model="form.password" id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
+        <div>
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input wire:model="form.password" id="password" class="block w-full pl-12 pr-4 py-3 border border-orange-200 rounded-xl focus:ring-[#ff5a5f] focus:border-[#ff5a5f] bg-gray-50/50 text-gray-900 transition-colors"
+                                type="password"
+                                name="password"
+                                required autocomplete="current-password"
+                                placeholder="Contraseña" />
+            </div>
             <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
         </div>
 
         <!-- Remember Me -->
-        <div class="block mt-4">
+        <div class="flex items-center justify-between pt-2">
             <label for="remember" class="inline-flex items-center">
-                <input wire:model="form.remember" id="remember" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                <input wire:model="form.remember" id="remember" type="checkbox" class="rounded border-gray-300 text-gray-600 shadow-sm focus:ring-[#ff5a5f]" name="remember">
+                <span class="ms-2 text-sm text-gray-500">{{ __('Recordarme') }}</span>
             </label>
-        </div>
 
-        <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}" wire:navigate>
-                    {{ __('Forgot your password?') }}
+                <a class="text-sm font-medium text-[#ff5a5f] hover:text-red-500 transition-colors duration-150" href="{{ route('password.request') }}" wire:navigate>
+                    {{ __('¿Olvidaste tu contraseña?') }}
                 </a>
             @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
         </div>
+
+        <!-- Submit Button -->
+        <div class="pt-4 pb-4">
+            <button type="submit" class="blob-btn">
+                <span style="position:relative; z-index: 10;">{{ __('INGRESAR') }}</span>
+                <span class="blob-btn__inner">
+                    <span class="blob-btn__blobs">
+                        <span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span>
+                    </span>
+                </span>
+            </button>
+        </div>
+
     </form>
 </div>

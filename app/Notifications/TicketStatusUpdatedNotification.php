@@ -7,8 +7,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use App\Models\Ticket;
 
-class TicketStatusUpdatedNotification extends Notification
+class TicketStatusUpdatedNotification extends Notification implements ShouldQueue
 {
+    use Queueable;
+
     public $ticket;
     public $message;
 

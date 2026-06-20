@@ -16,110 +16,104 @@ new class extends Component
     }
 }; ?>
 
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" wire:navigate>
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
+<div>
+    <!-- Sidebar overlay (mobile) -->
+    <div x-show="sidebarOpen" class="fixed inset-0 z-40 bg-black/50 md:hidden" @click="sidebarOpen = false" style="display: none;"></div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
-            </div>
+    <!-- Sidebar Container -->
+    <aside :class="{
+            'translate-x-0': sidebarOpen, 
+            '-translate-x-full': !sidebarOpen,
+            'w-[280px] min-w-[280px]': !sidebarCollapsed,
+            'w-[88px] min-w-[88px]': sidebarCollapsed
+        }" 
+        class="fixed inset-y-0 left-0 z-50 flex flex-col bg-white rounded-2xl p-4 transition-all duration-300 md:static md:translate-x-0 h-full shadow-sm border border-suraki-neutral-dark overflow-hidden">
+        
+        <!-- Header / Logo -->
+        <div class="flex items-center justify-between mb-8 px-2 mt-2">
+            <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-3 overflow-hidden">
+                <img src="{{ asset('icono.png') }}" alt="Suraki" class="w-8 h-8 object-contain shrink-0">
+                <span x-show="!sidebarCollapsed" class="font-heading font-bold text-xl text-suraki-secondary transition-opacity duration-300">Gestión de Tickets</span>
+            </a>
+            <button @click="sidebarOpen = false" class="md:hidden text-suraki-tertiary">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <!-- User Info & Clock -->
-                <div class="mr-6 flex flex-col items-end text-sm text-gray-500" x-data="{ time: new Date().toLocaleTimeString('es-ES'), date: new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }" x-init="setInterval(() => { time = new Date().toLocaleTimeString('es-ES'); }, 1000)">
-                    <div class="font-semibold text-gray-800 flex items-center gap-2" x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-on:profile-updated.window="name = $event.detail.name">
-                        Bienvenido, <span x-text="name"></span>
-                    </div>
-                    <div class="text-xs mt-0.5 capitalize">
-                        <span x-text="date"></span> - <span x-text="time" class="font-medium"></span>
-                    </div>
-                </div>
-                <!-- Notification Bell -->
-                <div class="mr-3">
-                    <livewire:layout.notification-bell />
-                </div>
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ auth()->user()->rol === 'admin' ? 'Administrador' : 'Usuario' }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile')" wire:navigate>
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        <button wire:click="logout" class="w-full text-start">
-                            <x-dropdown-link>
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </button>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <!-- Navigation Modules -->
+        <nav class="flex-1 space-y-2">
+            <a href="{{ route('dashboard') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               :title="sidebarCollapsed ? 'Panel Principal' : ''">
+                <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
                     </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">
-                    {{ auth()->user()->rol === 'admin' ? 'Administrador' : 'Usuario' }}
                 </div>
-                <div class="font-medium text-sm text-gray-500" x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
-            </div>
+                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Panel Principal</span>
+            </a>
 
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile')" wire:navigate>
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
+            <a href="{{ route('tickets.index') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('tickets.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               :title="sidebarCollapsed ? 'Tickets' : ''">
+                <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Tickets</span>
+            </a>
 
-                <!-- Authentication -->
-                <button wire:click="logout" class="w-full text-start">
-                    <x-responsive-nav-link>
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </button>
-            </div>
+            <a href="{{ route('inventory.index') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('inventory.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               :title="sidebarCollapsed ? 'Inventario' : ''">
+                <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Inventario</span>
+            </a>
+
+            @if(auth()->user()->rol === 'admin')
+            <a href="{{ route('users.index') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('users.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               :title="sidebarCollapsed ? 'Usuarios' : ''">
+                <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Usuarios</span>
+            </a>
+            @endif
+
+        </nav>
+
+        <!-- Sidebar Collapse Toggle Button -->
+        <div class="mb-4 hidden md:flex items-center justify-center">
+            <button @click="sidebarCollapsed = !sidebarCollapsed" class="p-2 rounded-full bg-suraki-neutral text-suraki-tertiary hover:text-suraki-secondary hover:bg-gray-200 transition-colors shadow-sm border border-suraki-neutral-dark" title="Expandir/Contraer Menú">
+                <svg x-show="!sidebarCollapsed" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                </svg>
+                <svg x-show="sidebarCollapsed" class="w-5 h-5 hidden" :class="{'hidden': !sidebarCollapsed}" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                </svg>
+            </button>
         </div>
-    </div>
-</nav>
+
+        <!-- Footer / User Actions -->
+        <div class="mt-auto pt-6 border-t border-suraki-neutral-dark">
+            <button wire:click="logout" class="flex w-full items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors duration-200" :class="{'justify-center': sidebarCollapsed}" :title="sidebarCollapsed ? 'Cerrar Sesión' : ''">
+                <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+</div>

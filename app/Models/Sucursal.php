@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Sucursal extends Model
 {
     protected $table = 'sucursales';
-    protected $fillable = ['nombre'];
+    protected $fillable = ['nombre', 'direccion', 'telefono', 'activa'];
 
     public function users()
     {
@@ -17,5 +17,10 @@ class Sucursal extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function equipos()
+    {
+        return $this->hasMany(Equipo::class);
     }
 }

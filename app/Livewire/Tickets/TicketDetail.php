@@ -6,78 +6,84 @@ use Livewire\Component;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use App\Notifications\TicketStatusUpdatedNotification;
-use Livewire\Attributes\On;
+use Livewire\Attributes\Computed;
 
 class TicketDetail extends Component
 {
-    public ?Ticket $ticket = null;
+    public Ticket $ticket;
+    public $status;
     public $assigned_to;
-    public $resolution_summary;
-    public bool $showDetailModal = false;
+    public $resolution_summary; // This can stay for backward compatibility or be removed if not used
+    public $newMessage = '';
 
-    #[On('open-ticket-modal')]
-    public function loadTicket($ticketId)
+    public function mount(Ticket $ticket)
     {
-        $this->ticket = Ticket::with(['sucursal', 'creator', 'assignedTo'])->findOrFail($ticketId);
+        $this->ticket = $ticket->load(['sucursal', 'creator', 'assignedTo']);
         
         // Autorizar visualización usando TicketPolicy
         $this->authorize('view', $this->ticket);
 
-        // Automatización: Si es admin y el ticket está abierto, pasarlo a en proceso
-        if (Auth::user()->rol === 'admin' && $this->ticket->status === 'abierto') {
-            $this->ticket->update(['status' => 'en_proceso']);
-            $this->ticket->refresh();
-        }
-
-        $this->assigned_to = $this->ticket->assigned_to;
-        $this->resolution_summary = $this->ticket->resolution_summary;
-        $this->showDetailModal = true;
-    }
-
-    public function closeModal()
-    {
-        $this->showDetailModal = false;
-        $this->ticket = null;
+        $this->status = $ticket->status;
+        $this->assigned_to = $ticket->assigned_to;
+        $this->resolution_summary = $ticket->resolution_summary;
     }
 
     public function updateTicket()
     {
-        if (!$this->ticket) return;
-
         // Autorizar actualización usando TicketPolicy
         $this->authorize('update', $this->ticket);
 
         $this->validate([
+            'status' => 'required|in:abierto,asignado,en_proceso,pendiente,resuelto,cerrado',
             'assigned_to' => 'nullable|exists:users,id',
-            'resolution_summary' => 'nullable|string',
+            'resolution_summary' => 'required_if:status,resuelto,cerrado|nullable|string|max:2000',
+        ], [
+            'resolution_summary.required_if' => 'El Plan de Acción / Diagnóstico es obligatorio al resolver o cerrar el ticket.'
         ]);
 
-        // Automatización: Si escribe resolución, se resuelve. Si no, sigue en proceso.
-        $newStatus = $this->resolution_summary ? 'resuelto' : 'en_proceso';
-
         $this->ticket->update([
-            'status' => $newStatus,
+            'status' => $this->status,
             'assigned_to' => $this->assigned_to,
             'resolution_summary' => $this->resolution_summary,
         ]);
 
-        // Enviar notificación al creador si alguien más lo modificó
-        if ($this->ticket->creator_id !== Auth::id()) {
-            $message = "El estado de tu ticket ha cambiado a: " . ucfirst(str_replace('_', ' ', $newStatus));
-            $this->ticket->creator->notify(new TicketStatusUpdatedNotification($this->ticket, $message));
-        }
+        session()->flash('message', 'Ticket actualizado exitosamente.');
+        
+        // Refrescar el modelo
+        $this->ticket->refresh();
+    }
 
-        $this->dispatch('ticket-updated');
-        $this->closeModal();
+    #[Computed]
+    public function admins()
+    {
+        return User::where('rol', 'admin')->get();
+    }
+
+    #[Computed]
+    public function ticketMessages()
+    {
+        return $this->ticket->messages()->with('user')->get();
+    }
+
+    public function sendMessage()
+    {
+        $this->validate([
+            'newMessage' => 'required|string|max:2000',
+        ]);
+
+        $this->ticket->messages()->create([
+            'user_id' => Auth::id(),
+            'message' => $this->newMessage,
+        ]);
+
+        $this->newMessage = '';
+        $this->ticket->refresh();
     }
 
     public function render()
     {
-        $admins = User::where('rol', 'admin')->get();
-
         return view('livewire.tickets.ticket-detail', [
-            'admins' => $admins
-        ]);
+            'admins' => $this->admins()
+        ])->layout('layouts.app');
     }
 }

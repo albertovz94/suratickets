@@ -13,8 +13,8 @@ class Ticket extends Model
         'title',
         'description',
         'sucursal_id',
-        'area_departamento',
-        'equipo_afectado',
+        'departamento_id',
+        'equipo_id',
         'priority',
         'status',
         'creator_id',
@@ -27,6 +27,16 @@ class Ticket extends Model
         return $this->belongsTo(Sucursal::class);
     }
 
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class);
+    }
+
+    public function equipo()
+    {
+        return $this->belongsTo(Equipo::class);
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'creator_id');
@@ -35,5 +45,10 @@ class Ticket extends Model
     public function assignedTo()
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(TicketMessage::class)->orderBy('created_at', 'asc');
     }
 }

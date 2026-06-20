@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'username', 'sucursal_id', 'rol'])]
+#[Fillable(['name', 'last_name', 'email', 'phone', 'password', 'username', 'sucursal_id', 'departamento_id', 'rol', 'status', 'avatar', 'bio', 'display_preference'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -35,6 +35,11 @@ class User extends Authenticatable
         return $this->belongsTo(Sucursal::class);
     }
 
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class);
+    }
+
     public function createdTickets()
     {
         return $this->hasMany(Ticket::class, 'creator_id');
@@ -43,5 +48,23 @@ class User extends Authenticatable
     public function assignedTickets()
     {
         return $this->hasMany(Ticket::class, 'assigned_to');
+    }
+
+    public function assignedEquipos()
+    {
+        return $this->hasMany(Equipo::class, 'assigned_to');
+    }
+
+    public function getDisplayNameAttribute()
+    {
+        if ($this->display_preference === 'username' && $this->username) {
+            return $this->username;
+        }
+        
+        if ($this->display_preference === 'full_name' && $this->last_name) {
+            return $this->name . ' ' . $this->last_name;
+        }
+
+        return $this->name;
     }
 }

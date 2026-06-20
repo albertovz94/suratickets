@@ -14,13 +14,6 @@ class TicketList extends Component
     public $search = '';
     public $status = '';
     public $priority = '';
-    public $activeTab = 'activos';
-
-    public function setTab($tab)
-    {
-        $this->activeTab = $tab;
-        $this->resetPage();
-    }
 
     public function updatingSearch()
     {
@@ -43,24 +36,8 @@ class TicketList extends Component
                 $q->where('priority', $this->priority);
             });
 
-        if (Auth::user()->rol === 'admin') {
-            // Lógica para el Administrador
-            if ($this->activeTab === 'activos') {
-                $query->whereNotIn('status', ['resuelto']);
-            } else {
-                // En historial del admin, solo ve los que él mismo resolvió/tiene asignados
-                $query->where('status', 'resuelto')
-                      ->where('assigned_to', Auth::id());
-            }
-        } else {
-            // Lógica para Usuario Final
+        if (Auth::user()->rol !== 'admin') {
             $query->where('creator_id', Auth::id());
-            
-            if ($this->activeTab === 'activos') {
-                $query->whereNotIn('status', ['resuelto']);
-            } else {
-                $query->where('status', 'resuelto');
-            }
         }
 
         $tickets = $query->latest()->paginate(10);
