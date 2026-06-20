@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Ticket {
+  id              Int       @id @default(autoincrement())
+  numero          Int
+  departamento    String    
+  estado          String    @default("esperando") 
+  creadoEn        DateTime  @default(now())
+  llamadoEn       DateTime?
+  finalizadoEn    DateTime?
+  operadorId      String?
+  operador        Operador? @relation(fields: [operadorId], references: [codigoBarras])
+}
+
+model Operador {
+  codigoBarras    String    @id
+  nombre          String
+  tickets         Ticket[]
+}
