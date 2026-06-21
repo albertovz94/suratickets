@@ -67,4 +67,11 @@ class User extends Authenticatable
 
         return $this->name;
     }
+
+    public function getAvatarPathAttribute()
+    {
+        if (!$this->avatar) return null;
+        if (str_starts_with($this->avatar, 'http')) return $this->avatar;
+        return asset('storage/' . $this->avatar);
+    }
 }

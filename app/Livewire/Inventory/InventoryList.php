@@ -41,6 +41,13 @@ class InventoryList extends Component
         $this->resetPage();
     }
 
+    public function deleteEquipo($id)
+    {
+        $equipo = Equipo::findOrFail($id);
+        $equipo->delete();
+        session()->flash('message', 'Equipo eliminado correctamente.');
+    }
+
     public function render()
     {
         $query = Equipo::query();
@@ -69,11 +76,11 @@ class InventoryList extends Component
             $query->where('departamento_id', $this->departamento_id);
         }
 
-        // Fake stats based on mock
-        $totalEquipos = 142; // Real: Equipo::count();
-        $activos = 128; // Real: Equipo::where('status', 'Activo')->count();
-        $enReparacion = 9; // Real: Equipo::where('status', 'En reparacion')->count();
-        $dadosBaja = 5; // Real: Equipo::where('status', 'De baja')->count();
+        // Estadísticas Reales
+        $totalEquipos = Equipo::count();
+        $activos = Equipo::where('status', 'Activo')->count();
+        $enReparacion = Equipo::where('status', 'En reparacion')->count();
+        $dadosBaja = Equipo::where('status', 'De baja')->count();
 
         // Unique values for dropdowns
         $types = Equipo::select('type')->distinct()->pluck('type');

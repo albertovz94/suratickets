@@ -14,6 +14,13 @@ class TicketList extends Component
     public $search = '';
     public $status = '';
     public $priority = '';
+    public $activeTab = 'asignados';
+
+    public function setTab($tab)
+    {
+        $this->activeTab = $tab;
+        $this->resetPage();
+    }
 
     public function updatingSearch()
     {
@@ -31,6 +38,13 @@ class TicketList extends Component
             })
             ->when($this->status, function ($q) {
                 $q->where('status', $this->status);
+            })
+            ->when(!$this->status, function ($q) {
+                if ($this->activeTab === 'resueltos') {
+                    $q->whereIn('status', ['resuelto', 'cerrado']);
+                } else {
+                    $q->whereIn('status', ['abierto', 'asignado', 'en_proceso', 'pendiente']);
+                }
             })
             ->when($this->priority, function ($q) {
                 $q->where('priority', $this->priority);

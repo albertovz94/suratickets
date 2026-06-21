@@ -44,6 +44,7 @@ new class extends Component
 
         <!-- Navigation Modules -->
         <nav class="flex-1 space-y-2">
+            @if(auth()->user()->rol === 'admin')
             <a href="{{ route('dashboard') }}" wire:navigate 
                class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
                :title="sidebarCollapsed ? 'Panel Principal' : ''">
@@ -54,6 +55,7 @@ new class extends Component
                 </div>
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Panel Principal</span>
             </a>
+            @endif
 
             <a href="{{ route('tickets.index') }}" wire:navigate 
                class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('tickets.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
@@ -66,6 +68,7 @@ new class extends Component
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Tickets</span>
             </a>
 
+            @if(auth()->user()->rol === 'admin')
             <a href="{{ route('inventory.index') }}" wire:navigate 
                class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('inventory.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
                :title="sidebarCollapsed ? 'Inventario' : ''">
@@ -76,6 +79,7 @@ new class extends Component
                 </div>
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Inventario</span>
             </a>
+            @endif
 
             @if(auth()->user()->rol === 'admin')
             <a href="{{ route('users.index') }}" wire:navigate 
@@ -87,6 +91,39 @@ new class extends Component
                     </svg>
                 </div>
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Usuarios</span>
+            </a>
+
+            <a href="{{ route('reports.index') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('reports.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               :title="sidebarCollapsed ? 'Reportes' : ''">
+                <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Reportes</span>
+            </a>
+
+            <a href="{{ route('bitacora.index') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('bitacora.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               :title="sidebarCollapsed ? 'Bitácora' : ''">
+                <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Bitácora</span>
+            </a>
+
+            <a href="{{ route('settings.index') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('settings.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               :title="sidebarCollapsed ? 'Configuración' : ''">
+                <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Configuración</span>
             </a>
             @endif
 

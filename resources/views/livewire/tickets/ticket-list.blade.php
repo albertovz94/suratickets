@@ -1,4 +1,14 @@
 <div wire:poll.10s>
+    <!-- Pestañas -->
+    <div class="flex gap-2 mb-6 border-b border-suraki-neutral-dark pb-0">
+        <button wire:click="setTab('asignados')" class="px-5 py-2.5 text-sm font-bold rounded-t-xl transition-colors duration-200 {{ $activeTab === 'asignados' ? 'bg-orange-50 text-orange-700 border-b-2 border-orange-500 shadow-inner' : 'text-suraki-tertiary hover:text-suraki-secondary hover:bg-suraki-neutral' }}">
+            Pendientes / Asignados
+        </button>
+        <button wire:click="setTab('resueltos')" class="px-5 py-2.5 text-sm font-bold rounded-t-xl transition-colors duration-200 {{ $activeTab === 'resueltos' ? 'bg-green-50 text-green-700 border-b-2 border-green-500 shadow-inner' : 'text-suraki-tertiary hover:text-suraki-secondary hover:bg-suraki-neutral' }}">
+            Resueltos
+        </button>
+    </div>
+
     <div class="mb-6 flex flex-col md:flex-row gap-3">
         <div class="relative flex-1">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

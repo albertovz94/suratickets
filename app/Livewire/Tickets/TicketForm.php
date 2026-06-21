@@ -40,14 +40,69 @@ class TicketForm extends Component
     {
         $validatedData = $this->validate();
         $validatedData['creator_id'] = Auth::id();
-        $validatedData['status'] = 'abierto';
         $validatedData['sucursal_id'] = Auth::user()->sucursal_id;
         $validatedData['departamento_id'] = Auth::user()->departamento_id;
 
-        Ticket::create($validatedData);
+        // 1. Asignación Automática de Prioridad
+        $textToAnalyze = strtolower($validatedData['title'] . ' ' . $validatedData['description']);
+        $criticalWords = ['caído', 'caido', 'urgente', 'servidor', 'no enciende', 'internet', 'red', 'imposible', 'critico', 'crítico'];
+        $highWords = ['lento', 'error', 'falla', 'pantalla azul', 'virus'];
+        
+        $assignedPriority = 'baja';
+        foreach ($criticalWords as $word) {
+            if (str_contains($textToAnalyze, $word)) {
+                $assignedPriority = 'critica';
+                break;
+            }
+        }
+        if ($assignedPriority === 'baja') {
+            foreach ($highWords as $word) {
+                if (str_contains($textToAnalyze, $word)) {
+                    $assignedPriority = 'alta';
+                    break;
+                }
+            }
+        }
+        $validatedData['priority'] = $assignedPriority;
 
-        session()->flash('message', 'Ticket creado exitosamente.');
-        return redirect()->route('dashboard');
+        // 2. Asignación Automática de Técnico (Menor carga de trabajo)
+        // Obtenemos a los administradores
+        $admins = \App\Models\User::where('rol', 'admin')->get();
+        
+        $assignedAdmin = null;
+        if ($admins->count() > 0) {
+            // Buscamos el que tenga menos tickets en estado abierto o en proceso
+            $assignedAdmin = \App\Models\User::where('rol', 'admin')
+                ->withCount(['assignedTickets' => function ($query) {
+                    $query->whereIn('status', ['abierto', 'asignado', 'en_proceso', 'pendiente']);
+                }])
+                ->orderBy('assigned_tickets_count', 'asc')
+                ->orderBy('id', 'asc') // Desempate por ID
+                ->first();
+        }
+
+        if ($assignedAdmin) {
+            $validatedData['assigned_to'] = $assignedAdmin->id;
+            $validatedData['status'] = 'asignado';
+        } else {
+            $validatedData['status'] = 'abierto';
+        }
+
+        // 3. Crear el Ticket
+        $ticket = Ticket::create($validatedData);
+        \App\Models\ActivityLog::log('Crear Ticket', "Se creó el ticket #{$ticket->id}: {$ticket->title}", $ticket);
+
+        // 4. Enviar Notificaciones a TODOS los administradores
+        if ($admins->count() > 0) {
+            $message = $assignedAdmin 
+                ? "Nuevo ticket reportado. Asignado automáticamente a " . $assignedAdmin->name 
+                : "Nuevo ticket reportado. Sin técnico asignado.";
+                
+            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\TicketCreated($ticket, $message));
+        }
+
+        session()->flash('message', 'Ticket creado y asignado exitosamente.');
+        return redirect()->route('tickets.index');
     }
 
     public function render()

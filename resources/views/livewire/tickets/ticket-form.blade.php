@@ -19,8 +19,8 @@
                         <!-- Datos del Solicitante (Solo Lectura) -->
                         <div class="bg-suraki-neutral p-4 rounded-xl border border-suraki-neutral-dark flex items-center gap-4 mb-6">
                             <div class="flex-shrink-0">
-                                @if(auth()->user()->avatar)
-                                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar" class="w-14 h-14 rounded-lg object-cover shadow-sm">
+                                @if(auth()->user()->avatar_path)
+                                    <img src="{{ auth()->user()->avatar_path }}" alt="Avatar" class="w-14 h-14 rounded-lg object-cover shadow-sm">
                                 @else
                                     <div class="w-14 h-14 rounded-lg bg-suraki-primary text-white flex items-center justify-center font-bold font-heading text-xl shadow-sm">
                                         {{ substr(auth()->user()->name, 0, 1) }}

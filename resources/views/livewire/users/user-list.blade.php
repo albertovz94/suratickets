@@ -171,8 +171,8 @@
                                                 $bgColor = $colors[$user->id % count($colors)];
                                             @endphp
                                             <div class="w-10 h-10 shrink-0 rounded-full {{ $bgColor }} text-white flex items-center justify-center font-bold text-sm shadow-sm overflow-hidden">
-                                                @if($user->avatar)
-                                                    <img src="{{ $user->avatar }}" class="w-full h-full object-cover" alt="Avatar">
+                                                @if($user->avatar_path)
+                                                    <img src="{{ $user->avatar_path }}" class="w-full h-full object-cover" alt="Avatar">
                                                 @else
                                                     {{ strtoupper(substr($user->name, 0, 1)) }}{{ $user->last_name ? strtoupper(substr($user->last_name, 0, 1)) : '' }}
                                                 @endif

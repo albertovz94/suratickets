@@ -39,8 +39,8 @@
                     <!-- Mensaje Inicial (Descripción Original) -->
                     <div class="bg-white p-6 rounded-xl border border-suraki-neutral-dark flex gap-4">
                         <div class="flex-shrink-0">
-                            @if($ticket->creator->avatar)
-                                <img src="{{ asset('storage/' . $ticket->creator->avatar) }}" alt="Avatar" class="w-10 h-10 rounded-lg object-cover">
+                            @if($ticket->creator->avatar_path)
+                                <img src="{{ $ticket->creator->avatar_path }}" alt="Avatar" class="w-10 h-10 rounded-lg object-cover">
                             @else
                                 <div class="w-10 h-10 rounded-lg bg-suraki-primary text-white flex items-center justify-center font-bold font-heading">
                                     {{ substr($ticket->creator->name, 0, 1) }}
@@ -51,7 +51,7 @@
                             <div class="flex justify-between items-center mb-2">
                                 <div>
                                     <span class="font-bold text-suraki-secondary">{{ $ticket->creator->display_name ?? $ticket->creator->name }}</span>
-                                    <span class="text-xs text-suraki-tertiary ml-2">Cliente / Solicitante</span>
+                                    <span class="text-xs text-suraki-tertiary ml-2">Solicitante</span>
                                 </div>
                                 <span class="text-xs text-suraki-tertiary">{{ $ticket->created_at->format('M d, H:i A') }}</span>
                             </div>
@@ -71,38 +71,62 @@
                         </div>
                     @endif
 
-                    <!-- Historial de Mensajes -->
-                    @foreach($this->ticketMessages as $msg)
-                    <div class="bg-{{ $msg->user->rol === 'admin' ? 'suraki-neutral' : 'white' }} p-6 rounded-xl border border-suraki-neutral-dark flex gap-4">
-                        <div class="flex-shrink-0">
-                            @if($msg->user->avatar)
-                                <img src="{{ asset('storage/' . $msg->user->avatar) }}" alt="Avatar" class="w-10 h-10 rounded-lg object-cover">
-                            @else
-                                <div class="w-10 h-10 rounded-lg bg-{{ $msg->user->rol === 'admin' ? 'red-600' : 'suraki-primary' }} text-white flex items-center justify-center font-bold font-heading">
-                                    {{ substr($msg->user->name, 0, 1) }}
-                                </div>
-                            @endif
-                        </div>
-                        <div class="flex-grow">
-                            <div class="flex justify-between items-center mb-2">
-                                <div>
-                                    <span class="text-xs text-{{ $msg->user->rol === 'admin' ? 'red-600' : 'suraki-tertiary' }} font-bold mr-2">{{ $msg->user->rol === 'admin' ? 'Soporte Técnico' : 'Cliente' }}</span>
-                                    <span class="font-bold text-suraki-secondary">{{ $msg->user->display_name ?? $msg->user->name }}</span>
-                                </div>
-                                <span class="text-xs text-suraki-tertiary">{{ $msg->created_at->format('M d, H:i A') }}</span>
+                    <!-- Historial de Mensajes (Auto-actualizable) -->
+                    <div wire:poll.5s>
+                        @foreach($this->ticketMessages as $msg)
+                        <div class="bg-{{ $msg->user->rol === 'admin' ? 'suraki-neutral' : 'white' }} p-6 rounded-xl border border-suraki-neutral-dark flex gap-4 mb-6 last:mb-0">
+                            <div class="flex-shrink-0">
+                                @if($msg->user->avatar_path)
+                                    <img src="{{ $msg->user->avatar_path }}" alt="Avatar" class="w-10 h-10 rounded-lg object-cover">
+                                @else
+                                    <div class="w-10 h-10 rounded-lg bg-{{ $msg->user->rol === 'admin' ? 'red-600' : 'suraki-primary' }} text-white flex items-center justify-center font-bold font-heading">
+                                        {{ substr($msg->user->name, 0, 1) }}
+                                    </div>
+                                @endif
                             </div>
-                            <p class="text-sm text-suraki-secondary whitespace-pre-wrap leading-relaxed">{{ $msg->message }}</p>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div>
+                                        <span class="text-xs text-{{ $msg->user->rol === 'admin' ? 'red-600' : 'suraki-tertiary' }} font-bold mr-2">{{ $msg->user->rol === 'admin' ? 'Soporte Técnico' : 'Solicitante' }}</span>
+                                        <span class="font-bold text-suraki-secondary">{{ $msg->user->display_name ?? $msg->user->name }}</span>
+                                    </div>
+                                    <span class="text-xs text-suraki-tertiary">{{ $msg->created_at->format('M d, H:i A') }}</span>
+                                </div>
+                                <p class="text-sm text-suraki-secondary whitespace-pre-wrap leading-relaxed">{{ $msg->message }}</p>
+                                @if($msg->attachment_path)
+                                    <div class="mt-3">
+                                        <a href="{{ asset('storage/' . $msg->attachment_path) }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
+                                            <svg class="w-4 h-4 text-suraki-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                            Ver archivo adjunto
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
+                        @endforeach
                     </div>
-                    @endforeach
 
                     <!-- Cuadro de Respuesta (Si está en proceso o resuelto) -->
                     @if(in_array($ticket->status, ['abierto', 'asignado', 'en_proceso', 'resuelto']))
                         <div class="bg-white p-6 rounded-xl border border-suraki-neutral-dark shadow-sm mt-6">
                             <form wire:submit.prevent="sendMessage">
                                 <textarea wire:model="newMessage" rows="3" class="w-full border-0 focus:ring-0 resize-none text-sm p-0 mb-3" placeholder="Escribe tu respuesta aquí..."></textarea>
+                                @if($attachment)
+                                    <div class="mb-3 flex items-center gap-2 text-xs text-green-600 bg-green-50 p-2 rounded border border-green-200">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                        Archivo adjunto listo: {{ $attachment->getClientOriginalName() }}
+                                    </div>
+                                @endif
+                                <x-input-error :messages="$errors->get('attachment')" class="mb-2" />
                                 <div class="flex justify-between items-center border-t border-suraki-neutral-dark pt-3">
-                                    <span class="text-xs text-suraki-tertiary flex items-center gap-1"><input type="checkbox" class="rounded border-suraki-neutral-dark text-suraki-primary focus:ring-suraki-primary w-3 h-3"> Nota Interna (Pronto)</span>
+                                    <div class="flex items-center gap-4">
+                                        <label class="cursor-pointer text-suraki-tertiary hover:text-suraki-primary transition-colors flex items-center gap-1 text-xs">
+                                            <input type="file" wire:model="attachment" class="hidden">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                            Adjuntar
+                                        </label>
+                                        <span class="text-xs text-suraki-tertiary flex items-center gap-1"><input type="checkbox" class="rounded border-suraki-neutral-dark text-suraki-primary focus:ring-suraki-primary w-3 h-3"> Nota Interna (Pronto)</span>
+                                    </div>
                                     <x-primary-button wire:loading.attr="disabled">
                                         Enviar Mensaje
                                     </x-primary-button>
@@ -120,7 +144,7 @@
                         <div class="bg-green-50 p-6 rounded-xl border border-green-200 mt-6 shadow-sm">
                             <h4 class="text-sm font-heading font-bold text-green-800 uppercase tracking-wider mb-2 flex items-center gap-2">
                                 <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Plan de Acción / Resolución Final
+                                Solución Aplicada
                             </h4>
                             <p class="text-sm text-green-700 whitespace-pre-wrap">{{ $ticket->resolution_summary }}</p>
                         </div>
@@ -182,8 +206,8 @@
                             {{ auth()->user()->rol === 'admin' ? 'Detalles de Contacto' : 'Técnico Asignado' }}
                         </h4>
                         <div class="flex items-center gap-3 mb-4">
-                            @if($contact->avatar)
-                                <img src="{{ asset('storage/' . $contact->avatar) }}" alt="Avatar" class="w-12 h-12 rounded-lg object-cover">
+                            @if($contact->avatar_path)
+                                <img src="{{ $contact->avatar_path }}" alt="Avatar" class="w-12 h-12 rounded-lg object-cover">
                             @else
                                 <div class="w-12 h-12 rounded-lg bg-suraki-primary text-white flex items-center justify-center font-bold font-heading text-lg">
                                     {{ substr($contact->name, 0, 1) }}
@@ -216,34 +240,53 @@
                             <svg class="w-4 h-4 text-suraki-primary" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                             Gestión de Ticket
                         </h4>
-                        <form wire:submit.prevent="updateTicket" class="space-y-4">
+                        <div class="space-y-4">
                             <div>
                                 <x-input-label for="status" value="Estado" />
-                                <select wire:model="status" id="status" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary rounded-lg shadow-sm text-sm">
-                                    <option value="abierto">Abierto</option>
-                                    <option value="asignado">Asignado</option>
-                                    <option value="en_proceso">En Proceso</option>
-                                    <option value="pendiente">Pendiente</option>
-                                    <option value="resuelto">Resuelto</option>
-                                    <option value="cerrado">Cerrado</option>
-                                </select>
+                                <div class="relative">
+                                    <select wire:model.live="status" id="status" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary rounded-lg shadow-sm text-sm">
+                                        <option value="abierto">Abierto</option>
+                                        <option value="asignado">Asignado</option>
+                                        <option value="en_proceso">En Proceso</option>
+                                        <option value="pendiente">Pendiente</option>
+                                        <option value="resuelto">Resuelto</option>
+                                        <option value="cerrado">Cerrado</option>
+                                    </select>
+                                    <div wire:loading wire:target="status" class="absolute right-8 top-3">
+                                        <svg class="animate-spin h-4 w-4 text-suraki-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    </div>
+                                </div>
                             </div>
                             <div>
                                 <x-input-label for="assigned_to" value="Asignar Técnico" />
-                                <select wire:model="assigned_to" id="assigned_to" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary rounded-lg shadow-sm text-sm">
-                                    <option value="">— Sin Asignar —</option>
-                                    @foreach($admins as $admin)
-                                        <option value="{{ $admin->id }}">{{ $admin->name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="relative">
+                                    <select wire:model.live="assigned_to" id="assigned_to" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary rounded-lg shadow-sm text-sm">
+                                        <option value="">— Sin Asignar —</option>
+                                        @foreach($admins as $admin)
+                                            <option value="{{ $admin->id }}">{{ $admin->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div wire:loading wire:target="assigned_to" class="absolute right-8 top-3">
+                                        <svg class="animate-spin h-4 w-4 text-suraki-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    </div>
+                                </div>
                             </div>
                             <div>
-                                <x-input-label for="resolution_summary" value="Plan de Acción / Diagnóstico Final" />
-                                <textarea wire:model="resolution_summary" id="resolution_summary" rows="3" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary rounded-lg shadow-sm text-sm" placeholder="Describe la solución o causa raíz..."></textarea>
+                                <x-input-label for="resolution_summary" value="Solución Aplicada (Se guarda al salir)" />
+                                <div class="relative">
+                                    <textarea wire:model.blur="resolution_summary" id="resolution_summary" rows="3" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary rounded-lg shadow-sm text-sm" placeholder="Describe la solución o causa raíz..."></textarea>
+                                    <div wire:loading wire:target="resolution_summary" class="absolute right-2 top-2">
+                                        <svg class="animate-spin h-4 w-4 text-suraki-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    </div>
+                                </div>
                                 <x-input-error :messages="$errors->get('resolution_summary')" class="mt-2" />
                             </div>
-                            <x-primary-button class="w-full justify-center text-sm py-2">Actualizar Estado</x-primary-button>
-                        </form>
+                            <!-- Mensaje de guardado exitoso invisible -->
+                            <div x-data="{ show: false }" x-on:ticket-saved.window="show = true; setTimeout(() => show = false, 2000)" class="text-sm text-green-600 font-medium flex items-center gap-1" style="display: none;" x-show="show">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                Cambios guardados
+                            </div>
+                        </div>
                     </div>
                     @endif
 

@@ -31,18 +31,7 @@
                 $openTickets = (clone $baseQuery)->where('status', 'abierto')->count();
                 $resolvedTickets = (clone $baseQuery)->whereIn('status', ['resuelto', 'cerrado'])->count();
 
-                // Datos para Gráfica Mensual
-                $monthlyDataRaw = (clone $baseQuery)
-                    ->selectRaw('MONTH(created_at) as month, count(*) as count')
-                    ->whereYear('created_at', date('Y'))
-                    ->groupBy('month')
-                    ->pluck('count', 'month')
-                    ->toArray();
-                
-                $monthlyData = [];
-                for ($i = 1; $i <= 12; $i++) {
-                    $monthlyData[] = $monthlyDataRaw[$i] ?? 0;
-                }
+                // Datos para Gráfica Mensual ahora se cargan en el componente Livewire DashboardCharts
 
                 // Todos los departamentos existentes
                 $allDepartments = \App\Models\Departamento::pluck('nombre')->toArray();
@@ -74,7 +63,7 @@
                 // Rendimiento de Sistemas
                 $agents = collect();
                 if ($user->rol === 'admin') {
-                    $agents = \App\Models\User::withCount([
+                    $agents = \App\Models\User::where('rol', 'admin')->withCount([
                         'assignedTickets as resolved_count' => function ($query) {
                             $query->whereIn('status', ['resuelto', 'cerrado']);
                         },
@@ -127,15 +116,9 @@
             
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Tendencia Chart (2/3 width) -->
+                <!-- Tendencia Chart (2/3 width) - INTERACTIVO -->
                 <div class="lg:col-span-2 card-suraki p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-heading font-semibold text-suraki-secondary">Tendencia de Tickets Mensuales</h3>
-                        <span class="text-xs text-suraki-tertiary font-mono bg-suraki-neutral px-3 py-1 rounded-md">{{ date('Y') }} - Año Actual</span>
-                    </div>
-                    <div class="relative h-72" wire:ignore>
-                        <canvas id="trendChart"></canvas>
-                    </div>
+                    <livewire:dashboard.dashboard-charts />
                 </div>
 
                 <!-- Distribución Chart (1/3 width) -->
@@ -253,81 +236,18 @@
                 return;
             }
 
-            const trendCanvas = document.getElementById('trendChart');
+            // Solo inicializamos Distribución (Doughnut)
             const distCanvas = document.getElementById('distChart');
             
-            if (!trendCanvas || !distCanvas) return; // Not on dashboard
+            if (!distCanvas) return; // Not on dashboard
             
-            // Destroy existing charts if any
-            if (window.trendChartInstance) window.trendChartInstance.destroy();
+            // Destroy existing chart if any
             if (window.distChartInstance) window.distChartInstance.destroy();
 
             // Data from PHP
-            const monthlyData = @json($monthlyData);
             const distLabels = @json($distLabels);
             const distData = @json($distData);
             const palette = @json($colors);
-
-            // 1. Tendencia Chart (Line)
-            const trendCtx = trendCanvas.getContext('2d');
-            
-            // Create Gradient
-            let gradient = trendCtx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(185, 28, 28, 0.2)');
-            gradient.addColorStop(1, 'rgba(185, 28, 28, 0)');
-
-            window.trendChartInstance = new Chart(trendCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-                    datasets: [{
-                        label: 'Tickets',
-                        data: monthlyData,
-                        borderColor: '#b91c1c',
-                        backgroundColor: gradient,
-                        borderWidth: 3,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#b91c1c',
-                        pointBorderWidth: 2,
-                        pointRadius: 3,
-                        pointHoverRadius: 6,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1f2937',
-                            padding: 12,
-                            titleFont: { family: 'Poppins', size: 14 },
-                            bodyFont: { family: 'Poppins', size: 13 },
-                            displayColors: false,
-                            callbacks: {
-                                label: function(context) { return context.parsed.y + ' Tickets'; }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { display: false, drawBorder: false },
-                            ticks: { font: { family: 'Poppins', size: 11 }, color: '#6b7280', maxTicksLimit: 5 }
-                        },
-                        x: {
-                            grid: { display: false, drawBorder: false },
-                            ticks: { font: { family: 'Poppins', size: 12 }, color: '#6b7280' }
-                        }
-                    }
-                }
-            });
 
             // 2. Distribución Chart (Doughnut)
             if(distLabels.length > 0) {

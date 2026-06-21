@@ -7,38 +7,71 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationBell extends Component
 {
-    public $unreadCount = 0;
+    public $notifications;
+    public $unreadCount;
+    public $isOpen = false;
+
+    // Actualiza la cuenta cada 30 segundos
+    protected $listeners = ['echo:private-App.Models.User.' . 'id' . ',Illuminate\\Notifications\\Events\\BroadcastNotificationCreated' => 'loadNotifications'];
 
     public function mount()
     {
-        $this->updateCount();
+        $this->loadNotifications();
     }
 
-    #[\Livewire\Attributes\On('profile-updated')]
-    public function updateCount()
+    public $lastNotificationId = null;
+
+    public function loadNotifications()
     {
         if (Auth::check()) {
+            $this->notifications = Auth::user()->notifications()->take(5)->get();
             $this->unreadCount = Auth::user()->unreadNotifications()->count();
+
+            $latest = Auth::user()->unreadNotifications()->first();
+            if ($latest && $latest->id !== $this->lastNotificationId) {
+                // If this isn't the first load, trigger the toast
+                if ($this->lastNotificationId !== null) {
+                    $this->dispatch('show-toast', message: $latest->data['message']);
+                }
+                $this->lastNotificationId = $latest->id;
+            }
+        } else {
+            $this->notifications = collect();
+            $this->unreadCount = 0;
         }
     }
 
-    public function markAsRead()
+    public function toggle()
     {
-        if (Auth::check()) {
-            Auth::user()->unreadNotifications->markAsRead();
-            $this->updateCount();
+        $this->isOpen = !$this->isOpen;
+    }
+
+    public function markAsRead($notificationId, $ticketId = null)
+    {
+        $notification = Auth::user()->notifications()->find($notificationId);
+        if ($notification) {
+            $notification->markAsRead();
         }
+        $this->loadNotifications();
+        $this->isOpen = false;
+
+        if ($ticketId) {
+            return redirect()->route('tickets.show', $ticketId);
+        }
+
+        if ($notification->type === \App\Notifications\PasswordResetAdminNotification::class) {
+            return redirect()->route('users.index');
+        }
+    }
+
+    public function markAllAsRead()
+    {
+        Auth::user()->unreadNotifications->markAsRead();
+        $this->loadNotifications();
     }
 
     public function render()
     {
-        $notifications = collect();
-        if (Auth::check()) {
-            $notifications = Auth::user()->unreadNotifications()->take(5)->get();
-        }
-
-        return view('livewire.layout.notification-bell', [
-            'notifications' => $notifications
-        ]);
+        return view('livewire.layout.notification-bell');
     }
 }

@@ -18,7 +18,7 @@ new class extends Component
     public ?string $phone = '';
     public ?string $bio = '';
     public string $display_preference = 'name';
-    public ?string $departamento = null;
+    public ?int $departamento_id = null;
     public $photo;
 
     /**
@@ -33,7 +33,7 @@ new class extends Component
         $this->phone = Auth::user()->phone;
         $this->bio = Auth::user()->bio;
         $this->display_preference = Auth::user()->display_preference ?? 'name';
-        $this->departamento = Auth::user()->departamento;
+        $this->departamento_id = Auth::user()->departamento_id;
     }
 
     /**
@@ -51,7 +51,7 @@ new class extends Component
             'phone' => ['nullable', 'string', 'max:255'],
             'bio' => ['nullable', 'string', 'max:1000'],
             'display_preference' => ['required', 'string', Rule::in(['name', 'full_name', 'username'])],
-            'departamento' => ['nullable', 'string', 'max:255'],
+            'departamento_id' => ['nullable', 'exists:departamentos,id'],
             'photo' => ['nullable', 'image', 'max:1024'], // 1MB Max
         ]);
 
@@ -63,12 +63,12 @@ new class extends Component
             'phone' => $validated['phone'],
             'bio' => $validated['bio'],
             'display_preference' => $validated['display_preference'],
-            'departamento' => $validated['departamento'],
+            'departamento_id' => $validated['departamento_id'],
         ]);
 
         if ($this->photo) {
             $path = $this->photo->store('avatars', 'public');
-            $user->avatar_path = '/storage/' . $path;
+            $user->avatar = $path;
         }
 
         if ($user->isDirty('email')) {
@@ -87,9 +87,10 @@ new class extends Component
     public function useDepartmentIcon(): void
     {
         $user = Auth::user();
-        if ($this->departamento) {
+        if ($this->departamento_id) {
+            $depName = \App\Models\Departamento::find($this->departamento_id)->nombre ?? 'User';
             // Utilizamos DiceBear para generar un avatar 3D-ish basado en el departamento
-            $user->avatar_path = 'https://api.dicebear.com/9.x/micah/svg?seed=' . urlencode($this->departamento) . '&backgroundColor=f1f5f9';
+            $user->avatar = 'https://api.dicebear.com/9.x/micah/svg?seed=' . urlencode($depName) . '&backgroundColor=f1f5f9';
             $user->save();
             $user->notify(new \App\Notifications\ProfileUpdatedNotification('Tu ícono 3D de departamento se ha aplicado.'));
             $this->dispatch('profile-updated', name: $user->name);
@@ -146,9 +147,9 @@ new class extends Component
                     <x-input-error class="mt-2" :messages="$errors->get('photo')" />
                 </div>
                 
-                @if($departamento)
+                @if($departamento_id)
                     <button type="button" wire:click="useDepartmentIcon" class="text-sm font-medium text-suraki-primary hover:text-suraki-primary-hover transition-colors underline decoration-dotted underline-offset-4">
-                        O usar ícono 3D de {{ $departamento }}
+                        O usar ícono 3D de {{ \App\Models\Departamento::find($departamento_id)->nombre ?? 'tu departamento' }}
                     </button>
                 @endif
             </div>
@@ -221,17 +222,14 @@ new class extends Component
 
             <!-- Full Width -->
             <div class="col-span-1 md:col-span-2">
-                <x-input-label for="departamento" value="Departamento" class="font-mono text-sm text-suraki-secondary" />
-                <select wire:model.live="departamento" id="departamento" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-suraki-primary focus:ring-suraki-primary text-suraki-secondary">
+                <x-input-label for="departamento_id" value="Departamento" class="font-mono text-sm text-suraki-secondary" />
+                <select wire:model.live="departamento_id" id="departamento_id" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-suraki-primary focus:ring-suraki-primary text-suraki-secondary">
                     <option value="">-- Seleccionar --</option>
-                    <option value="Sistemas">Sistemas</option>
-                    <option value="Tesoreria">Tesorería</option>
-                    <option value="Compras">Compras</option>
-                    <option value="Liquidacion">Liquidación</option>
-                    <option value="Ventas">Ventas</option>
-                    <option value="Recursos Humanos">Recursos Humanos</option>
+                    @foreach(\App\Models\Departamento::all() as $dep)
+                        <option value="{{ $dep->id }}">{{ $dep->nombre }}</option>
+                    @endforeach
                 </select>
-                <x-input-error class="mt-2" :messages="$errors->get('departamento')" />
+                <x-input-error class="mt-2" :messages="$errors->get('departamento_id')" />
             </div>
 
             <!-- Full Width -->

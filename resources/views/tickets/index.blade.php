@@ -25,14 +25,6 @@
                         <h3 class="text-lg font-heading font-semibold text-suraki-secondary">
                             {{ auth()->user()->rol === 'admin' ? 'Gestión de Todos los Tickets' : 'Mis Tickets' }}
                         </h3>
-                        
-                        <!-- Botón siempre visible en móviles y desktop -->
-                        <a href="{{ route('tickets.create') }}" wire:navigate class="inline-flex items-center gap-2 px-4 py-2 bg-suraki-primary text-white rounded-lg text-sm font-semibold hover:bg-suraki-primary-hover transition-all duration-200 shadow-sm w-full sm:w-auto justify-center">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                            Crear Nuevo Ticket
-                        </a>
                     </div>
                     
                     <livewire:tickets.ticket-list />
