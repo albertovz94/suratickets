@@ -22,7 +22,7 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-[1600px] w-full mx-auto sm:px-6 lg:px-8">
             
             <!-- Cards de Métricas -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -207,19 +207,34 @@
                                 <span class="text-sm text-gray-600">{{ optional($equipo->assignee)->name ?? '--' }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if($equipo->status === 'Activo')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span> Activo
+                                <div class="flex items-center">
+                                    <button 
+                                        wire:click="cycleEquipoStatus({{ $equipo->id }})" 
+                                        type="button" 
+                                        class="relative inline-flex h-6 w-16 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none {{ $equipo->status === 'Activo' ? 'bg-emerald-500' : ($equipo->status === 'En reparacion' ? 'bg-orange-500' : 'bg-gray-400') }}" 
+                                        role="switch" 
+                                        aria-checked="{{ $equipo->status === 'Activo' ? 'true' : 'false' }}">
+                                        <span class="sr-only">Cambiar estado del equipo</span>
+                                        <span 
+                                            class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $equipo->status === 'Activo' ? 'translate-x-0' : ($equipo->status === 'En reparacion' ? 'translate-x-5' : 'translate-x-10') }}">
+                                            <!-- Icono Activo -->
+                                            <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ $equipo->status === 'Activo' ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out' }}">
+                                                <svg class="h-3 w-3 text-emerald-600" fill="currentColor" viewBox="0 0 12 12"><path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" /></svg>
+                                            </span>
+                                            <!-- Icono Reparacion -->
+                                            <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ $equipo->status === 'En reparacion' ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out' }}">
+                                                <svg class="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01" /></svg>
+                                            </span>
+                                            <!-- Icono De Baja -->
+                                            <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ $equipo->status === 'De baja' ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out' }}">
+                                                <svg class="h-3 w-3 text-gray-500" fill="none" viewBox="0 0 12 12"><path d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                            </span>
+                                        </span>
+                                    </button>
+                                    <span class="ml-3 text-xs font-bold text-suraki-secondary w-20">
+                                        {{ $equipo->status }}
                                     </span>
-                                @elseif($equipo->status === 'En reparacion')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-50 text-orange-600 border border-orange-100">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-orange-500 mr-1.5"></span> En reparacion
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-500 mr-1.5"></span> De baja
-                                    </span>
-                                @endif
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center justify-end gap-2">

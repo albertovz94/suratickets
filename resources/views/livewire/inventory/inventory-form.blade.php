@@ -1,5 +1,5 @@
 <div class="py-12 animate-fade-in">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-[1600px] w-full mx-auto sm:px-6 lg:px-8">
         <!-- Encabezado con efecto Glassmorphism -->
         <div class="bg-white/80 backdrop-blur-xl overflow-hidden shadow-sm sm:rounded-2xl border border-white/50 mb-6">
             <div class="p-8">

@@ -1,5 +1,5 @@
 <div class="py-12 animate-fade-in">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-[1600px] w-full mx-auto sm:px-6 lg:px-8">
         <div class="bg-white/80 backdrop-blur-xl overflow-hidden shadow-sm sm:rounded-2xl border border-white/50 mb-6 p-8">
             <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Configuración del Sistema</h2>
             <p class="mt-2 text-sm text-gray-600">Administra las sucursales y departamentos de la empresa.</p>

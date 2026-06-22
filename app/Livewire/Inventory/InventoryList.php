@@ -48,6 +48,25 @@ class InventoryList extends Component
         session()->flash('message', 'Equipo eliminado correctamente.');
     }
 
+    public function cycleEquipoStatus($id)
+    {
+        $equipo = Equipo::findOrFail($id);
+        
+        if ($equipo->status === 'Activo') {
+            $equipo->status = 'En reparacion';
+            $message = "El equipo {$equipo->name} ahora está en reparación.";
+        } elseif ($equipo->status === 'En reparacion') {
+            $equipo->status = 'De baja';
+            $message = "El equipo {$equipo->name} ha sido dado de baja.";
+        } else {
+            $equipo->status = 'Activo';
+            $message = "El equipo {$equipo->name} ahora está activo.";
+        }
+        
+        $equipo->save();
+        $this->dispatch('show-toast', message: $message);
+    }
+
     public function render()
     {
         $query = Equipo::query();

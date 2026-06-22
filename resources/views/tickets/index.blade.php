@@ -17,7 +17,7 @@
     </x-slot>
 
     <div class="py-4 md:py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-[1600px] w-full mx-auto sm:px-6 lg:px-8 space-y-6">
             <!-- Tickets List Card -->
             <div class="card-suraki">
                 <div class="p-6">

@@ -60,6 +60,29 @@ class UserList extends Component
         session()->flash('message', 'Usuario eliminado correctamente.');
     }
 
+    public function toggleUserStatus($userId)
+    {
+        if (Auth::user()->rol !== 'admin') {
+            return;
+        }
+
+        $user = User::findOrFail($userId);
+        if ($user->id === Auth::id()) {
+            $this->dispatch('show-toast', message: 'No puedes cambiar el estado de tu propia cuenta.');
+            return;
+        }
+
+        if ($user->status === 'Activo') {
+            $user->status = 'Inactivo';
+            $this->dispatch('show-toast', message: "El usuario {$user->name} ha sido deshabilitado.");
+        } else {
+            $user->status = 'Activo';
+            $this->dispatch('show-toast', message: "El usuario {$user->name} ha sido habilitado.");
+        }
+
+        $user->save();
+    }
+
     public function render()
     {
         $query = User::with(['departamento'])->withCount('assignedEquipos');
