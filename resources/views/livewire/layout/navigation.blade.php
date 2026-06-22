@@ -68,6 +68,29 @@ new class extends Component
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Tickets</span>
             </a>
 
+            <a href="{{ route('solicitudes.index') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('solicitudes.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               :title="sidebarCollapsed ? 'Solicitudes IT' : ''">
+                <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Solicitudes IT</span>
+            </a>
+
+            @if(auth()->user()->rol === 'admin' || auth()->user()->departamento_id === 1)
+            <a href="{{ route('horarios.index') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('horarios.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               :title="sidebarCollapsed ? 'Horarios IT' : ''">
+                <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Horarios IT</span>
+            </a>
+            @endif
             @if(auth()->user()->rol === 'admin')
             <a href="{{ route('inventory.index') }}" wire:navigate 
                class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('inventory.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
@@ -104,16 +127,6 @@ new class extends Component
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Reportes</span>
             </a>
 
-            <a href="{{ route('bitacora.index') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('bitacora.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
-               :title="sidebarCollapsed ? 'Bitácora' : ''">
-                <div class="w-6 h-6 flex items-center justify-center shrink-0">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Bitácora</span>
-            </a>
 
             <a href="{{ route('settings.index') }}" wire:navigate 
                class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('settings.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"

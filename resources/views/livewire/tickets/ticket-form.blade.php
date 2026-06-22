@@ -9,7 +9,19 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="card-suraki">
                 <div class="p-6">
-                    <form wire:submit.prevent="save" class="space-y-6 max-w-2xl mx-auto bg-white p-8 rounded-xl border border-suraki-neutral-dark">
+                    <form wire:submit="save" class="bg-white rounded-2xl shadow-sm border border-suraki-neutral-dark p-6 md:p-8 space-y-6">
+                        @if(!$is_it_available)
+                            <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-start gap-3 mb-6">
+                                <svg class="w-6 h-6 text-orange-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                <div>
+                                    <h3 class="font-bold text-orange-800">Atención: Fuera de Horario Laboral de Sistemas</h3>
+                                    <p class="text-sm text-orange-700 mt-1">
+                                        Actualmente no hay personal del departamento de Sistemas en turno. Puedes reportar tu problema, pero ten en cuenta que tu ticket será atendido a primera hora en el próximo turno laboral disponible.
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Header -->
                         <div class="border-b border-suraki-neutral-dark pb-4">
                             <h3 class="text-lg font-heading font-semibold text-suraki-secondary">Información del Problema</h3>

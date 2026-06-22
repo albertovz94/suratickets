@@ -88,7 +88,7 @@ class UserForm extends Component
         if ($this->user_id) {
             User::where('id', $this->user_id)->update($data);
             $updatedUser = User::find($this->user_id);
-            \App\Models\ActivityLog::log('Actualizar Usuario', "Se actualizó el perfil del usuario {$updatedUser->username}", $updatedUser);
+
             
             // Optionally send email if password was changed
             if (!empty($this->password)) {
@@ -104,7 +104,7 @@ class UserForm extends Component
             session()->flash('message', 'Usuario actualizado correctamente.');
         } else {
             $newUser = User::create($data);
-            \App\Models\ActivityLog::log('Crear Usuario', "Se creó el nuevo usuario {$newUser->username}", $newUser);
+
             
             if (!empty($this->password)) {
                 try {

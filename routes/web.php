@@ -16,6 +16,26 @@ Route::view('tickets', 'tickets.index')
     ->middleware(['auth', 'verified'])
     ->name('tickets.index');
 
+Route::get('/solicitudes', \App\Livewire\Solicitudes\SolicitudList::class)
+    ->middleware(['auth', 'verified'])
+    ->name('solicitudes.index');
+
+Route::get('/solicitudes/crear', \App\Livewire\Solicitudes\SolicitudForm::class)
+    ->middleware(['auth', 'verified'])
+    ->name('solicitudes.create');
+
+Route::get('/horarios', \App\Livewire\Horarios\HorariosList::class)
+    ->middleware(['auth', 'verified'])
+    ->name('horarios.index');
+
+Route::get('/horarios/configuracion', \App\Livewire\Horarios\HorariosForm::class)
+    ->middleware(['auth', 'verified'])
+    ->name('horarios.config');
+
+Route::get('/horarios/outsourcing', \App\Livewire\Horarios\WorkShiftsList::class)
+    ->middleware(['auth', 'verified'])
+    ->name('horarios.outsourcing');
+
 Route::get('/tickets/create', \App\Livewire\Tickets\TicketForm::class)
     ->middleware(['auth', 'verified'])
     ->name('tickets.create');
@@ -34,7 +54,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckRole::class.':a
     Route::get('/usuarios/crear', \App\Livewire\Users\UserForm::class)->name('users.create');
     Route::get('/usuarios/{id}/editar', \App\Livewire\Users\UserForm::class)->name('users.edit');
 
-    Route::get('/bitacora', \App\Livewire\Bitacora\Index::class)->name('bitacora.index');
+
     Route::get('/reportes', \App\Livewire\Reports\Index::class)->name('reports.index');
 
     Route::get('/configuracion', \App\Livewire\Settings\SettingsList::class)->name('settings.index');

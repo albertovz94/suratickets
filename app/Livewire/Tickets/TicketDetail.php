@@ -43,7 +43,7 @@ class TicketDetail extends Component
 
         $this->ticket->update(['status' => $this->status]);
         
-        \App\Models\ActivityLog::log('Actualizar Estado Ticket', "Se cambió el estado del ticket #{$this->ticket->id} a {$this->status}", $this->ticket);
+
         
         // Enviar notificación si se resuelve o cierra
         if (in_array($this->status, ['resuelto', 'cerrado'])) {
@@ -72,7 +72,7 @@ class TicketDetail extends Component
         ]);
 
         $this->ticket->update(['assigned_to' => $this->assigned_to ?: null]);
-        \App\Models\ActivityLog::log('Asignar Ticket', "Se asignó el ticket #{$this->ticket->id}", $this->ticket);
+
         $this->dispatch('ticket-saved');
     }
 
@@ -138,7 +138,7 @@ class TicketDetail extends Component
             'attachment_path' => $path,
         ]);
 
-        \App\Models\ActivityLog::log('Comentar Ticket', "Se agregó un comentario al ticket #{$this->ticket->id}", $this->ticket);
+
 
         $this->newMessage = '';
         $this->attachment = null;

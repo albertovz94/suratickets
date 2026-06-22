@@ -74,4 +74,50 @@ class User extends Authenticatable
         if (str_starts_with($this->avatar, 'http')) return $this->avatar;
         return asset('storage/' . $this->avatar);
     }
+
+    public function schedule()
+    {
+        return $this->hasOne(UserSchedule::class);
+    }
+
+    public function workShifts()
+    {
+        return $this->hasMany(WorkShift::class);
+    }
+
+    public function isWorkingNow()
+    {
+        $schedule = $this->schedule;
+        if (!$schedule) return false;
+
+        $now = \Carbon\Carbon::now();
+
+        if ($schedule->type === 'fijo') {
+            $dayOfWeek = strtolower($now->englishDayOfWeek);
+            $startField = $dayOfWeek . '_start';
+            $endField = $dayOfWeek . '_end';
+
+            $start = $schedule->$startField;
+            $end = $schedule->$endField;
+
+            if ($start && $end) {
+                $currentTime = $now->format('H:i:s');
+                return $currentTime >= $start && $currentTime <= $end;
+            }
+            return false;
+        }
+
+        if ($schedule->type === 'outsourcing') {
+            $activeShift = $this->workShifts()->whereDate('date', $now->toDateString())
+                ->where(function($query) {
+                    $query->where('status', 'en_curso')
+                          ->orWhere(function($q) {
+                              $q->whereNotNull('check_in')->whereNull('check_out');
+                          });
+                })->first();
+            return $activeShift !== null;
+        }
+
+        return false;
+    }
 }

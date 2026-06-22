@@ -16,15 +16,19 @@ class TicketForm extends Component
     public $departamento_id = '';
     public $priority = 'baja';
     public $fecha_hora = '';
+    public $categoria = '';
+    public $is_it_available = true;
 
     protected $rules = [
         'title' => 'required|string|max:255',
         'description' => 'required|string|max:2000',
         'priority' => 'required|in:baja,media,alta,critica',
+        'categoria' => 'required|in:hardware,software,redes,otros',
     ];
 
     public function mount()
     {
+        $this->checkItAvailability();
         $this->fecha_hora = now()->format('Y-m-d H:i');
         
         if (Auth::user()->sucursal_id) {
@@ -65,20 +69,22 @@ class TicketForm extends Component
         }
         $validatedData['priority'] = $assignedPriority;
 
-        // 2. Asignación Automática de Técnico (Menor carga de trabajo)
-        // Obtenemos a los administradores
-        $admins = \App\Models\User::where('rol', 'admin')->get();
+        // 2. Asignación Automática de Técnico (Menor carga de trabajo Y EN TURNO)
+        $admins = \App\Models\User::where('rol', 'admin')
+            ->withCount(['assignedTickets' => function ($query) {
+                $query->whereIn('status', ['abierto', 'asignado', 'en_proceso', 'pendiente']);
+            }])
+            ->get();
+            
+        // Filtramos SOLO los que están trabajando AHORA MISMO
+        $workingAdmins = $admins->filter(function($admin) {
+            return $admin->isWorkingNow();
+        });
         
         $assignedAdmin = null;
-        if ($admins->count() > 0) {
-            // Buscamos el que tenga menos tickets en estado abierto o en proceso
-            $assignedAdmin = \App\Models\User::where('rol', 'admin')
-                ->withCount(['assignedTickets' => function ($query) {
-                    $query->whereIn('status', ['abierto', 'asignado', 'en_proceso', 'pendiente']);
-                }])
-                ->orderBy('assigned_tickets_count', 'asc')
-                ->orderBy('id', 'asc') // Desempate por ID
-                ->first();
+        if ($workingAdmins->count() > 0) {
+            // Ordenamos por menor cantidad de tickets asignados y devolvemos el primero
+            $assignedAdmin = $workingAdmins->sortBy('assigned_tickets_count')->first();
         }
 
         if ($assignedAdmin) {
@@ -90,7 +96,7 @@ class TicketForm extends Component
 
         // 3. Crear el Ticket
         $ticket = Ticket::create($validatedData);
-        \App\Models\ActivityLog::log('Crear Ticket', "Se creó el ticket #{$ticket->id}: {$ticket->title}", $ticket);
+
 
         // 4. Enviar Notificaciones a TODOS los administradores
         if ($admins->count() > 0) {

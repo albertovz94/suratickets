@@ -3,7 +3,7 @@
 **Autor:** Jeralth C.  
 **Proyecto:** Suraki HelpDesk — Sistema de Gestión de Tickets  
 **Stack:** Laravel 13.x · Livewire 3 · TailwindCSS · ApexCharts  
-**Última actualización:** 20/06/2026
+**Última actualización:** 21/06/2026
 
 ---
 
@@ -19,6 +19,7 @@
 8. [Zona Horaria Venezuela](#8-zona-horaria-venezuela)
 9. [Mejoras en el Dashboard Principal](#9-mejoras-en-el-dashboard-principal)
 10. [Mejoras Visuales Generales](#10-mejoras-visuales-generales)
+11. [Módulo de Solicitudes IT y Horarios Inteligentes](#11-módulo-de-solicitudes-it-y-horarios-inteligentes)
 
 ---
 
@@ -289,6 +290,27 @@ Todas las fechas del sistema (notificaciones, tickets, bitácora, reportes) ahor
 ### Sidebar Navigation (`navigation.blade.php`)
 - Se añadieron los nuevos enlaces: Reportes, Bitácora, Configuración.
 - Se mejoró el diseño responsive y la animación de colapso.
+
+---
+
+## 11. Módulo de Solicitudes IT y Horarios Inteligentes
+
+### Descripción
+Se reemplazó el antiguo módulo de "Bitácora" por un completo sistema de **Solicitudes IT** y un gestor inteligente de **Horarios y Control Outsourcing** para el departamento de Sistemas.
+
+### Funcionalidades Implementadas
+- **Solicitudes IT:** Los usuarios pueden solicitar equipamiento de hardware mediante un formulario. Los administradores tienen un panel con pestañas interactivas (Pendientes, Aprobados, Rechazados) que funciona en tiempo real (asíncrono con polling).
+- **Gestión de Horarios (Internos vs Outsourcing):** Se creó un módulo para administrar esquemas laborales. Los administradores pueden asignar un horario fijo semanal al personal interno o establecerlos como "Outsourcing" (horarios flexibles).
+- **Control de Asistencia Outsourcing:** Un panel de "Check-In" para que el personal flexible registre sus horas reales de trabajo con exactitud (Llegada/Salida).
+- **Asignación Inteligente de Tickets:** El motor de asignación de nuevos tickets ahora verifica los horarios en tiempo real. Los tickets **solo** se asignan a administradores que estén activamente **"En Turno"** en el momento de la creación. Si nadie está en turno, el ticket queda "Abierto" y al usuario se le muestra una alerta advirtiendo que está fuera del horario laboral.
+
+### Archivos Creados
+| Archivo | Descripción |
+|---|---|
+| `app/Models/UserSchedule.php` | Modelo para gestionar contratos y horas fijas. |
+| `app/Models/WorkShift.php` | Modelo para gestionar turnos asíncronos y asistencia. |
+| `app/Livewire/Horarios/...` | Componentes Livewire `HorariosList`, `HorariosForm`, `WorkShiftsList`. |
+| `database/migrations/...` | Migraciones `create_user_schedules_table`, `create_work_shifts_table`, `create_solicitudes_table`. |
 
 ---
 
