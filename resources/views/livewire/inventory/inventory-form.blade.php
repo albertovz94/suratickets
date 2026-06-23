@@ -94,7 +94,7 @@
                 </div>
 
                 <div class="flex items-center justify-end mt-8">
-                    <button type="submit" class="blob-btn shadow-xl text-lg" style="max-width: 250px;">
+                    <button type="submit" wire:loading.attr="disabled" class="blob-btn shadow-xl text-lg" style="max-width: 250px;">
                         <span style="position:relative; z-index: 10;">{{ __('Guardar Equipo') }}</span>
                         <span class="blob-btn__inner"><span class="blob-btn__blobs"><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span></span></span>
                     </button>

@@ -20,7 +20,15 @@ class Ticket extends Model
         'creator_id',
         'assigned_to',
         'resolution_summary',
+        'resolved_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'resolved_at' => 'datetime',
+        ];
+    }
 
     public function sucursal()
     {

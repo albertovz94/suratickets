@@ -40,6 +40,17 @@ class TicketForm extends Component
         }
     }
 
+    public function checkItAvailability()
+    {
+        $admins = \App\Models\User::where('rol', 'admin')->get();
+        
+        $workingAdmins = $admins->filter(function($admin) {
+            return $admin->isWorkingNow();
+        });
+
+        $this->is_it_available = $workingAdmins->count() > 0;
+    }
+
     public function save()
     {
         $validatedData = $this->validate();

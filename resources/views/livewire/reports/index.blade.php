@@ -32,7 +32,7 @@
     </div>
 
     <!-- TARJETAS DE MÉTRICAS -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-suraki-neutral-dark flex items-center gap-4">
             <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
@@ -60,6 +60,16 @@
             <div>
                 <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Pendientes</p>
                 <h3 class="text-3xl font-bold text-gray-900">{{ $metrics['pendientes'] }}</h3>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-suraki-neutral-dark flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Tiempo Promedio</p>
+                <h3 class="text-3xl font-bold text-gray-900">{{ $metrics['avg_resolution_time'] ?? 'N/A' }}</h3>
             </div>
         </div>
     </div>
@@ -178,22 +188,28 @@
             <!-- PDF KPI Cards -->
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
                 <tr>
-                    <td style="width: 33.33%; padding: 5px;">
+                    <td style="width: 25%; padding: 5px;">
                         <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 18px; text-align: center;">
-                            <p style="font-size: 10px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 5px 0;">Total Creados</p>
+                            <p style="font-size: 10px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 5px 0;">Creados</p>
                             <p style="font-size: 32px; font-weight: 800; color: #1e40af; margin: 0;">{{ $metrics['total'] }}</p>
                         </div>
                     </td>
-                    <td style="width: 33.33%; padding: 5px;">
+                    <td style="width: 25%; padding: 5px;">
                         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 18px; text-align: center;">
                             <p style="font-size: 10px; font-weight: 700; color: #16a34a; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 5px 0;">Resueltos</p>
                             <p style="font-size: 32px; font-weight: 800; color: #15803d; margin: 0;">{{ $metrics['resueltos'] }}</p>
                         </div>
                     </td>
-                    <td style="width: 33.33%; padding: 5px;">
+                    <td style="width: 25%; padding: 5px;">
                         <div style="background: #fefce8; border: 1px solid #fde68a; border-radius: 10px; padding: 18px; text-align: center;">
                             <p style="font-size: 10px; font-weight: 700; color: #ca8a04; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 5px 0;">Pendientes</p>
                             <p style="font-size: 32px; font-weight: 800; color: #a16207; margin: 0;">{{ $metrics['pendientes'] }}</p>
+                        </div>
+                    </td>
+                    <td style="width: 25%; padding: 5px;">
+                        <div style="background: #f3e8ff; border: 1px solid #e9d5ff; border-radius: 10px; padding: 18px; text-align: center;">
+                            <p style="font-size: 10px; font-weight: 700; color: #9333ea; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 5px 0;">Tiempo (SLA)</p>
+                            <p style="font-size: 32px; font-weight: 800; color: #6b21a8; margin: 0;">{{ $metrics['avg_resolution_time'] ?? 'N/A' }}</p>
                         </div>
                     </td>
                 </tr>

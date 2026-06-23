@@ -51,10 +51,25 @@ class Index extends Component
 
         $allTickets = $query->get();
 
+        $resolvedTickets = $allTickets->filter(function($ticket) {
+            return in_array($ticket->status, ['resuelto', 'cerrado']) && $ticket->resolved_at !== null;
+        });
+
+        $avgMinutes = 0;
+        if ($resolvedTickets->count() > 0) {
+            $totalMinutes = $resolvedTickets->reduce(function($carry, $ticket) {
+                return $carry + $ticket->created_at->diffInMinutes($ticket->resolved_at);
+            }, 0);
+            $avgMinutes = $totalMinutes / $resolvedTickets->count();
+        }
+
+        $avgResolutionTime = $avgMinutes > 0 ? round($avgMinutes / 60, 1) . ' hrs' : 'N/A';
+
         $this->metrics = [
             'total' => $allTickets->count(),
             'resueltos' => $allTickets->whereIn('status', ['resuelto', 'cerrado'])->count(),
             'pendientes' => $allTickets->whereNotIn('status', ['resuelto', 'cerrado'])->count(),
+            'avg_resolution_time' => $avgResolutionTime,
         ];
 
         $this->deptChart = $allTickets->groupBy(function($t) {
