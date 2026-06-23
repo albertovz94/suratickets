@@ -45,6 +45,11 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class, 'creator_id');
     }
 
+    public function scopeAdmins($query)
+    {
+        return $query->where('rol', 'admin');
+    }
+
     public function assignedTickets()
     {
         return $this->hasMany(Ticket::class, 'assigned_to');
@@ -101,8 +106,17 @@ class User extends Authenticatable
             $end = $schedule->$endField;
 
             if ($start && $end) {
+                $startTime = \Carbon\Carbon::createFromFormat('H:i:s', $start);
+                $endTime = \Carbon\Carbon::createFromFormat('H:i:s', $end);
                 $currentTime = $now->format('H:i:s');
-                return $currentTime >= $start && $currentTime <= $end;
+
+                if ($endTime->lessThan($startTime)) {
+                    // Turno nocturno (ej: 22:00 a 06:00)
+                    return $currentTime >= $start || $currentTime <= $end;
+                } else {
+                    // Turno normal (ej: 08:00 a 17:00)
+                    return $currentTime >= $start && $currentTime <= $end;
+                }
             }
             return false;
         }

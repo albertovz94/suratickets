@@ -22,17 +22,8 @@ class Index extends Component
         $this->loadData();
     }
 
-    public function setPeriod($period)
+    private function applyDateFilter($query)
     {
-        $this->period = $period;
-        $this->resetPage();
-        $this->loadData();
-    }
-
-    public function loadData()
-    {
-        $query = Ticket::with(['departamento']);
-
         $now = Carbon::now();
         switch ($this->period) {
             case 'diario':
@@ -48,6 +39,20 @@ class Index extends Component
                 $query->whereBetween('created_at', [$now->copy()->subDays(30), $now]);
                 break;
         }
+        return $query;
+    }
+
+    public function setPeriod($period)
+    {
+        $this->period = $period;
+        $this->resetPage();
+        $this->loadData();
+    }
+
+    public function loadData()
+    {
+        $query = Ticket::with(['departamento']);
+        $query = $this->applyDateFilter($query);
 
         $allTickets = $query->get();
 
@@ -84,22 +89,7 @@ class Index extends Component
     public function render()
     {
         $query = Ticket::with(['departamento', 'creator', 'assignedTo']);
-
-        $now = Carbon::now();
-        switch ($this->period) {
-            case 'diario':
-                $query->where('created_at', '>=', $now->copy()->subDay());
-                break;
-            case 'semanal':
-                $query->whereBetween('created_at', [$now->copy()->subDays(7), $now]);
-                break;
-            case 'quincenal':
-                $query->whereBetween('created_at', [$now->copy()->subDays(15), $now]);
-                break;
-            case 'mensual':
-                $query->whereBetween('created_at', [$now->copy()->subDays(30), $now]);
-                break;
-        }
+        $query = $this->applyDateFilter($query);
 
         $tickets = $query->latest()->paginate(20);
 

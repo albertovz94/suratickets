@@ -43,23 +43,6 @@ class TicketDetail extends Component
 
         $this->ticket->update(['status' => $this->status]);
         
-
-        
-        // Enviar notificación si se resuelve o cierra
-        if (in_array($this->status, ['resuelto', 'cerrado'])) {
-            $creatorName = $this->ticket->creator->name;
-            $deptName = optional($this->ticket->creator->departamento)->nombre ?? 'Sin departamento';
-            $resolverName = \Illuminate\Support\Facades\Auth::user()->name;
-            $message = "El ticket #{$this->ticket->id} de {$creatorName} ({$deptName}) ha sido marcado como " . ucfirst($this->status) . " por {$resolverName}.";
-            
-            // Notificar al creador del ticket
-            \Illuminate\Support\Facades\Notification::send($this->ticket->creator, new \App\Notifications\TicketCreated($this->ticket, $message));
-            
-            // Notificar a todos los administradores
-            $admins = \App\Models\User::where('rol', 'admin')->get();
-            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\TicketCreated($this->ticket, $message));
-        }
-
         $this->dispatch('ticket-saved');
     }
 
@@ -90,17 +73,7 @@ class TicketDetail extends Component
         if (!empty(trim($this->resolution_summary)) && !in_array($this->status, ['resuelto', 'cerrado'])) {
             $this->status = 'resuelto';
             $this->ticket->update(['status' => 'resuelto']);
-            
-            // Enviar notificaciones
-            $creatorName = $this->ticket->creator->name;
-            $deptName = optional($this->ticket->creator->departamento)->nombre ?? 'Sin departamento';
-            $resolverName = \Illuminate\Support\Facades\Auth::user()->name;
-            $message = "El ticket #{$this->ticket->id} de {$creatorName} ({$deptName}) ha sido marcado como Resuelto por {$resolverName}.";
-            
-            \Illuminate\Support\Facades\Notification::send($this->ticket->creator, new \App\Notifications\TicketCreated($this->ticket, $message));
-            
-            $admins = \App\Models\User::where('rol', 'admin')->get();
-            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\TicketCreated($this->ticket, $message));
+            // El Observer se encargará de enviar las notificaciones
         }
 
         // Refrescar para que la vista detecte el cambio de estado si ocurrió
@@ -111,7 +84,7 @@ class TicketDetail extends Component
     #[Computed]
     public function admins()
     {
-        return User::where('rol', 'admin')->get();
+        return User::admins()->get();
     }
 
     #[Computed]

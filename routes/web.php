@@ -60,10 +60,4 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckRole::class.':a
     Route::get('/configuracion', \App\Livewire\Settings\SettingsList::class)->name('settings.index');
 });
 
-Route::get('/run-migrations', function () {
-    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-    \Illuminate\Support\Facades\Artisan::call('storage:link');
-    return '¡Migraciones ejecutadas con éxito! Ya puedes volver al sistema.';
-});
-
 require __DIR__.'/auth.php';

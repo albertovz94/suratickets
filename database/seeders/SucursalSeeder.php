@@ -12,9 +12,9 @@ class SucursalSeeder extends Seeder
      */
     public function run(): void
     {
-        $sucursales = ['Andinka', 'Kikana', 'Nabilka'];
+        $sucursales = ['Andinka', 'Kikana', 'Nabilka', 'distribucion', 'Galpon', 'Hiper Suraki', '2kNR', 'Lacteos', 'Surakarne americas'];
         foreach ($sucursales as $sucursal) {
-            \App\Models\Sucursal::create(['nombre' => $sucursal]);
+            \App\Models\Sucursal::firstOrCreate(['nombre' => $sucursal]);
         }
     }
 }
