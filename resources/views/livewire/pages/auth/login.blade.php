@@ -20,7 +20,7 @@ new #[Layout('layouts.guest')] class extends Component
 
         Session::regenerate();
 
-        if (Auth::user()->rol === 'admin') {
+        if (Auth::user()->hasAdminAccess()) {
             $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
         } else {
             $this->redirectIntended(default: route('tickets.index', absolute: false), navigate: true);
@@ -42,7 +42,7 @@ new #[Layout('layouts.guest')] class extends Component
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form wire:submit="login" class="space-y-4">
+    <form wire:submit="login" x-on:submit="window.useLoading().show('Iniciando sesión...', 6000)" class="space-y-4">
         <!-- Username -->
         <div>
             <div class="relative mt-1">
@@ -51,7 +51,7 @@ new #[Layout('layouts.guest')] class extends Component
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                     </svg>
                 </div>
-                <input wire:model="form.username" id="username" class="block w-full pl-12 pr-4 py-3 border border-orange-200 rounded-xl focus:ring-[#ff5a5f] focus:border-[#ff5a5f] bg-gray-50/50 text-gray-900 transition-colors" type="text" name="username" required autofocus autocomplete="username" placeholder="Usuario" />
+                <input wire:model="form.username" id="username" class="block w-full pl-12 pr-4 py-3 border border-orange-200 rounded-xl focus:ring-suraki-primary focus:border-suraki-primary bg-gray-50/50 text-gray-900 transition-colors" type="text" name="username" required autofocus autocomplete="username" placeholder="Usuario" />
             </div>
             <x-input-error :messages="$errors->get('form.username')" class="mt-2" />
         </div>
@@ -64,7 +64,7 @@ new #[Layout('layouts.guest')] class extends Component
                         <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                     </svg>
                 </div>
-                <input wire:model="form.password" id="password" class="block w-full pl-12 pr-4 py-3 border border-orange-200 rounded-xl focus:ring-[#ff5a5f] focus:border-[#ff5a5f] bg-gray-50/50 text-gray-900 transition-colors"
+                <input wire:model="form.password" id="password" class="block w-full pl-12 pr-4 py-3 border border-orange-200 rounded-xl focus:ring-suraki-primary focus:border-suraki-primary bg-gray-50/50 text-gray-900 transition-colors"
                                 type="password"
                                 name="password"
                                 required autocomplete="current-password"
@@ -76,12 +76,12 @@ new #[Layout('layouts.guest')] class extends Component
         <!-- Remember Me -->
         <div class="flex items-center justify-between pt-2">
             <label for="remember" class="inline-flex items-center">
-                <input wire:model="form.remember" id="remember" type="checkbox" class="rounded border-gray-300 text-gray-600 shadow-sm focus:ring-[#ff5a5f]" name="remember">
+                <input wire:model="form.remember" id="remember" type="checkbox" class="rounded border-gray-300 text-gray-600 shadow-sm focus:ring-suraki-primary" name="remember">
                 <span class="ms-2 text-sm text-gray-500">{{ __('Recordarme') }}</span>
             </label>
 
             @if (Route::has('password.request'))
-                <a class="text-sm font-medium text-[#ff5a5f] hover:text-red-500 transition-colors duration-150" href="{{ route('password.request') }}" wire:navigate>
+                <a class="text-sm font-medium text-suraki-primary hover:text-red-500 transition-colors duration-150" href="{{ route('password.request') }}" wire:navigate>
                     {{ __('¿Olvidaste tu contraseña?') }}
                 </a>
             @endif

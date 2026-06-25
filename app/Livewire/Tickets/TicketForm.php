@@ -3,42 +3,47 @@
 namespace App\Livewire\Tickets;
 
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use App\Models\Ticket;
-use App\Models\Sucursal;
-use App\Models\Departamento;
+use App\Models\Branch;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Actions\Tickets\CreateTicketAction;
 
 class TicketForm extends Component
 {
+    use WithFileUploads;
+
     public $title = '';
     public $description = '';
-    public $sucursal_id = '';
-    public $departamento_id = '';
+    public $branch_id = '';
+    public $department_id = '';
     public $priority = 'baja';
-    public $fecha_hora = '';
-    public $categoria = '';
+    public $date_time = '';
+    public $category = '';
+    public $attachment;
     public $is_it_available = true;
 
     protected $rules = [
         'title' => 'required|string|max:255',
         'description' => 'required|string|max:2000',
         'priority' => 'required|in:baja,media,alta,critica',
-        'categoria' => 'required|in:hardware,software,redes,otros',
+        'category' => 'required|in:hardware,software,redes,otros',
+        'attachment' => 'nullable|file|max:10240',
     ];
 
     public function mount()
     {
         $this->checkItAvailability();
-        $this->fecha_hora = now()->format('Y-m-d H:i');
+        $this->date_time = now()->format('Y-m-d H:i');
         
-        if (Auth::user()->sucursal_id) {
-            $this->sucursal_id = Auth::user()->sucursal_id;
+        if (Auth::user()->branch_id) {
+            $this->branch_id = Auth::user()->branch_id;
         }
 
-        if (Auth::user()->departamento_id) {
-            $this->departamento_id = Auth::user()->departamento_id;
+        if (Auth::user()->department_id) {
+            $this->department_id = Auth::user()->department_id;
         }
     }
 
@@ -57,20 +62,24 @@ class TicketForm extends Component
     {
         $validatedData = $this->validate();
         $validatedData['creator_id'] = Auth::id();
-        $validatedData['sucursal_id'] = Auth::user()->sucursal_id;
-        $validatedData['departamento_id'] = Auth::user()->departamento_id;
+        $validatedData['branch_id'] = Auth::user()->branch_id;
+        $validatedData['department_id'] = Auth::user()->department_id;
+
+        if ($this->attachment) {
+            $validatedData['attachment_path'] = $this->attachment->store('attachments', 'public');
+        }
 
         $action->execute($validatedData);
 
-        session()->flash('message', 'Ticket creado y asignado exitosamente.');
+        $this->dispatch('notify', message: 'Ticket creado y asignado exitosamente.'); session()->flash('message', 'Ticket creado y asignado exitosamente.');
         return redirect()->route('tickets.index');
     }
 
     public function render()
     {
         return view('livewire.tickets.ticket-form', [
-            'sucursales' => Sucursal::where('activa', true)->get(),
-            'departamentos' => Departamento::all()
+            'branches' => Branch::where('is_active', true)->get(),
+            'departments' => Department::all()
         ])->layout('layouts.app');
     }
 }

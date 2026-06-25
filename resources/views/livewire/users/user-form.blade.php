@@ -79,12 +79,13 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <x-input-label for="rol" value="Rol en el sistema" />
-                            <select wire:model="rol" id="rol" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm" required>
-                                <option value="usuario">Usuario Estándar</option>
+                            <x-input-label for="role" value="Rol en el Sistema" />
+                            <select wire:model="role" id="role" class="block w-full mt-1 border-suraki-neutral-dark rounded-lg shadow-sm focus:border-suraki-primary focus:ring focus:ring-suraki-primary focus:ring-opacity-50 text-suraki-secondary transition duration-150 ease-in-out">
+                                <option value="usuario">Usuario / Cliente</option>
                                 <option value="admin">Administrador</option>
+                                <option value="outsourcing">Outsourcing</option>
                             </select>
-                            <x-input-error :messages="$errors->get('rol')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('role')" class="mt-2" />
                         </div>
 
                         <div>
@@ -98,25 +99,25 @@
                         </div>
 
                         <div>
-                            <x-input-label for="sucursal_id" value="Sucursal" />
-                            <select wire:model="sucursal_id" id="sucursal_id" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm" required>
+                            <x-input-label for="branch_id" value="Sucursal" />
+                            <select wire:model="branch_id" id="branch_id" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm" required>
                                 <option value="">Seleccione Sucursal</option>
-                                @foreach($sucursales as $sucursal)
-                                    <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
+                                @foreach($branches as $branch)
+                                    <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                 @endforeach
                             </select>
-                            <x-input-error :messages="$errors->get('sucursal_id')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('branch_id')" class="mt-2" />
                         </div>
 
                         <div>
-                            <x-input-label for="departamento_id" value="Departamento" />
-                            <select wire:model="departamento_id" id="departamento_id" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm" required>
+                            <x-input-label for="department_id" value="Departamento" />
+                            <select wire:model="department_id" id="department_id" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm" required>
                                 <option value="">Seleccione Departamento</option>
-                                @foreach($departamentos as $departamento)
-                                    <option value="{{ $departamento->id }}">{{ $departamento->nombre }}</option>
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
                                 @endforeach
                             </select>
-                            <x-input-error :messages="$errors->get('departamento_id')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
                         </div>
                     </div>
 

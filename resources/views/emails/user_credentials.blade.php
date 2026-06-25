@@ -39,7 +39,7 @@
                 <div class="value">{{ $plainPassword }}</div>
                 
                 <div class="label">Departamento Asignado</div>
-                <div class="value">{{ $user->departamento ? $user->departamento->nombre : 'N/A' }}</div>
+                <div class="value">{{ $user->department ? $user->department->name : 'N/A' }}</div>
             </div>
             
             <p>Por motivos de seguridad, te recomendamos iniciar sesión lo antes posible y cambiar tu contraseña desde tu panel de perfil.</p>

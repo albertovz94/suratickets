@@ -33,7 +33,10 @@ new class extends Component
         <div class="flex items-center justify-between mb-8 px-2 mt-2">
             <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-3 overflow-hidden">
                 <img src="{{ asset('icono.png') }}" alt="Suraki" class="w-8 h-8 object-contain shrink-0">
-                <span x-show="!sidebarCollapsed" class="font-heading font-bold text-xl text-suraki-secondary transition-opacity duration-300">Gestión de Tickets</span>
+                <div x-show="!sidebarCollapsed" class="flex flex-col transition-opacity duration-300">
+                    <span class="font-heading font-bold text-xl text-suraki-secondary leading-none">Suraki Tickets</span>
+                    <span class="text-[11px] font-bold text-suraki-primary uppercase tracking-wider mt-0.5">Soporte IT</span>
+                </div>
             </a>
             <button @click="sidebarOpen = false" class="md:hidden text-suraki-tertiary">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -44,7 +47,7 @@ new class extends Component
 
         <!-- Navigation Modules -->
         <nav class="flex-1 space-y-2">
-            @if(auth()->user()->rol === 'admin')
+            @if(auth()->user()->hasAdminAccess())
             <a href="{{ route('dashboard') }}" wire:navigate 
                class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
                :title="sidebarCollapsed ? 'Panel Principal' : ''">
@@ -68,8 +71,8 @@ new class extends Component
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Tickets</span>
             </a>
 
-            <a href="{{ route('solicitudes.index') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('solicitudes.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+            <a href="{{ route('requests.index') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('requests.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
                :title="sidebarCollapsed ? 'Solicitudes IT' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -79,9 +82,9 @@ new class extends Component
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Solicitudes IT</span>
             </a>
 
-            @if(auth()->user()->rol === 'admin' || auth()->user()->departamento_id === 1)
-            <a href="{{ route('horarios.index') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('horarios.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+            @if(auth()->user()->hasAdminAccess() || auth()->user()->department_id === 1)
+            <a href="{{ route('schedules.index') }}" wire:navigate 
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('schedules.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
                :title="sidebarCollapsed ? 'Horarios IT' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -91,7 +94,7 @@ new class extends Component
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Horarios IT</span>
             </a>
             @endif
-            @if(auth()->user()->rol === 'admin')
+            @if(auth()->user()->hasAdminAccess())
             <a href="{{ route('inventory.index') }}" wire:navigate 
                class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('inventory.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
                :title="sidebarCollapsed ? 'Inventario' : ''">
@@ -104,7 +107,7 @@ new class extends Component
             </a>
             @endif
 
-            @if(auth()->user()->rol === 'admin')
+            @if(auth()->user()->hasAdminAccess())
             <a href="{{ route('users.index') }}" wire:navigate 
                class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('users.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
                :title="sidebarCollapsed ? 'Usuarios' : ''">
@@ -156,7 +159,7 @@ new class extends Component
 
         <!-- Footer / User Actions -->
         <div class="mt-auto pt-6 border-t border-suraki-neutral-dark">
-            <button wire:click="logout" class="flex w-full items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors duration-200" :class="{'justify-center': sidebarCollapsed}" :title="sidebarCollapsed ? 'Cerrar Sesión' : ''">
+            <button wire:click="logout" x-on:click="window.useLoading().show('Cerrando sesión...', 6000)" class="flex w-full items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors duration-200" :class="{'justify-center': sidebarCollapsed}" :title="sidebarCollapsed ? 'Cerrar Sesión' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />

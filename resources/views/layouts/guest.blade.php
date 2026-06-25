@@ -99,5 +99,8 @@
                 </filter>
             </defs>
         </svg>
+
+        <x-toast />
+        <x-global-loader />
     </body>
 </html>

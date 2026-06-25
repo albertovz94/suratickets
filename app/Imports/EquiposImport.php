@@ -2,9 +2,9 @@
 
 namespace App\Imports;
 
-use App\Models\Equipo;
-use App\Models\Sucursal;
-use App\Models\Departamento;
+use App\Models\Device;
+use App\Models\Branch;
+use App\Models\Department;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
@@ -47,8 +47,8 @@ class EquiposImport implements ToCollection, WithStartRow
             // 13: URL del QR
 
             $tipo_activo = trim($row[1] ?? 'Otro');
-            $departamento_nombre = trim($row[2] ?? 'Sin asignar');
-            $sucursal_nombre = trim($row[3] ?? 'Principal');
+            $department_nombre = trim($row[2] ?? 'Sin asignar');
+            $branch_nombre = trim($row[3] ?? 'Principal');
             $descripcion = trim($row[5] ?? '');
             $marca_modelo = trim($row[6] ?? '');
             $numero_serie = trim($row[7] ?? '');
@@ -86,24 +86,24 @@ class EquiposImport implements ToCollection, WithStartRow
             }
 
             // Manejar relaciones
-            $sucursal = Sucursal::firstOrCreate(
-                ['nombre' => $sucursal_nombre],
-                ['activa' => true]
+            $branch = Branch::firstOrCreate(
+                ['name' => $branch_nombre],
+                ['is_active' => true]
             );
 
-            $departamento = Departamento::firstOrCreate(
-                ['nombre' => $departamento_nombre, 'sucursal_id' => $sucursal->id]
+            $department = Department::firstOrCreate(
+                ['name' => $department_nombre, 'branch_id' => $branch->id]
             );
 
             // Crear o Actualizar el Equipo (usamos serial_number como clave)
-            Equipo::updateOrCreate(
+            Device::updateOrCreate(
                 ['serial_number' => $numero_serie],
                 [
                     'name' => substr($name, 0, 255),
                     'specs' => substr($descripcion, 0, 255),
                     'type' => $mappedType,
-                    'sucursal_id' => $sucursal->id,
-                    'departamento_id' => $departamento->id,
+                    'branch_id' => $branch->id,
+                    'department_id' => $department->id,
                     'status' => $status,
                 ]
             );

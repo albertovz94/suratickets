@@ -5,7 +5,7 @@ namespace App\Livewire\Users;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\User;
-use App\Models\Departamento;
+use App\Models\Department;
 use Illuminate\Support\Facades\Auth;
 
 class UserList extends Component
@@ -15,13 +15,13 @@ class UserList extends Component
     public $search = '';
     public $roleFilter = '';
     public $statusFilter = '';
-    public $departamentoFilter = '';
+    public $departmentFilter = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
         'roleFilter' => ['except' => ''],
         'statusFilter' => ['except' => ''],
-        'departamentoFilter' => ['except' => ''],
+        'departmentFilter' => ['except' => ''],
     ];
 
     public function updatingSearch()
@@ -39,14 +39,14 @@ class UserList extends Component
         $this->resetPage();
     }
 
-    public function updatingDepartamentoFilter()
+    public function updatingDepartmentFilter()
     {
         $this->resetPage();
     }
 
     public function deleteUser($userId)
     {
-        if (Auth::user()->rol !== 'admin') {
+        if (!Auth::user()->hasAdminAccess()) {
             return;
         }
 
@@ -57,12 +57,12 @@ class UserList extends Component
         }
 
         $user->delete();
-        session()->flash('message', 'Usuario eliminado correctamente.');
+        $this->dispatch('notify', message: 'Usuario eliminado correctamente.'); session()->flash('message', 'Usuario eliminado correctamente.');
     }
 
     public function toggleUserStatus($userId)
     {
-        if (Auth::user()->rol !== 'admin') {
+        if (!Auth::user()->hasAdminAccess()) {
             return;
         }
 
@@ -85,7 +85,7 @@ class UserList extends Component
 
     public function render()
     {
-        $query = User::with(['departamento'])->withCount('assignedEquipos');
+        $query = User::with(['department'])->withCount('assignedDevices');
 
         if (!empty($this->search)) {
             $query->where(function($q) {
@@ -96,15 +96,15 @@ class UserList extends Component
         }
 
         if (!empty($this->roleFilter)) {
-            $query->where('rol', $this->roleFilter);
+            $query->where('role', $this->roleFilter);
         }
 
         if (!empty($this->statusFilter)) {
             $query->where('status', $this->statusFilter);
         }
 
-        if (!empty($this->departamentoFilter)) {
-            $query->where('departamento_id', $this->departamentoFilter);
+        if (!empty($this->departmentFilter)) {
+            $query->where('department_id', $this->departmentFilter);
         }
 
         $users = $query->paginate(15);
@@ -112,15 +112,15 @@ class UserList extends Component
         // Stats
         $stats = [
             'total_activos' => User::where('status', 'Activo')->count(),
-            'total_admins' => User::where('rol', 'admin')->count(),
+            'total_admins' => User::whereIn('role', ['admin', 'outsourcing'])->count(),
             'total_bloqueadas' => User::where('status', 'Bloqueada')->count(),
-            'sin_equipo' => User::doesntHave('assignedEquipos')->count(),
+            'sin_equipo' => User::doesntHave('assignedDevices')->count(),
         ];
 
         return view('livewire.users.user-list', [
             'users' => $users,
             'stats' => $stats,
-            'departamentos' => Departamento::all()
+            'departments' => Department::all()
         ])->layout('layouts.app');
     }
 }

@@ -12,9 +12,11 @@ class Ticket extends Model
     protected $fillable = [
         'title',
         'description',
-        'sucursal_id',
-        'departamento_id',
-        'equipo_id',
+        'category',
+        'attachment_path',
+        'branch_id',
+        'department_id',
+        'device_id',
         'priority',
         'status',
         'creator_id',
@@ -30,19 +32,19 @@ class Ticket extends Model
         ];
     }
 
-    public function sucursal()
+    public function branch()
     {
-        return $this->belongsTo(Sucursal::class);
+        return $this->belongsTo(Branch::class);
     }
 
-    public function departamento()
+    public function department()
     {
-        return $this->belongsTo(Departamento::class);
+        return $this->belongsTo(Department::class);
     }
 
-    public function equipo()
+    public function device()
     {
-        return $this->belongsTo(Equipo::class);
+        return $this->belongsTo(Device::class);
     }
 
     public function creator()

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Gestión de Tickets') }}</title>
+        <title>Suraki Tickets</title>
 
         <!-- Fonts -->
         <link rel="icon" type="image/png" href="{{ asset('icono.png') }}">
@@ -76,46 +76,7 @@
         </div>
 
         <!-- Global Toast Notification System -->
-        <div x-data="{
-                toasts: [],
-                addToast(message) {
-                    const id = Date.now();
-                    this.toasts.push({ id, message });
-                    setTimeout(() => this.removeToast(id), 5000);
-                },
-                removeToast(id) {
-                    this.toasts = this.toasts.filter(t => t.id !== id);
-                }
-            }"
-            @show-toast.window="addToast($event.detail.message)"
-            class="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
-            
-            <template x-for="toast in toasts" :key="toast.id">
-                <div x-show="true"
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="transform translate-y-10 opacity-0"
-                     x-transition:enter-end="transform translate-y-0 opacity-100"
-                     x-transition:leave="transition ease-in duration-200"
-                     x-transition:leave-start="transform translate-y-0 opacity-100"
-                     x-transition:leave-end="transform translate-y-2 opacity-0"
-                     class="bg-white border-l-4 border-suraki-primary shadow-lg rounded-r-lg p-4 max-w-sm flex items-start gap-3">
-                    <div class="flex-shrink-0 mt-0.5">
-                        <svg class="w-5 h-5 text-suraki-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                        </svg>
-                    </div>
-                    <div class="flex-grow">
-                        <h4 class="text-sm font-bold text-suraki-secondary mb-1">Nueva Notificación</h4>
-                        <p class="text-xs text-suraki-tertiary" x-text="toast.message"></p>
-                    </div>
-                    <button @click="removeToast(toast.id)" class="text-gray-400 hover:text-gray-600 focus:outline-none">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            </template>
-        </div>
+        <x-toast />
 
         <!-- SVG Filter for gooey effect -->
         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none;">
@@ -127,5 +88,7 @@
                 </filter>
             </defs>
         </svg>
+
+        <x-global-loader />
     </body>
 </html>

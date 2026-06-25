@@ -48,11 +48,11 @@
                                     </span>
                                     <span class="flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                                        {{ optional(auth()->user()->sucursal)->nombre ?? 'Sin Sucursal' }}
+                                        {{ optional(auth()->user()->branch)->name ?? 'Sin Sucursal' }}
                                     </span>
                                     <span class="flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                        {{ optional(auth()->user()->departamento)->nombre ?? 'Sin Departamento' }}
+                                        {{ optional(auth()->user()->department)->name ?? 'Sin Departamento' }}
                                     </span>
                                 </div>
                             </div>
@@ -82,11 +82,44 @@
                                 </select>
                                 <x-input-error :messages="$errors->get('priority')" class="mt-2" />
                             </div>
+
+                            <div>
+                                <x-input-label for="category" value="Categoría" />
+                                <select wire:model="category" id="category" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary rounded-lg shadow-sm" required>
+                                    <option value="" disabled>Selecciona una categoría</option>
+                                    <option value="hardware">Hardware</option>
+                                    <option value="software">Software</option>
+                                    <option value="redes">Redes</option>
+                                    <option value="otros">Otros</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('category')" class="mt-2" />
+                            </div>
                             
                             <div>
                                 <x-input-label value="Fecha de Registro" />
-                                <x-text-input type="text" class="mt-1 block w-full bg-gray-50 text-gray-500 cursor-not-allowed border-suraki-neutral-dark" wire:model="fecha_hora" disabled />
+                                <x-text-input type="text" class="mt-1 block w-full bg-gray-50 text-gray-500 cursor-not-allowed border-suraki-neutral-dark" wire:model="date_time" disabled />
                             </div>
+                        </div>
+
+                        <!-- Archivo Adjunto -->
+                        <div class="border-t border-suraki-neutral-dark pt-6">
+                            <x-input-label for="attachment" value="Archivo Adjunto (Opcional)" />
+                            <div class="mt-1 flex items-center gap-4">
+                                <label class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border border-suraki-neutral-dark rounded-lg text-sm font-medium text-suraki-secondary hover:bg-gray-100 transition-colors">
+                                    <svg class="w-5 h-5 text-suraki-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                    Seleccionar Archivo
+                                    <input type="file" wire:model="attachment" id="attachment" class="hidden">
+                                </label>
+                                @if($attachment)
+                                    <span class="text-sm font-medium text-green-600 flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                        {{ $attachment->getClientOriginalName() }}
+                                    </span>
+                                @else
+                                    <span class="text-sm text-suraki-tertiary">Formatos permitidos: JPG, PNG, PDF (Máx. 10MB)</span>
+                                @endif
+                            </div>
+                            <x-input-error :messages="$errors->get('attachment')" class="mt-2" />
                         </div>
 
                         <div class="flex items-center justify-end pt-4 border-t border-suraki-neutral-dark">

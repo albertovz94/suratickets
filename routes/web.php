@@ -16,25 +16,25 @@ Route::view('tickets', 'tickets.index')
     ->middleware(['auth', 'verified'])
     ->name('tickets.index');
 
-Route::get('/solicitudes', \App\Livewire\Solicitudes\SolicitudList::class)
+Route::get('/requests', \App\Livewire\Requests\RequestList::class)
     ->middleware(['auth', 'verified'])
-    ->name('solicitudes.index');
+    ->name('requests.index');
 
-Route::get('/solicitudes/crear', \App\Livewire\Solicitudes\SolicitudForm::class)
+Route::get('/requests/crear', \App\Livewire\Requests\RequestForm::class)
     ->middleware(['auth', 'verified'])
-    ->name('solicitudes.create');
+    ->name('requests.create');
 
-Route::get('/horarios', \App\Livewire\Horarios\HorariosList::class)
+Route::get('/schedules', \App\Livewire\Schedules\ScheduleList::class)
     ->middleware(['auth', 'verified'])
-    ->name('horarios.index');
+    ->name('schedules.index');
 
-Route::get('/horarios/configuracion', \App\Livewire\Horarios\HorariosForm::class)
+Route::get('/schedules/configuracion', \App\Livewire\Schedules\ScheduleForm::class)
     ->middleware(['auth', 'verified'])
-    ->name('horarios.config');
+    ->name('schedules.config');
 
-Route::get('/horarios/outsourcing', \App\Livewire\Horarios\WorkShiftsList::class)
+Route::get('/schedules/outsourcing', \App\Livewire\Schedules\WorkShiftsList::class)
     ->middleware(['auth', 'verified'])
-    ->name('horarios.outsourcing');
+    ->name('schedules.outsourcing');
 
 Route::get('/tickets/create', \App\Livewire\Tickets\TicketForm::class)
     ->middleware(['auth', 'verified'])

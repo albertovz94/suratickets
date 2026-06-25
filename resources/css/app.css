@@ -68,8 +68,8 @@
 }
 
 @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 15px rgba(228,63,69,0.3); }
-    50% { box-shadow: 0 0 40px rgba(228,63,69,0.9); }
+    0%, 100% { box-shadow: 0 0 15px rgba(255, 30, 30, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(255, 30, 30, 0.9); }
 }
 
 .animate-float-glow {
@@ -165,7 +165,7 @@
   padding: 16px 20px;
   text-align: center;
   text-transform: uppercase;
-  color: #ff1e1e;
+  color: theme('colors.suraki.primary');
   font-size: 14px;
   font-weight: bold;
   background-color: transparent;
@@ -188,7 +188,7 @@
   top: 0;
   width: 100%;
   height: 100%;
-  border: 2px solid #ff1e1e;
+  border: 2px solid theme('colors.suraki.primary');
   border-radius: 30px;
 }
 
@@ -240,7 +240,7 @@
   top: 2px;
   width: 25%;
   height: 100%;
-  background: #ff1e1e;
+  background: theme('colors.suraki.primary');
   border-radius: 100%;
   transform: translate3d(0, 150%, 0) scale(1.7);
   transition: transform 0.45s;

@@ -29,7 +29,7 @@ class DashboardCharts extends Component
         $user = Auth::user();
         $baseQuery = Ticket::query();
 
-        if ($user->rol !== 'admin') {
+        if (!$user->hasAdminAccess()) {
             $baseQuery->where('creator_id', $user->id);
         }
 

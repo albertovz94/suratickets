@@ -140,7 +140,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex flex-col items-start gap-2">
                                     <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-semibold">
-                                        {{ $ticket->departamento ? $ticket->departamento->nombre : 'Sin depto' }}
+                                        {{ $ticket->department ? $ticket->department->name : 'Sin depto' }}
                                     </span>
                                     <span class="px-2 py-1 rounded text-xs font-bold uppercase
                                         {{ $ticket->status === 'resuelto' || $ticket->status === 'cerrado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
@@ -358,7 +358,7 @@
                                 <td style="padding: 7px 10px; font-size: 10px; color: #1f2937; font-weight: 600;">{{ Str::limit($ticket->title, 30) }}</td>
                                 <td style="padding: 7px 10px; font-size: 10px; color: #4b5563;">{{ $ticket->creator->name ?? 'N/A' }}</td>
                                 <td style="padding: 7px 10px; font-size: 10px; color: #4b5563;">{{ $ticket->assignedTo ? $ticket->assignedTo->name : '—' }}</td>
-                                <td style="padding: 7px 10px; font-size: 10px; color: #4b5563;">{{ $ticket->departamento ? $ticket->departamento->nombre : '—' }}</td>
+                                <td style="padding: 7px 10px; font-size: 10px; color: #4b5563;">{{ $ticket->department ? $ticket->department->name : '—' }}</td>
                                 <td style="padding: 7px 10px; text-align: center;">
                                     <span style="display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 700; text-transform: uppercase;
                                         @if($ticket->status === 'resuelto' || $ticket->status === 'cerrado') background: #dcfce7; color: #15803d;

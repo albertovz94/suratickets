@@ -12,16 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Crear Equipos primero (porque Tickets depende de Equipos)
-        Schema::create('equipos', function (Blueprint $table) {
+        Schema::create('devices', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('specs')->nullable();
             $table->enum('type', ['Laptop', 'Desktop', 'Servidor', 'Red', 'Impresora', 'Otro'])->default('Laptop');
             $table->string('serial_number')->unique();
-            $table->foreignId('sucursal_id')->nullable()->constrained('sucursales')->nullOnDelete();
-            $table->foreignId('departamento_id')->nullable()->constrained('departamentos')->nullOnDelete();
+            $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
+            $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
             $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
             $table->enum('status', ['Activo', 'En reparacion', 'De baja'])->default('Activo');
+            $table->index('status');
             $table->timestamps();
         });
 
@@ -30,14 +31,20 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->foreignId('sucursal_id')->nullable()->constrained('sucursales')->nullOnDelete();
-            $table->foreignId('departamento_id')->nullable()->constrained('departamentos')->nullOnDelete();
-            $table->foreignId('equipo_id')->nullable()->constrained('equipos')->nullOnDelete();
+            $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
+            $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
+            $table->foreignId('device_id')->nullable()->constrained('devices')->nullOnDelete();
+            $table->enum('category', ['hardware', 'software', 'redes', 'otros'])->default('otros');
             $table->enum('priority', ['baja', 'media', 'alta', 'critica'])->default('media');
             $table->enum('status', ['abierto', 'asignado', 'en_proceso', 'pendiente', 'resuelto', 'cerrado'])->default('abierto');
             $table->foreignId('creator_id')->constrained('users');
             $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
             $table->text('resolution_summary')->nullable();
+            $table->timestamp('resolved_at')->nullable();
+            $table->string('attachment_path')->nullable();
+            
+            $table->index('status');
+            $table->index('priority');
             $table->timestamps();
         });
 
@@ -59,6 +66,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('ticket_messages');
         Schema::dropIfExists('tickets');
-        Schema::dropIfExists('equipos');
+        Schema::dropIfExists('devices');
     }
 };

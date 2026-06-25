@@ -23,7 +23,7 @@
                 <div class="p-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                         <h3 class="text-lg font-heading font-semibold text-suraki-secondary">
-                            {{ auth()->user()->rol === 'admin' ? 'Gestión de Todos los Tickets' : 'Mis Tickets' }}
+                            {{ auth()->user()->hasAdminAccess() ? 'Gestión de Todos los Tickets' : 'Mis Tickets' }}
                         </h3>
                     </div>
                     

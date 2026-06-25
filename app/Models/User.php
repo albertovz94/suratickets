@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'last_name', 'email', 'phone', 'password', 'username', 'sucursal_id', 'departamento_id', 'rol', 'status', 'avatar', 'bio', 'display_preference'])]
+#[Fillable(['name', 'last_name', 'email', 'phone', 'password', 'username', 'branch_id', 'department_id', 'role', 'status', 'avatar', 'bio', 'display_preference'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -30,14 +30,14 @@ class User extends Authenticatable
         ];
     }
 
-    public function sucursal()
+    public function branch()
     {
-        return $this->belongsTo(Sucursal::class);
+        return $this->belongsTo(Branch::class);
     }
 
-    public function departamento()
+    public function department()
     {
-        return $this->belongsTo(Departamento::class);
+        return $this->belongsTo(Department::class);
     }
 
     public function createdTickets()
@@ -47,7 +47,7 @@ class User extends Authenticatable
 
     public function scopeAdmins($query)
     {
-        return $query->where('rol', 'admin');
+        return $query->where('role', 'admin');
     }
 
     public function assignedTickets()
@@ -55,9 +55,9 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class, 'assigned_to');
     }
 
-    public function assignedEquipos()
+    public function assignedDevices()
     {
-        return $this->hasMany(Equipo::class, 'assigned_to');
+        return $this->hasMany(Device::class, 'assigned_to');
     }
 
     public function getDisplayNameAttribute()
@@ -92,10 +92,27 @@ class User extends Authenticatable
 
     public function isWorkingNow()
     {
-        $schedule = $this->schedule;
-        if (!$schedule) return false;
-
         $now = \Carbon\Carbon::now();
+        $schedule = $this->schedule;
+
+        if ($this->role === 'outsourcing') {
+            $activeShift = $this->workShifts()->whereDate('date', $now->toDateString())
+                ->where(function($query) {
+                    $query->where('status', 'en_curso')
+                          ->orWhere(function($q) {
+                              $q->whereNotNull('check_in')->whereNull('check_out');
+                          });
+                })->first();
+            return $activeShift !== null;
+        }
+
+        if (!$schedule) {
+            // Horario por defecto: 7 am a 10:30 pm
+            $currentTime = $now->format('H:i:s');
+            $start = '07:00:00';
+            $end = '22:30:00';
+            return $currentTime >= $start && $currentTime <= $end;
+        }
 
         if ($schedule->type === 'fijo') {
             $dayOfWeek = strtolower($now->englishDayOfWeek);
@@ -133,5 +150,10 @@ class User extends Authenticatable
         }
 
         return false;
+    }
+
+    public function hasAdminAccess()
+    {
+        return in_array($this->role, ['admin', 'outsourcing']);
     }
 }

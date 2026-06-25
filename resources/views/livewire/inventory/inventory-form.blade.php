@@ -6,7 +6,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h2 class="text-3xl font-bold text-gray-900 tracking-tight">
-                            {{ $equipo_id ? 'Editar Equipo' : 'Nuevo Equipo' }}
+                            {{ $device_id ? 'Editar Equipo' : 'Nuevo Equipo' }}
                         </h2>
                         <p class="mt-2 text-sm text-gray-600">Completa la información del equipo tecnológico para tu inventario.</p>
                     </div>
@@ -46,7 +46,7 @@
                     <!-- Tipo -->
                     <div>
                         <x-input-label for="type" :value="__('Tipo de Equipo')" />
-                        <select wire:model="type" id="type" class="block mt-1 w-full border-gray-300 focus:border-[#ff5a5f] focus:ring-[#ff5a5f] rounded-xl shadow-sm bg-white/50">
+                        <select wire:model="type" id="type" class="block mt-1 w-full border-gray-300 focus:border-suraki-primary focus:ring-suraki-primary rounded-xl shadow-sm bg-white/50">
                             <option value="Laptop">Laptop</option>
                             <option value="Desktop">Desktop</option>
                             <option value="Servidor">Servidor</option>
@@ -60,7 +60,7 @@
                     <!-- Estado -->
                     <div>
                         <x-input-label for="status" :value="__('Estado')" />
-                        <select wire:model="status" id="status" class="block mt-1 w-full border-gray-300 focus:border-[#ff5a5f] focus:ring-[#ff5a5f] rounded-xl shadow-sm bg-white/50">
+                        <select wire:model="status" id="status" class="block mt-1 w-full border-gray-300 focus:border-suraki-primary focus:ring-suraki-primary rounded-xl shadow-sm bg-white/50">
                             <option value="Activo">Activo</option>
                             <option value="En reparacion">En reparación</option>
                             <option value="De baja">De baja</option>
@@ -70,26 +70,26 @@
 
                     <!-- Sucursal -->
                     <div>
-                        <x-input-label for="sucursal_id" :value="__('Sucursal')" />
-                        <select wire:model="sucursal_id" id="sucursal_id" class="block mt-1 w-full border-gray-300 focus:border-[#ff5a5f] focus:ring-[#ff5a5f] rounded-xl shadow-sm bg-white/50">
+                        <x-input-label for="branch_id" :value="__('Sucursal')" />
+                        <select wire:model="branch_id" id="branch_id" class="block mt-1 w-full border-gray-300 focus:border-suraki-primary focus:ring-suraki-primary rounded-xl shadow-sm bg-white/50">
                             <option value="">-- Seleccionar Sucursal --</option>
-                            @foreach($sucursales as $sucursal)
-                                <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
+                            @foreach($branches as $branch)
+                                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                             @endforeach
                         </select>
-                        <x-input-error :messages="$errors->get('sucursal_id')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('branch_id')" class="mt-2" />
                     </div>
 
                     <!-- Departamento -->
                     <div>
-                        <x-input-label for="departamento_id" :value="__('Departamento')" />
-                        <select wire:model="departamento_id" id="departamento_id" class="block mt-1 w-full border-gray-300 focus:border-[#ff5a5f] focus:ring-[#ff5a5f] rounded-xl shadow-sm bg-white/50">
+                        <x-input-label for="department_id" :value="__('Departamento')" />
+                        <select wire:model="department_id" id="department_id" class="block mt-1 w-full border-gray-300 focus:border-suraki-primary focus:ring-suraki-primary rounded-xl shadow-sm bg-white/50">
                             <option value="">-- Seleccionar Departamento --</option>
-                            @foreach($departamentos as $departamento)
-                                <option value="{{ $departamento->id }}">{{ $departamento->nombre }}</option>
+                            @foreach($departments as $department)
+                                <option value="{{ $department->id }}">{{ $department->name }}</option>
                             @endforeach
                         </select>
-                        <x-input-error :messages="$errors->get('departamento_id')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
                     </div>
                 </div>
 

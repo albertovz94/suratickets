@@ -7,12 +7,14 @@
                 </h2>
                 <p class="text-sm text-suraki-tertiary mt-1">Bienvenido/a de nuevo, {{ auth()->user()->name }}</p>
             </div>
-            <a href="{{ route('tickets.create') }}" wire:navigate class="inline-flex items-center gap-2 px-4 py-2.5 bg-suraki-primary text-white rounded-lg text-sm font-semibold hover:bg-suraki-primary-hover transition-all duration-200 shadow-sm shadow-suraki-primary/20">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Nuevo Ticket
-            </a>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('tickets.create') }}" wire:navigate class="inline-flex items-center gap-2 px-4 py-2.5 bg-suraki-primary text-white rounded-lg text-sm font-semibold hover:bg-suraki-primary-hover transition-all duration-200 shadow-sm shadow-suraki-primary/20">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Nuevo Ticket
+                </a>
+            </div>
         </div>
     </x-slot>
 
@@ -23,7 +25,7 @@
             @php
                 $user = auth()->user();
                 $baseQuery = \App\Models\Ticket::query();
-                if ($user->rol !== 'admin') {
+                if (!$user->hasAdminAccess()) {
                     $baseQuery->where('creator_id', $user->id);
                 }
 
@@ -34,14 +36,14 @@
                 // Datos para Gráfica Mensual ahora se cargan en el componente Livewire DashboardCharts
 
                 // Todos los departamentos existentes
-                $allDepartments = \App\Models\Departamento::pluck('nombre')->toArray();
+                $allDepartments = \App\Models\Department::pluck('name')->toArray();
 
                 // Datos para Gráfica de Distribución
                 $distributionRaw = (clone $baseQuery)
-                    ->join('departamentos', 'tickets.departamento_id', '=', 'departamentos.id')
-                    ->selectRaw('departamentos.nombre as departamento_nombre, count(tickets.id) as count')
-                    ->groupBy('departamentos.nombre')
-                    ->pluck('count', 'departamento_nombre')
+                    ->join('departments', 'tickets.department_id', '=', 'departments.id')
+                    ->selectRaw('departments.name as department_name, count(tickets.id) as count')
+                    ->groupBy('departments.name')
+                    ->pluck('count', 'department_name')
                     ->toArray();
 
                 $distLabels = [];
@@ -62,8 +64,8 @@
 
                 // Rendimiento de Sistemas
                 $agents = collect();
-                if ($user->rol === 'admin') {
-                    $agents = \App\Models\User::where('rol', 'admin')->withCount([
+                if ($user->hasAdminAccess()) {
+                    $agents = \App\Models\User::where('role', 'admin')->withCount([
                         'assignedTickets as resolved_count' => function ($query) {
                             $query->whereIn('status', ['resuelto', 'cerrado']);
                         },
@@ -156,7 +158,7 @@
             </div>
 
             <!-- Rendimiento de Sistemas -->
-            @if($user->rol === 'admin')
+            @if($user->hasAdminAccess())
             <div class="card-suraki p-0 overflow-hidden mt-8 col-span-full">
                 <div class="p-6 border-b border-suraki-neutral flex justify-between items-center bg-suraki-neutral/30">
                     <h3 class="text-lg font-heading font-semibold text-suraki-secondary">Rendimiento de Sistemas</h3>
@@ -186,7 +188,7 @@
                                             </div>
                                             <div>
                                                 <p class="text-sm font-bold text-suraki-secondary">{{ $agent->name }}</p>
-                                                <p class="text-xs text-suraki-tertiary font-mono">{{ optional($agent->departamento)->nombre ?? 'Sin departamento' }}</p>
+                                                <p class="text-xs text-suraki-tertiary font-mono">{{ optional($agent->department)->name ?? 'Sin departamento' }}</p>
                                             </div>
                                         </div>
                                     </td>

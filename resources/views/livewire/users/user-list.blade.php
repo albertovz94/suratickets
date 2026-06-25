@@ -94,16 +94,7 @@
                 </div>
             </div>
 
-            @if (session()->has('message'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline">{{ session('message') }}</span>
-                </div>
-            @endif
-            @if (session()->has('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline">{{ session('error') }}</span>
-                </div>
-            @endif
+
 
             <!-- Filters -->
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -120,6 +111,7 @@
                     <select wire:model.live="roleFilter" class="border-suraki-neutral-dark rounded-lg text-sm text-suraki-secondary focus:ring-suraki-primary focus:border-suraki-primary shadow-sm py-2">
                         <option value="">Todos los roles</option>
                         <option value="admin">Administrador</option>
+                        <option value="outsourcing">Outsourcing</option>
                         <option value="usuario">Usuario</option>
                     </select>
 
@@ -130,10 +122,10 @@
                         <option value="Inactivo">Inactivo</option>
                     </select>
 
-                    <select wire:model.live="departamentoFilter" class="border-suraki-neutral-dark rounded-lg text-sm text-suraki-secondary focus:ring-suraki-primary focus:border-suraki-primary shadow-sm py-2">
+                    <select wire:model.live="departmentFilter" class="border-suraki-neutral-dark rounded-lg text-sm text-suraki-secondary focus:ring-suraki-primary focus:border-suraki-primary shadow-sm py-2">
                         <option value="">Todos los departamentos</option>
-                        @foreach($departamentos as $dept)
-                            <option value="{{ $dept->id }}">{{ $dept->nombre }}</option>
+                        @foreach($departments as $dept)
+                            <option value="{{ $dept->id }}">{{ $dept->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -179,7 +171,7 @@
                                             </div>
                                             <div>
                                                 <p class="text-sm font-bold text-suraki-secondary">{{ $user->name }} {{ $user->last_name }}</p>
-                                                <p class="text-xs text-suraki-tertiary">{{ $user->assigned_equipos_count }} equipos asignados</p>
+                                                <p class="text-xs text-suraki-tertiary">{{ $user->assigned_devices_count }} equipos asignados</p>
                                             </div>
                                         </div>
                                     </td>
@@ -188,16 +180,16 @@
                                         <p class="text-xs text-suraki-tertiary">{{ $user->username }}</p>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold {{ $user->rol === 'admin' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700' }}">
-                                            <span class="w-1.5 h-1.5 rounded-full {{ $user->rol === 'admin' ? 'bg-green-500' : 'bg-gray-500' }}"></span>
-                                            {{ ucfirst($user->rol === 'admin' ? 'Administrador' : 'Usuario') }}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold {{ $user->hasAdminAccess() ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700' }}">
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $user->hasAdminAccess() ? 'bg-green-500' : 'bg-gray-500' }}"></span>
+                                            {{ ucfirst($user->role) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <p class="text-sm text-suraki-secondary">{{ optional($user->sucursal)->nombre ?? 'Sin sucursal' }}</p>
+                                        <p class="text-sm text-suraki-secondary">{{ optional($user->branch)->name ?? 'Sin sucursal' }}</p>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <p class="text-sm text-suraki-secondary">{{ optional($user->departamento)->nombre ?? 'Sin departamento' }}</p>
+                                        <p class="text-sm text-suraki-secondary">{{ optional($user->department)->name ?? 'Sin departamento' }}</p>
                                     </td>
                                     <td class="px-6 py-4 flex items-center h-[73px]">
                                         <button 

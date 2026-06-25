@@ -3,20 +3,20 @@
 namespace App\Livewire\Settings;
 
 use Livewire\Component;
-use App\Models\Departamento;
-use App\Models\Sucursal;
+use App\Models\Department;
+use App\Models\Branch;
 
 class SettingsList extends Component
 {
-    public $activeTab = 'departamentos';
+    public $activeTab = 'departments';
 
     // Modelos para creación/edición
-    public $depto_id, $depto_nombre;
-    public $sucursal_id, $sucursal_nombre, $sucursal_activa = true;
+    public $department_id, $department_name;
+    public $branch_id, $branch_name, $branch_is_active = true;
 
     // Modals state
-    public $showDeptoModal = false;
-    public $showSucursalModal = false;
+    public $showDepartmentModal = false;
+    public $showBranchModal = false;
 
     public function setTab($tab)
     {
@@ -25,115 +25,115 @@ class SettingsList extends Component
 
     // --- DEPARTAMENTOS ---
 
-    public function openDeptoModal($id = null)
+    public function openDepartmentModal($id = null)
     {
         $this->resetErrorBag();
         if ($id) {
-            $depto = Departamento::findOrFail($id);
-            $this->depto_id = $depto->id;
-            $this->depto_nombre = $depto->nombre;
+            $department = Department::findOrFail($id);
+            $this->department_id = $department->id;
+            $this->department_name = $department->name;
         } else {
-            $this->depto_id = null;
-            $this->depto_nombre = '';
+            $this->department_id = null;
+            $this->department_name = '';
         }
-        $this->showDeptoModal = true;
+        $this->showDepartmentModal = true;
     }
 
-    public function closeDeptoModal()
+    public function closeDepartmentModal()
     {
-        $this->showDeptoModal = false;
+        $this->showDepartmentModal = false;
     }
 
-    public function saveDepto()
+    public function saveDepartment()
     {
         $this->validate([
-            'depto_nombre' => 'required|string|max:255'
+            'department_name' => 'required|string|max:255'
         ]);
 
-        if ($this->depto_id) {
-            Departamento::where('id', $this->depto_id)->update(['nombre' => $this->depto_nombre]);
-            session()->flash('message', 'Departamento actualizado correctamente.');
+        if ($this->department_id) {
+            Department::where('id', $this->department_id)->update(['name' => $this->department_name]);
+            $this->dispatch('notify', message: 'Departamento actualizado correctamente.'); session()->flash('message', 'Departamento actualizado correctamente.');
         } else {
-            Departamento::create(['nombre' => $this->depto_nombre]);
-            session()->flash('message', 'Departamento creado correctamente.');
+            Department::create(['name' => $this->department_name]);
+            $this->dispatch('notify', message: 'Departamento creado correctamente.'); session()->flash('message', 'Departamento creado correctamente.');
         }
-        $this->closeDeptoModal();
+        $this->closeDepartmentModal();
     }
 
-    public function deleteDepto($id)
+    public function deleteDepartment($id)
     {
-        $depto = Departamento::findOrFail($id);
-        if ($depto->users()->count() > 0 || $depto->equipos()->count() > 0 || $depto->tickets()->count() > 0) {
+        $department = Department::findOrFail($id);
+        if ($department->users()->count() > 0 || $department->devices()->count() > 0 || $department->tickets()->count() > 0) {
             session()->flash('error', 'No se puede eliminar el departamento porque tiene registros asociados.');
             return;
         }
-        $depto->delete();
-        session()->flash('message', 'Departamento eliminado.');
+        $department->delete();
+        $this->dispatch('notify', message: 'Departamento eliminado.'); session()->flash('message', 'Departamento eliminado.');
     }
 
 
     // --- SUCURSALES ---
 
-    public function openSucursalModal($id = null)
+    public function openBranchModal($id = null)
     {
         $this->resetErrorBag();
         if ($id) {
-            $sucursal = Sucursal::findOrFail($id);
-            $this->sucursal_id = $sucursal->id;
-            $this->sucursal_nombre = $sucursal->nombre;
-            $this->sucursal_activa = $sucursal->activa;
+            $branch = Branch::findOrFail($id);
+            $this->branch_id = $branch->id;
+            $this->branch_name = $branch->name;
+            $this->branch_is_active = $branch->is_active;
         } else {
-            $this->sucursal_id = null;
-            $this->sucursal_nombre = '';
-            $this->sucursal_activa = true;
+            $this->branch_id = null;
+            $this->branch_name = '';
+            $this->branch_is_active = true;
         }
-        $this->showSucursalModal = true;
+        $this->showBranchModal = true;
     }
 
-    public function closeSucursalModal()
+    public function closeBranchModal()
     {
-        $this->showSucursalModal = false;
+        $this->showBranchModal = false;
     }
 
-    public function saveSucursal()
+    public function saveBranch()
     {
         $this->validate([
-            'sucursal_nombre' => 'required|string|max:255',
-            'sucursal_activa' => 'boolean'
+            'branch_name' => 'required|string|max:255',
+            'branch_is_active' => 'boolean'
         ]);
 
-        if ($this->sucursal_id) {
-            Sucursal::where('id', $this->sucursal_id)->update([
-                'nombre' => $this->sucursal_nombre,
-                'activa' => $this->sucursal_activa
+        if ($this->branch_id) {
+            Branch::where('id', $this->branch_id)->update([
+                'name' => $this->branch_name,
+                'is_active' => $this->branch_is_active
             ]);
-            session()->flash('message', 'Sucursal actualizada correctamente.');
+            $this->dispatch('notify', message: 'Sucursal actualizada correctamente.'); session()->flash('message', 'Sucursal actualizada correctamente.');
         } else {
-            Sucursal::create([
-                'nombre' => $this->sucursal_nombre,
-                'activa' => $this->sucursal_activa
+            Branch::create([
+                'name' => $this->branch_name,
+                'is_active' => $this->branch_is_active
             ]);
-            session()->flash('message', 'Sucursal creada correctamente.');
+            $this->dispatch('notify', message: 'Sucursal creada correctamente.'); session()->flash('message', 'Sucursal creada correctamente.');
         }
-        $this->closeSucursalModal();
+        $this->closeBranchModal();
     }
 
-    public function deleteSucursal($id)
+    public function deleteBranch($id)
     {
-        $sucursal = Sucursal::findOrFail($id);
-        if ($sucursal->equipos()->count() > 0 || $sucursal->tickets()->count() > 0) {
+        $branch = Branch::findOrFail($id);
+        if ($branch->devices()->count() > 0 || $branch->tickets()->count() > 0) {
             session()->flash('error', 'No se puede eliminar la sucursal porque tiene registros asociados.');
             return;
         }
-        $sucursal->delete();
-        session()->flash('message', 'Sucursal eliminada.');
+        $branch->delete();
+        $this->dispatch('notify', message: 'Sucursal eliminada.'); session()->flash('message', 'Sucursal eliminada.');
     }
 
     public function render()
     {
         return view('livewire.settings.settings-list', [
-            'departamentos' => Departamento::withCount(['users', 'equipos'])->get(),
-            'sucursales' => Sucursal::withCount(['equipos'])->get(),
+            'departments' => Department::withCount(['users', 'devices'])->get(),
+            'branches' => Branch::withCount(['devices'])->get(),
         ])->layout('layouts.app');
     }
 }

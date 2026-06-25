@@ -23,7 +23,7 @@ class TicketDetail extends Component
 
     public function mount(Ticket $ticket)
     {
-        $this->ticket = $ticket->load(['sucursal', 'creator', 'assignedTo']);
+        $this->ticket = $ticket->load(['branch', 'creator', 'assignedTo']);
         
         // Autorizar visualización usando TicketPolicy
         $this->authorize('view', $this->ticket);

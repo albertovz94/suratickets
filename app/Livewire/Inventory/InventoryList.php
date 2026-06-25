@@ -4,7 +4,7 @@ namespace App\Livewire\Inventory;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Equipo;
+use App\Models\Device;
 
 class InventoryList extends Component
 {
@@ -13,8 +13,8 @@ class InventoryList extends Component
     public $search = '';
     public $type = '';
     public $status = '';
-    public $sucursal_id = '';
-    public $departamento_id = '';
+    public $branch_id = '';
+    public $department_id = '';
 
     public function updatingSearch()
     {
@@ -43,33 +43,33 @@ class InventoryList extends Component
 
     public function deleteEquipo($id)
     {
-        $equipo = Equipo::findOrFail($id);
-        $equipo->delete();
-        session()->flash('message', 'Equipo eliminado correctamente.');
+        $device = Device::findOrFail($id);
+        $device->delete();
+        $this->dispatch('notify', message: 'Equipo eliminado correctamente.'); session()->flash('message', 'Equipo eliminado correctamente.');
     }
 
     public function cycleEquipoStatus($id)
     {
-        $equipo = Equipo::findOrFail($id);
+        $device = Device::findOrFail($id);
         
-        if ($equipo->status === 'Activo') {
-            $equipo->status = 'En reparacion';
-            $message = "El equipo {$equipo->name} ahora está en reparación.";
-        } elseif ($equipo->status === 'En reparacion') {
-            $equipo->status = 'De baja';
-            $message = "El equipo {$equipo->name} ha sido dado de baja.";
+        if ($device->status === 'Activo') {
+            $device->status = 'En reparacion';
+            $message = "El equipo {$device->name} ahora está en reparación.";
+        } elseif ($device->status === 'En reparacion') {
+            $device->status = 'De baja';
+            $message = "El equipo {$device->name} ha sido dado de baja.";
         } else {
-            $equipo->status = 'Activo';
-            $message = "El equipo {$equipo->name} ahora está activo.";
+            $device->status = 'Activo';
+            $message = "El equipo {$device->name} ahora está activo.";
         }
         
-        $equipo->save();
+        $device->save();
         $this->dispatch('show-toast', message: $message);
     }
 
     public function render()
     {
-        $query = Equipo::query();
+        $query = Device::query();
 
         if ($this->search) {
             $query->where(function ($q) {
@@ -87,36 +87,36 @@ class InventoryList extends Component
             $query->where('status', $this->status);
         }
 
-        if ($this->sucursal_id) {
-            $query->where('sucursal_id', $this->sucursal_id);
+        if ($this->branch_id) {
+            $query->where('branch_id', $this->branch_id);
         }
 
-        if ($this->departamento_id) {
-            $query->where('departamento_id', $this->departamento_id);
+        if ($this->department_id) {
+            $query->where('department_id', $this->department_id);
         }
 
         // Estadísticas Reales
-        $totalEquipos = Equipo::count();
-        $activos = Equipo::where('status', 'Activo')->count();
-        $enReparacion = Equipo::where('status', 'En reparacion')->count();
-        $dadosBaja = Equipo::where('status', 'De baja')->count();
+        $totalEquipos = Device::count();
+        $activos = Device::where('status', 'Activo')->count();
+        $enReparacion = Device::where('status', 'En reparacion')->count();
+        $dadosBaja = Device::where('status', 'De baja')->count();
 
         // Unique values for dropdowns
-        $types = Equipo::select('type')->distinct()->pluck('type');
-        $statuses = Equipo::select('status')->distinct()->pluck('status');
-        $sucursales = \App\Models\Sucursal::where('activa', true)->get();
-        $departamentos = \App\Models\Departamento::all();
+        $types = Device::select('type')->distinct()->pluck('type');
+        $statuses = Device::select('status')->distinct()->pluck('status');
+        $branches = \App\Models\Branch::where('is_active', true)->get();
+        $departments = \App\Models\Department::all();
 
         return view('livewire.inventory.inventory-list', [
-            'equipos' => $query->paginate(6),
+            'devices' => $query->paginate(6),
             'totalEquipos' => $totalEquipos,
             'activos' => $activos,
             'enReparacion' => $enReparacion,
             'dadosBaja' => $dadosBaja,
             'types' => $types,
             'statuses' => $statuses,
-            'sucursales' => $sucursales,
-            'departamentos' => $departamentos,
+            'branches' => $branches,
+            'departments' => $departments,
         ])->layout('layouts.app');
     }
 }

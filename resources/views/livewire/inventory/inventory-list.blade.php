@@ -13,7 +13,7 @@
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     Exportar
                 </button>
-                <a href="{{ route('inventory.create') }}" wire:navigate class="px-4 py-2 bg-[#d32f2f] hover:bg-[#b71c1c] text-white rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm">
+                <a href="{{ route('inventory.create') }}" wire:navigate class="px-4 py-2 bg-suraki-primary hover:bg-suraki-primary-hover text-white rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                     Nuevo Equipo
                 </a>
@@ -123,17 +123,17 @@
                         <option value="De baja">Dados de baja</option>
                     </select>
 
-                    <select wire:model.live="sucursal_id" class="block w-full md:w-48 py-2 px-3 border border-suraki-neutral-dark bg-white rounded-lg text-sm focus:outline-none focus:ring-suraki-primary focus:border-suraki-primary">
+                    <select wire:model.live="branch_id" class="block w-full md:w-48 py-2 px-3 border border-suraki-neutral-dark bg-white rounded-lg text-sm focus:outline-none focus:ring-suraki-primary focus:border-suraki-primary">
                         <option value="">Todas las sucursales</option>
-                        @foreach($sucursales as $s)
-                            <option value="{{ $s->id }}">{{ $s->nombre }}</option>
+                        @foreach($branches as $s)
+                            <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach
                     </select>
 
-                    <select wire:model.live="departamento_id" class="block w-full md:w-48 py-2 px-3 border border-suraki-neutral-dark bg-white rounded-lg text-sm focus:outline-none focus:ring-suraki-primary focus:border-suraki-primary">
+                    <select wire:model.live="department_id" class="block w-full md:w-48 py-2 px-3 border border-suraki-neutral-dark bg-white rounded-lg text-sm focus:outline-none focus:ring-suraki-primary focus:border-suraki-primary">
                         <option value="">Todos los departamentos</option>
-                        @foreach($departamentos as $d)
-                            <option value="{{ $d->id }}">{{ $d->nombre }}</option>
+                        @foreach($departments as $d)
+                            <option value="{{ $d->id }}">{{ $d->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -171,77 +171,77 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($equipos as $equipo)
+                        @foreach($devices as $device)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <input type="checkbox" class="rounded border-gray-300 text-suraki-primary focus:ring-suraki-primary">
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-lg {{ $equipo->type === 'Laptop' ? 'bg-red-50 text-red-500' : ($equipo->type === 'Desktop' ? 'bg-blue-50 text-blue-500' : ($equipo->type === 'Servidor' ? 'bg-purple-50 text-purple-500' : 'bg-gray-100 text-gray-500')) }} flex items-center justify-center flex-shrink-0">
-                                        @if($equipo->type === 'Laptop' || $equipo->type === 'Desktop')
+                                    <div class="w-10 h-10 rounded-lg {{ $device->type === 'Laptop' ? 'bg-red-50 text-red-500' : ($device->type === 'Desktop' ? 'bg-blue-50 text-blue-500' : ($device->type === 'Servidor' ? 'bg-purple-50 text-purple-500' : 'bg-gray-100 text-gray-500')) }} flex items-center justify-center flex-shrink-0">
+                                        @if($device->type === 'Laptop' || $device->type === 'Desktop')
                                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                        @elseif($equipo->type === 'Servidor')
+                                        @elseif($device->type === 'Servidor')
                                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
                                         @else
                                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
                                         @endif
                                     </div>
                                     <div>
-                                        <p class="text-sm font-bold text-suraki-secondary">{{ $equipo->name }}</p>
-                                        <p class="text-xs text-gray-500 mt-0.5">{{ $equipo->specs }}</p>
+                                        <p class="text-sm font-bold text-suraki-secondary">{{ $device->name }}</p>
+                                        <p class="text-xs text-gray-500 mt-0.5">{{ $device->specs }}</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-600">{{ $equipo->type }}</span>
+                                <span class="text-sm text-gray-600">{{ $device->type }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-600">{{ $equipo->serial_number }}</span>
+                                <span class="text-sm text-gray-600">{{ $device->serial_number }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <p class="text-sm text-gray-600">{{ optional($equipo->sucursal)->nombre }}</p>
-                                <p class="text-xs text-gray-400 mt-0.5">{{ optional($equipo->departamento)->nombre }}</p>
+                                <p class="text-sm text-gray-600">{{ optional($device->branch)->name }}</p>
+                                <p class="text-xs text-gray-400 mt-0.5">{{ optional($device->department)->name }}</p>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-600">{{ optional($equipo->assignee)->name ?? '--' }}</span>
+                                <span class="text-sm text-gray-600">{{ optional($device->assignee)->name ?? '--' }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <button 
-                                        wire:click="cycleEquipoStatus({{ $equipo->id }})" 
+                                        wire:click="cycleEquipoStatus({{ $device->id }})" 
                                         type="button" 
-                                        class="relative inline-flex h-6 w-16 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none {{ $equipo->status === 'Activo' ? 'bg-emerald-500' : ($equipo->status === 'En reparacion' ? 'bg-orange-500' : 'bg-gray-400') }}" 
+                                        class="relative inline-flex h-6 w-16 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none {{ $device->status === 'Activo' ? 'bg-emerald-500' : ($device->status === 'En reparacion' ? 'bg-orange-500' : 'bg-gray-400') }}" 
                                         role="switch" 
-                                        aria-checked="{{ $equipo->status === 'Activo' ? 'true' : 'false' }}">
+                                        aria-checked="{{ $device->status === 'Activo' ? 'true' : 'false' }}">
                                         <span class="sr-only">Cambiar estado del equipo</span>
                                         <span 
-                                            class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $equipo->status === 'Activo' ? 'translate-x-0' : ($equipo->status === 'En reparacion' ? 'translate-x-5' : 'translate-x-10') }}">
+                                            class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $device->status === 'Activo' ? 'translate-x-0' : ($device->status === 'En reparacion' ? 'translate-x-5' : 'translate-x-10') }}">
                                             <!-- Icono Activo -->
-                                            <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ $equipo->status === 'Activo' ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out' }}">
+                                            <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ $device->status === 'Activo' ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out' }}">
                                                 <svg class="h-3 w-3 text-emerald-600" fill="currentColor" viewBox="0 0 12 12"><path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" /></svg>
                                             </span>
                                             <!-- Icono Reparacion -->
-                                            <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ $equipo->status === 'En reparacion' ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out' }}">
+                                            <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ $device->status === 'En reparacion' ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out' }}">
                                                 <svg class="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01" /></svg>
                                             </span>
                                             <!-- Icono De Baja -->
-                                            <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ $equipo->status === 'De baja' ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out' }}">
+                                            <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ $device->status === 'De baja' ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out' }}">
                                                 <svg class="h-3 w-3 text-gray-500" fill="none" viewBox="0 0 12 12"><path d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                             </span>
                                         </span>
                                     </button>
                                     <span class="ml-3 text-xs font-bold text-suraki-secondary w-20">
-                                        {{ $equipo->status }}
+                                        {{ $device->status }}
                                     </span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('inventory.edit', $equipo->id) }}" wire:navigate class="text-gray-400 hover:text-suraki-primary transition-colors p-1.5 border border-gray-200 rounded-md hover:bg-gray-50">
+                                    <a href="{{ route('inventory.edit', $device->id) }}" wire:navigate class="text-gray-400 hover:text-suraki-primary transition-colors p-1.5 border border-gray-200 rounded-md hover:bg-gray-50">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                     </a>
-                                    <button wire:click="deleteEquipo({{ $equipo->id }})" wire:confirm="¿Seguro que deseas eliminar este equipo?" class="text-gray-400 hover:text-red-500 transition-colors p-1.5 border border-gray-200 rounded-md hover:bg-gray-50">
+                                    <button wire:click="deleteEquipo({{ $device->id }})" wire:confirm="¿Seguro que deseas eliminar este equipo?" class="text-gray-400 hover:text-red-500 transition-colors p-1.5 border border-gray-200 rounded-md hover:bg-gray-50">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                     </button>
                                 </div>
@@ -251,7 +251,7 @@
                     </tbody>
                 </table>
                 <div class="px-6 py-4 border-t border-gray-200">
-                    {{ $equipos->links() }}
+                    {{ $devices->links() }}
                 </div>
             </div>
 

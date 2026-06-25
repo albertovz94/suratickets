@@ -29,7 +29,7 @@ class TicketList extends Component
 
     public function render()
     {
-        $query = Ticket::with(['sucursal', 'creator', 'assignedTo'])
+        $query = Ticket::with(['branch', 'creator', 'assignedTo'])
             ->when($this->search, function ($q) {
                 $q->where(function($query) {
                     $query->where('title', 'like', '%' . $this->search . '%')
@@ -50,7 +50,7 @@ class TicketList extends Component
                 $q->where('priority', $this->priority);
             });
 
-        if (Auth::user()->rol !== 'admin') {
+        if (!Auth::user()->hasAdminAccess()) {
             $query->where('creator_id', Auth::id());
         }
 

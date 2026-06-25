@@ -7,7 +7,7 @@
                 <span class="badge-status badge-{{ $ticket->status }} uppercase">{{ str_replace('_', ' ', $ticket->status) }}</span>
             </div>
             
-            @if(auth()->user()->rol === 'admin')
+            @if(auth()->user()->hasAdminAccess())
             <div class="flex gap-2">
                 <!-- Acciones rápidas para el admin se mantienen en la derecha -->
             </div>
@@ -18,11 +18,7 @@
     <div class="py-6">
         <div class="max-w-[1600px] w-full mx-auto sm:px-6 lg:px-8">
             
-            @if (session()->has('message'))
-                <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-lg relative flex items-center gap-2">
-                    <span class="block sm:inline text-sm font-medium">{{ session('message') }}</span>
-                </div>
-            @endif
+
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- COLUMNA IZQUIERDA: Chat y Detalle -->
@@ -53,9 +49,17 @@
                                     <span class="font-bold text-suraki-secondary">{{ $ticket->creator->display_name ?? $ticket->creator->name }}</span>
                                     <span class="text-xs text-suraki-tertiary ml-2">Solicitante</span>
                                 </div>
-                                <span class="text-xs text-suraki-tertiary">{{ $ticket->created_at->format('M d, H:i A') }}</span>
+                                <span class="text-xs text-suraki-tertiary">{{ $ticket->created_at->translatedFormat('d M, h:i A') }}</span>
                             </div>
                             <p class="text-sm text-suraki-secondary whitespace-pre-wrap leading-relaxed">{{ $ticket->description }}</p>
+                            @if($ticket->attachment_path)
+                                <div class="mt-4 pt-4 border-t border-suraki-neutral-dark">
+                                    <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-suraki-neutral-dark rounded-lg text-sm font-medium text-suraki-secondary hover:bg-gray-100 transition-colors">
+                                        <svg class="w-5 h-5 text-suraki-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                        Ver Archivo Adjunto Inicial
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -72,14 +76,14 @@
                     @endif
 
                     <!-- Historial de Mensajes (Auto-actualizable) -->
-                    <div wire:poll.5s>
+                    <div wire:poll.180s>
                         @foreach($this->ticketMessages as $msg)
-                        <div class="bg-{{ $msg->user->rol === 'admin' ? 'suraki-neutral' : 'white' }} p-6 rounded-xl border border-suraki-neutral-dark flex gap-4 mb-6 last:mb-0">
+                        <div class="bg-{{ $msg->user->hasAdminAccess() ? 'suraki-neutral' : 'white' }} p-6 rounded-xl border border-suraki-neutral-dark flex gap-4 mb-6 last:mb-0">
                             <div class="flex-shrink-0">
                                 @if($msg->user->avatar_path)
                                     <img src="{{ $msg->user->avatar_path }}" alt="Avatar" class="w-10 h-10 rounded-lg object-cover">
                                 @else
-                                    <div class="w-10 h-10 rounded-lg bg-{{ $msg->user->rol === 'admin' ? 'red-600' : 'suraki-primary' }} text-white flex items-center justify-center font-bold font-heading">
+                                    <div class="w-10 h-10 rounded-lg bg-{{ $msg->user->hasAdminAccess() ? 'red-600' : 'suraki-primary' }} text-white flex items-center justify-center font-bold font-heading">
                                         {{ substr($msg->user->name, 0, 1) }}
                                     </div>
                                 @endif
@@ -87,10 +91,10 @@
                             <div class="flex-grow">
                                 <div class="flex justify-between items-center mb-2">
                                     <div>
-                                        <span class="text-xs text-{{ $msg->user->rol === 'admin' ? 'red-600' : 'suraki-tertiary' }} font-bold mr-2">{{ $msg->user->rol === 'admin' ? 'Soporte Técnico' : 'Solicitante' }}</span>
+                                        <span class="text-xs text-{{ $msg->user->hasAdminAccess() ? 'red-600' : 'suraki-tertiary' }} font-bold mr-2">{{ $msg->user->hasAdminAccess() ? 'Soporte Técnico' : 'Solicitante' }}</span>
                                         <span class="font-bold text-suraki-secondary">{{ $msg->user->display_name ?? $msg->user->name }}</span>
                                     </div>
-                                    <span class="text-xs text-suraki-tertiary">{{ $msg->created_at->format('M d, H:i A') }}</span>
+                                    <span class="text-xs text-suraki-tertiary">{{ $msg->created_at->translatedFormat('d M, h:i A') }}</span>
                                 </div>
                                 <p class="text-sm text-suraki-secondary whitespace-pre-wrap leading-relaxed">{{ $msg->message }}</p>
                                 @if($msg->attachment_path)
@@ -159,12 +163,16 @@
                         <h4 class="text-sm font-heading font-bold text-suraki-secondary uppercase tracking-wider mb-4">Información del Ticket</h4>
                         <div class="space-y-3 text-sm">
                             <div>
+                                <p class="text-xs text-suraki-tertiary mb-1">Categoría</p>
+                                <span class="font-medium text-suraki-secondary capitalize">{{ $ticket->categoria ?? 'Otros' }}</span>
+                            </div>
+                            <div>
                                 <p class="text-xs text-suraki-tertiary mb-1">Departamento</p>
-                                <span class="font-medium text-suraki-secondary">{{ optional($ticket->departamento)->nombre }}</span>
+                                <span class="font-medium text-suraki-secondary">{{ optional($ticket->department)->name }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-suraki-tertiary">Creado</span>
-                                <span class="font-medium text-suraki-secondary">{{ $ticket->created_at->format('M d, H:i A') }}</span>
+                                <span class="font-medium text-suraki-secondary">{{ $ticket->created_at->translatedFormat('d M, h:i A') }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-suraki-tertiary text-xs">
@@ -187,9 +195,9 @@
                         <div class="mt-5 pt-4 border-t border-suraki-neutral-dark">
                             <h4 class="text-xs text-suraki-tertiary mb-2">Etiquetas</h4>
                             <div class="flex flex-wrap gap-2">
-                                <span class="text-xs bg-suraki-neutral px-2 py-1 rounded text-suraki-secondary">{{ strtolower($ticket->sucursal->nombre ?? 'N/A') }}</span>
-                                @if($ticket->equipo_afectado)
-                                    <span class="text-xs bg-suraki-neutral px-2 py-1 rounded text-suraki-secondary">{{ strtolower($ticket->equipo_afectado) }}</span>
+                                <span class="text-xs bg-suraki-neutral px-2 py-1 rounded text-suraki-secondary">{{ strtolower($ticket->branch->name ?? 'N/A') }}</span>
+                                @if($ticket->device_afectado)
+                                    <span class="text-xs bg-suraki-neutral px-2 py-1 rounded text-suraki-secondary">{{ strtolower($ticket->device_afectado) }}</span>
                                 @endif
                             </div>
                         </div>
@@ -197,13 +205,13 @@
 
                     <!-- Detalles de Contacto -->
                     @php
-                        $contact = auth()->user()->rol === 'admin' ? $ticket->creator : ($ticket->assignedTo ?? null);
+                        $contact = auth()->user()->hasAdminAccess() ? $ticket->creator : ($ticket->assignedTo ?? null);
                     @endphp
                     
                     @if($contact)
                     <div class="bg-white p-6 rounded-xl border border-suraki-neutral-dark">
                         <h4 class="text-sm font-heading font-bold text-suraki-secondary uppercase tracking-wider mb-4">
-                            {{ auth()->user()->rol === 'admin' ? 'Detalles de Contacto' : 'Técnico Asignado' }}
+                            {{ auth()->user()->hasAdminAccess() ? 'Detalles de Contacto' : 'Técnico Asignado' }}
                         </h4>
                         <div class="flex items-center gap-3 mb-4">
                             @if($contact->avatar_path)
@@ -215,7 +223,7 @@
                             @endif
                             <div>
                                 <p class="font-medium text-suraki-secondary">{{ $contact->name }} {{ $contact->last_name }}</p>
-                                <p class="text-xs text-suraki-tertiary">{{ optional($contact->departamento)->nombre ?? 'Usuario del Sistema' }}</p>
+                                <p class="text-xs text-suraki-tertiary">{{ optional($contact->department)->name ?? 'Usuario del Sistema' }}</p>
                             </div>
                         </div>
                         <div class="space-y-2 text-sm text-suraki-secondary">
@@ -234,7 +242,7 @@
                     @endif
 
                     <!-- Admin: Gestión del Ticket -->
-                    @if(auth()->user()->rol === 'admin')
+                    @if(auth()->user()->hasAdminAccess())
                     <div class="bg-suraki-neutral p-6 rounded-xl border border-suraki-neutral-dark">
                         <h4 class="text-sm font-heading font-bold text-suraki-secondary uppercase tracking-wider mb-4 flex items-center gap-2">
                             <svg class="w-4 h-4 text-suraki-primary" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>

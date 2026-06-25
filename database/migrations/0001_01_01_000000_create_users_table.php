@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sucursales', function (Blueprint $table) {
+        Schema::create('branches', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique();
-            $table->string('direccion')->nullable();
-            $table->string('telefono')->nullable();
-            $table->boolean('activa')->default(true);
+            $table->string('name')->unique();
+            $table->string('address')->nullable();
+            $table->string('phone')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
 
-        Schema::create('departamentos', function (Blueprint $table) {
+        Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique();
+            $table->string('name')->unique();
             $table->timestamps();
         });
 
@@ -36,11 +36,12 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar')->nullable();
-            $table->foreignId('sucursal_id')->nullable()->constrained('sucursales')->nullOnDelete();
-            $table->foreignId('departamento_id')->nullable()->constrained('departamentos')->nullOnDelete();
+            $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
+            $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
             $table->text('bio')->nullable();
             $table->string('display_preference')->default('name'); // name, full_name, username
-            $table->enum('rol', ['admin', 'usuario'])->default('usuario');
+            $table->enum('role', ['admin', 'usuario'])->default('usuario');
+            $table->enum('status', ['Activo', 'Bloqueada', 'Inactivo'])->default('Activo');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -69,7 +70,7 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('users');
-        Schema::dropIfExists('departamentos');
-        Schema::dropIfExists('sucursales');
+        Schema::dropIfExists('departments');
+        Schema::dropIfExists('branches');
     }
 };

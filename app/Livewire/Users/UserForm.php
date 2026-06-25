@@ -4,8 +4,8 @@ namespace App\Livewire\Users;
 
 use Livewire\Component;
 use App\Models\User;
-use App\Models\Departamento;
-use App\Models\Sucursal;
+use App\Models\Department;
+use App\Models\Branch;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCredentialsMail;
@@ -21,10 +21,10 @@ class UserForm extends Component
     public $last_name = '';
     public $email = '';
     public $username = '';
-    public $rol = 'usuario';
+    public $role = 'usuario';
     public $status = 'Activo';
-    public $departamento_id = '';
-    public $sucursal_id = '';
+    public $department_id = '';
+    public $branch_id = '';
     public $password = '';
     public $avatar;
     public $existing_avatar;
@@ -36,10 +36,10 @@ class UserForm extends Component
             'last_name' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email,' . $this->user_id,
             'username' => 'nullable|string|unique:users,username,' . $this->user_id,
-            'rol' => 'required|in:admin,usuario',
+            'role' => 'required|in:admin,usuario,outsourcing',
             'status' => 'required|in:Activo,Bloqueada,Inactivo',
-            'departamento_id' => 'required|exists:departamentos,id',
-            'sucursal_id' => 'required|exists:sucursales,id',
+            'department_id' => 'required|exists:departments,id',
+            'branch_id' => 'required|exists:branches,id',
             'password' => $this->user_id ? 'nullable|min:6' : 'required|min:6',
             'avatar' => 'nullable|image|max:2048', // Max 2MB
         ];
@@ -54,10 +54,10 @@ class UserForm extends Component
             $this->last_name = $user->last_name;
             $this->email = $user->email;
             $this->username = $user->username;
-            $this->rol = $user->rol;
+            $this->role = $user->role;
             $this->status = $user->status ?? 'Activo';
-            $this->departamento_id = $user->departamento_id;
-            $this->sucursal_id = $user->sucursal_id;
+            $this->department_id = $user->department_id;
+            $this->branch_id = $user->branch_id;
             $this->existing_avatar = $user->avatar_path;
         }
     }
@@ -71,10 +71,10 @@ class UserForm extends Component
             'last_name' => $this->last_name,
             'email' => $this->email,
             'username' => $this->username,
-            'rol' => $this->rol,
+            'role' => $this->role,
             'status' => $this->status,
-            'departamento_id' => $this->departamento_id,
-            'sucursal_id' => $this->sucursal_id,
+            'department_id' => $this->department_id,
+            'branch_id' => $this->branch_id,
         ];
 
         if (!empty($this->password)) {
@@ -87,9 +87,7 @@ class UserForm extends Component
 
         if ($this->user_id) {
             User::where('id', $this->user_id)->update($data);
-            $updatedUser = User::find($this->user_id);
 
-            
             // Optionally send email if password was changed
             if (!empty($this->password)) {
                 $updatedUser = User::find($this->user_id);
@@ -97,35 +95,38 @@ class UserForm extends Component
                     Mail::to($updatedUser->email)->send(new UserCredentialsMail($updatedUser, $this->password));
                 } catch (\Exception $e) {
                     session()->flash('message', 'Usuario actualizado, pero hubo un error enviando el correo.');
-                    return redirect()->route('users.index');
+                    sleep(2);
+                    return $this->redirectRoute('users.index', navigate: true);
                 }
             }
             
             session()->flash('message', 'Usuario actualizado correctamente.');
+
         } else {
             $newUser = User::create($data);
 
-            
             if (!empty($this->password)) {
                 try {
                     Mail::to($newUser->email)->send(new UserCredentialsMail($newUser, $this->password));
                 } catch (\Exception $e) {
                     session()->flash('message', 'Usuario creado correctamente, pero hubo un error al enviar el correo.');
-                    return redirect()->route('users.index');
+                    sleep(2); // Retraso artificial para dar "respiro" y que se aprecie la pantalla de carga
+                    return $this->redirectRoute('users.index', navigate: true);
                 }
             }
             
             session()->flash('message', 'Usuario creado correctamente y correo enviado con accesos.');
         }
 
-        return redirect()->route('users.index');
+        sleep(2); // Retraso artificial para dar "respiro" y que se aprecie la pantalla de carga
+        return $this->redirectRoute('users.index', navigate: true);
     }
 
     public function render()
     {
         return view('livewire.users.user-form', [
-            'departamentos' => Departamento::all(),
-            'sucursales' => Sucursal::where('activa', true)->get(),
+            'departments' => Department::all(),
+            'branches' => Branch::where('is_active', true)->get(),
         ])->layout('layouts.app');
     }
 }

@@ -56,7 +56,7 @@ class TicketObserver
             // Asegurarse de que no estuviese ya en estado de resolución
             if (!in_array($ticket->getOriginal('status'), ['resuelto', 'cerrado'])) {
                 $creatorName = $ticket->creator->name;
-                $deptName = optional($ticket->creator->departamento)->nombre ?? 'Sin departamento';
+                $deptName = optional($ticket->creator->department)->name ?? 'Sin departamento';
                 $resolverName = Auth::check() ? Auth::user()->name : 'el Sistema';
                 
                 $message = "El ticket #{$ticket->id} de {$creatorName} ({$deptName}) ha sido marcado como " . ucfirst($ticket->status) . " por {$resolverName}.";

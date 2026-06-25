@@ -18,7 +18,7 @@ new class extends Component
     public ?string $phone = '';
     public ?string $bio = '';
     public string $display_preference = 'name';
-    public ?int $departamento_id = null;
+    public ?int $department_id = null;
     public $photo;
 
     /**
@@ -33,7 +33,7 @@ new class extends Component
         $this->phone = Auth::user()->phone;
         $this->bio = Auth::user()->bio;
         $this->display_preference = Auth::user()->display_preference ?? 'name';
-        $this->departamento_id = Auth::user()->departamento_id;
+        $this->department_id = Auth::user()->department_id;
     }
 
     /**
@@ -51,7 +51,7 @@ new class extends Component
             'phone' => ['nullable', 'string', 'max:255'],
             'bio' => ['nullable', 'string', 'max:1000'],
             'display_preference' => ['required', 'string', Rule::in(['name', 'full_name', 'username'])],
-            'departamento_id' => ['nullable', 'exists:departamentos,id'],
+            'department_id' => ['nullable', 'exists:departments,id'],
             'photo' => ['nullable', 'image', 'max:1024'], // 1MB Max
         ]);
 
@@ -63,7 +63,7 @@ new class extends Component
             'phone' => $validated['phone'],
             'bio' => $validated['bio'],
             'display_preference' => $validated['display_preference'],
-            'departamento_id' => $validated['departamento_id'],
+            'department_id' => $validated['department_id'],
         ]);
 
         if ($this->photo) {
@@ -87,8 +87,8 @@ new class extends Component
     public function useDepartmentIcon(): void
     {
         $user = Auth::user();
-        if ($this->departamento_id) {
-            $depName = \App\Models\Departamento::find($this->departamento_id)->nombre ?? 'User';
+        if ($this->department_id) {
+            $depName = \App\Models\Department::find($this->department_id)->name ?? 'User';
             // Utilizamos DiceBear para generar un avatar 3D-ish basado en el departamento
             $user->avatar = 'https://api.dicebear.com/9.x/micah/svg?seed=' . urlencode($depName) . '&backgroundColor=f1f5f9';
             $user->save();
@@ -147,9 +147,9 @@ new class extends Component
                     <x-input-error class="mt-2" :messages="$errors->get('photo')" />
                 </div>
                 
-                @if($departamento_id)
+                @if($department_id)
                     <button type="button" wire:click="useDepartmentIcon" class="text-sm font-medium text-suraki-primary hover:text-suraki-primary-hover transition-colors underline decoration-dotted underline-offset-4">
-                        O usar ícono 3D de {{ \App\Models\Departamento::find($departamento_id)->nombre ?? 'tu departamento' }}
+                        O usar ícono 3D de {{ \App\Models\Department::find($department_id)->name ?? 'tu departamento' }}
                     </button>
                 @endif
             </div>
@@ -222,14 +222,14 @@ new class extends Component
 
             <!-- Full Width -->
             <div class="col-span-1 md:col-span-2">
-                <x-input-label for="departamento_id" value="Departamento" class="font-mono text-sm text-suraki-secondary" />
-                <select wire:model.live="departamento_id" id="departamento_id" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-suraki-primary focus:ring-suraki-primary text-suraki-secondary">
+                <x-input-label for="department_id" value="Departamento" class="font-mono text-sm text-suraki-secondary" />
+                <select wire:model.live="department_id" id="department_id" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-suraki-primary focus:ring-suraki-primary text-suraki-secondary">
                     <option value="">-- Seleccionar --</option>
-                    @foreach(\App\Models\Departamento::all() as $dep)
-                        <option value="{{ $dep->id }}">{{ $dep->nombre }}</option>
+                    @foreach(\App\Models\Department::all() as $dep)
+                        <option value="{{ $dep->id }}">{{ $dep->name }}</option>
                     @endforeach
                 </select>
-                <x-input-error class="mt-2" :messages="$errors->get('departamento_id')" />
+                <x-input-error class="mt-2" :messages="$errors->get('department_id')" />
             </div>
 
             <!-- Full Width -->

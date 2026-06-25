@@ -38,9 +38,9 @@ class TicketCriticoNotification extends Notification implements ShouldQueue
         return (new MailMessage)
                     ->subject('🚨 Ticket CRÍTICO Reportado: ' . $this->ticket->title)
                     ->greeting('Hola Equipo de Sistemas,')
-                    ->line('Se ha reportado un nuevo problema crítico en la sucursal: ' . $this->ticket->sucursal->nombre)
+                    ->line('Se ha reportado un nuevo problema crítico en la sucursal: ' . $this->ticket->branch->name)
                     ->line('**Área:** ' . $this->ticket->area_departamento)
-                    ->line('**Equipo:** ' . $this->ticket->equipo_afectado)
+                    ->line('**Equipo:** ' . $this->ticket->device_afectado)
                     ->line('**Descripción:** ' . $this->ticket->description)
                     ->action('Ver Ticket', url('/dashboard'))
                     ->line('Por favor, atienda este requerimiento lo antes posible.');

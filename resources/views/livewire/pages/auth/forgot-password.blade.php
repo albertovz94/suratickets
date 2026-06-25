@@ -21,7 +21,7 @@ new #[Layout('layouts.guest')] class extends Component
         ]);
 
         $user = User::where('username', $this->username)->first();
-        $admins = User::where('rol', 'admin')->get();
+        $admins = User::where('role', 'admin')->get();
 
         foreach ($admins as $admin) {
             $admin->notify(new PasswordResetAdminNotification($user));
@@ -57,7 +57,7 @@ new #[Layout('layouts.guest')] class extends Component
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                     </svg>
                 </div>
-                <input wire:model="username" id="username" class="block w-full pl-12 pr-4 py-3 border border-orange-200 rounded-xl focus:ring-[#ff5a5f] focus:border-[#ff5a5f] bg-gray-50/50 text-gray-900 transition-colors" type="text" name="username" required autofocus placeholder="Tu Usuario" />
+                <input wire:model="username" id="username" class="block w-full pl-12 pr-4 py-3 border border-orange-200 rounded-xl focus:ring-suraki-primary focus:border-suraki-primary bg-gray-50/50 text-gray-900 transition-colors" type="text" name="username" required autofocus placeholder="Tu Usuario" />
             </div>
             <x-input-error :messages="$errors->get('username')" class="mt-2" />
         </div>
@@ -85,7 +85,7 @@ new #[Layout('layouts.guest')] class extends Component
     </form>
     @else
         <div class="pt-4 pb-4 text-center">
-            <a href="{{ route('login') }}" class="inline-block text-[#ff5a5f] font-bold hover:underline" wire:navigate>Volver al inicio</a>
+            <a href="{{ route('login') }}" class="inline-block text-suraki-primary font-bold hover:underline" wire:navigate>Volver al inicio</a>
         </div>
     @endif
 </div>

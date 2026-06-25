@@ -51,7 +51,7 @@ class Index extends Component
 
     public function loadData()
     {
-        $query = Ticket::with(['departamento']);
+        $query = Ticket::with(['department']);
         $query = $this->applyDateFilter($query);
 
         $allTickets = $query->get();
@@ -78,7 +78,7 @@ class Index extends Component
         ];
 
         $this->deptChart = $allTickets->groupBy(function($t) {
-            return $t->departamento ? $t->departamento->nombre : 'Sin Depto';
+            return $t->department ? $t->department->name : 'Sin Depto';
         })->map->count()->toArray();
 
         $this->commonChart = $allTickets->groupBy('title')->map->count()->sortDesc()->take(5)->toArray();
@@ -88,7 +88,7 @@ class Index extends Component
 
     public function render()
     {
-        $query = Ticket::with(['departamento', 'creator', 'assignedTo']);
+        $query = Ticket::with(['department', 'creator', 'assignedTo']);
         $query = $this->applyDateFilter($query);
 
         $tickets = $query->latest()->paginate(20);

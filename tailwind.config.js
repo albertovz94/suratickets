@@ -18,9 +18,9 @@ export default {
             },
             colors: {
                 suraki: {
-                    primary: '#BE1E1E',
-                    'primary-hover': '#9A1818',
-                    'primary-light': '#FEE2E2',
+                    primary: '#ff1e1e',
+                    'primary-hover': '#e61b1b',
+                    'primary-light': '#ffebeb',
                     secondary: '#1A1A1B',
                     'secondary-light': '#2D2D2E',
                     tertiary: '#4A5568',
