@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/login');
 
 Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified', \App\Http\Middleware\CheckRole::class.':admin'])
+    ->middleware(['auth', 'verified', \App\Http\Middleware\CheckRole::class.':admin,outsourcing'])
     ->name('dashboard');
 
 Route::view('profile', 'profile')
@@ -45,7 +45,7 @@ Route::get('/tickets/{ticket}', \App\Livewire\Tickets\TicketDetail::class)
     ->name('tickets.show');
 
 // Admin Routes
-Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckRole::class.':admin'])->group(function () {
+Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckRole::class.':admin,outsourcing'])->group(function () {
     Route::get('/inventario', \App\Livewire\Inventory\InventoryList::class)->name('inventory.index');
     Route::get('/inventario/crear', \App\Livewire\Inventory\InventoryForm::class)->name('inventory.create');
     Route::get('/inventario/{id}/editar', \App\Livewire\Inventory\InventoryForm::class)->name('inventory.edit');

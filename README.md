@@ -16,28 +16,41 @@ Sistema de Soporte TI Monolítico desarrollado exclusivamente para el departamen
 
 El sistema utiliza un inicio de sesión personalizado a través de un **Username** (ej: `pedro_caja1`) en lugar de correo electrónico, para facilitar el acceso rápido del personal de sucursales. Sin embargo, los correos se almacenan para notificaciones.
 
-Existen exclusivamente **dos roles** definidos en la base de datos (`enum`):
+Existen **tres roles** definidos en la base de datos (`enum`):
 
 1.  **`admin` (Administrador de Sistemas):**
-    *   Tiene visión global.
-    *   Puede ver todos los tickets de todas las sucursales.
-    *   Tiene acceso a filtros avanzados (Estado, Prioridad).
-    *   Puede asignar tickets y cambiar sus estados.
-2.  **`usuario` (Usuario Final):**
-    *   Visión limitada a sus propios requerimientos.
-    *   Solo puede ver los tickets que él mismo ha creado (`creator_id`).
-    *   Interfaz simplificada sin filtros complejos.
+    *   Tiene visión global y control total del sistema.
+    *   Puede ver, editar y gestionar todos los tickets, requerimientos e inventario.
+    *   Tiene acceso exclusivo a configuración, reportes y gestión de usuarios.
+2.  **`outsourcing` (Personal Técnico Externo):**
+    *   Actúa operativamente como un administrador en las mesas de ayuda.
+    *   Tiene visión global de los tickets y requerimientos de soporte.
+    *   Gestiona su propio panel de horarios por turnos y check-in en el sistema.
+3.  **`usuario` (Usuario Final):**
+    *   Visión y control estrictamente limitados a sus propios requerimientos y tickets.
+    *   Solo puede visualizar el progreso de lo que él mismo ha creado (`creator_id`).
+    *   Interfaz limpia sin opciones avanzadas, menús de administración ni filtros complejos.
 
 ---
 
-## 🎫 Gestión de Tickets y Estados
+## 📦 Módulos del Sistema (Auditoría Actualizada)
 
-Cada ticket recopila información crucial sin necesidad de un inventario previo complejo:
-*   **Sucursal:** (Ej: Andinka, Kikana, Nabilka).
-*   **Área/Departamento:** (Ej: Caja 1, Gerencia).
-*   **Equipo Afectado:** (Ej: Impresora 02, PC Principal).
-*   **Prioridad:** Baja, Media, Alta, Crítica.
-*   **Estados del Ticket:** Abierto, Asignado, En Proceso, Pendiente, Resuelto, Cerrado.
+A medida que el proyecto ha escalado, se han integrado diversos módulos esenciales:
+
+1. **Gestión de Tickets (Soporte Técnico):**
+   * Control de incidentes por sucursal, área y equipo afectado.
+   * Prioridades (Baja, Media, Alta, Crítica) y estados dinámicos (Abierto, En Proceso, Pendiente, Resuelto, Cerrado).
+2. **Requerimientos (Requests):**
+   * Control de solicitudes específicas, asignación de responsables (`assigned_to`), urgencia y fecha de entrega.
+   * Sistema de subida de comprobantes (`proof`), guías de remisión (`delivery_note`) y sección de notas internas.
+   * Historial de comentarios (`RequestComment`) en tiempo real.
+3. **Control de Inventario (Inventory):**
+   * CRUD completo para la gestión del parque informático (`Device`) de cada sucursal y departamento.
+4. **Horarios y Turnos (Schedules):**
+   * Control de horarios de personal interno (`UserSchedule`).
+   * Gestión de turnos y personal externo (Outsourcing) mediante `WorkShift`.
+5. **Auditoría y Logs:**
+   * Tablas `activity_logs` y `route_logs` para llevar trazabilidad de las acciones y accesos de los usuarios en el sistema.
 
 ---
 
@@ -47,7 +60,7 @@ El proyecto está diseñado para funcionar de manera dinámica ("magia") sin rec
 
 *   **Campanita (In-App):** Ubicada en la barra de navegación. Notifica cambios de estado y asignaciones en tiempo real (Sondeo cada 5s).
 *   **Notificaciones Críticas (Observer):** Si un ticket se levanta con prioridad "Crítica", el `TicketObserver` dispara una alerta por Correo Electrónico (procesada por las Colas de Laravel) a todos los Administradores, además de la notificación interna.
-*   **Dashboard en Vivo:** Las tablas de tickets reflejan los cambios que hagan otros usuarios instantáneamente.
+*   **Dashboard en Vivo:** Las tablas reflejan los cambios que hagan otros usuarios instantáneamente.
 
 ---
 
@@ -88,57 +101,41 @@ Si otro desarrollador o Agente de IA necesita levantar el entorno, estos son los
 
 ---
 
-## 📂 Estructura Clave de Archivos (Para IA / Devs)
-*   **Componentes Livewire:** `app/Livewire/Tickets/` y `app/Livewire/Layout/NotificationBell.php`.
-*   **Vistas Livewire:** `resources/views/livewire/tickets/`.
-*   **Modelos y Migraciones:** `app/Models/Ticket.php` (y User, Sucursal).
-*   **Notificaciones y Observers:** `app/Notifications/` y `app/Observers/TicketObserver.php`.
-*   **Autenticación:** Las vistas de Breeze (`resources/views/livewire/pages/auth/`) fueron modificadas para usar `username`. El archivo clave de lógica es `app/Livewire/Forms/LoginForm.php`.
+## 🚀 Hoja de Ruta y Posibles Mejoras (Expert Roadmap)
+
+Tras una auditoría arquitectónica profunda, se plantean las siguientes optimizaciones de grado *Senior (15+ años exp)* para futuras iteraciones:
+
+*   **Desacoplamiento (Service Classes):** Extraer la lógica de negocio pesada de los componentes de Livewire (ej. cálculos de inventario o asignaciones de requerimientos) hacia clases de Servicio (`App\Services`). Esto evitará "Fat Controllers" y facilitará las pruebas.
+*   **Optimización de Queries (N+1) y Caché:** Implementar *Eager Loading* de manera estricta en todas las vistas de tablas (Livewire) y aplicar caché en consultas frecuentes que mutan poco (Ej. listado de Sucursales y Departamentos usando `Cache::remember`).
+*   **Testing Automatizado:** Configurar e implementar `Pest PHP` para testear el backend y las interacciones de los componentes clave de Livewire para evitar regresiones.
+*   **UI/UX Avanzado:** Añadir "Skeleton Loaders" (pantallas de carga falsa) para las transiciones de Livewire y notificaciones Toast no intrusivas en los CRUDs.
+*   **Seguridad:** Implementar Rate Limiting más agresivo en las rutas de login y estudiar la viabilidad de 2FA para cuentas administrativas.
 
 ---
 
 ## 📜 Historial de Cambios (Changelog)
 
-Este proyecto se desarrolló en fases iterativas. A continuación, se detalla el progreso acumulado y los archivos que fueron modificados o creados en cada paso para mantener un estricto control de versiones.
-
 ### Fase 1: Inicialización y Arquitectura Base
-*   **Objetivo:** Levantar el proyecto de Laravel 11 con Livewire, configurar la base de datos y la autenticación básica de Breeze.
-*   **Archivos Afectados / Creados:**
-    *   `composer.json` y `package.json` (Instalación de Laravel, Livewire y dependencias).
-    *   `.env` (Configuración de conexión a base de datos MySQL).
-    *   Instalación de Laravel Breeze (`php artisan breeze:install`).
+*   Levantar Laravel 11, Livewire, BDD y autenticación básica de Breeze. (Archivos clave: `composer.json`, `.env`, configuración inicial).
 
-### Fase 2: Modelado de Datos (Migraciones)
-*   **Objetivo:** Crear la estructura de la base de datos para Sucursales, Tickets y adaptar Usuarios.
-*   **Archivos Afectados / Creados:**
-    *   `database/migrations/..._create_sucursals_table.php`: Creación de la tabla de sucursales.
-    *   `database/migrations/..._create_tickets_table.php`: Estructura principal de los tickets (título, descripción, prioridad, estados, asignaciones).
-    *   `database/migrations/..._add_fields_to_users_table.php`: Se añadieron los campos `rol`, `username` y `sucursal_id` a la tabla `users`.
-    *   Modelos de Eloquent: `app/Models/Ticket.php`, `app/Models/Sucursal.php`, `app/Models/User.php`.
+### Fase 2: Modelado de Datos de Soporte
+*   Creación de migraciones para `Sucursales`, `Tickets` y personalización de la tabla `Users` con campos como `rol` y `username`.
 
 ### Fase 3: Lógica de Negocio y Notificaciones Backend
-*   **Objetivo:** Implementar los Seeders de prueba y el sistema asíncrono para enviar correos de emergencia (Tickets Críticos) usando colas y el patrón Observer.
-*   **Archivos Afectados / Creados:**
-    *   `database/seeders/SucursalSeeder.php`, `UserSeeder.php`, `TicketSeeder.php`, `DatabaseSeeder.php`.
-    *   `app/Observers/TicketObserver.php`: Se conecta al evento "created" o "updated" del modelo Ticket para evaluar prioridades.
-    *   `app/Notifications/TicketCriticoNotification.php`: Plantilla mailable del correo y configuración `ShouldQueue`.
-    *   `bootstrap/providers.php`: Registro del Observer.
+*   Implementación del patrón Observer (`TicketObserver.php`) y envío de correos asíncronos en cola para tickets críticos. Seeders base.
 
-### Fase 4: Autenticación con Username, Tiempo Real y UI (Livewire)
-*   **Objetivo:** Refactorizar el Login para usar `username`, construir el Dashboard reactivo con tablas filtrables, el formulario de tickets y la Campanita de notificaciones In-App usando Polling.
-*   **Archivos Afectados / Creados:**
-    *   `app/Livewire/Forms/LoginForm.php` y `resources/views/livewire/pages/auth/login.blade.php`: Cambio de lógica de validación de `email` a `username`.
-    *   `app/Livewire/Layout/NotificationBell.php`: Componente de Livewire con `wire:poll.5s` para notificaciones In-App en tiempo real.
-    *   `app/Livewire/Tickets/TicketList.php` (y `.blade.php`): Tabla dinámica para listar tickets, con filtros condicionales dependiendo del rol (Administrador vs Usuario) y `wire:poll.10s`.
-    *   `app/Livewire/Tickets/TicketForm.php` (y `.blade.php`): Pantalla para creación de tickets.
-    *   `resources/views/dashboard.blade.php` y `resources/views/livewire/layout/navigation.blade.php`: Inserción de los componentes visuales.
-    *   `routes/web.php`: Nuevas rutas `/tickets/create` y `/tickets/{ticket}`.
+### Fase 4: Refactorización Login y Tiempo Real
+*   Login por `username`.
+*   Componente `NotificationBell.php` (Campanita) y Polling Livewire para UI dinámica.
+*   CRUD y tablas dinámicas de Tickets.
 
-### Fase 5: Vista de Detalle, Políticas de Seguridad y Middleware
-*   **Objetivo:** Implementar la pantalla donde el administrador puede cambiar los estados y asignar tickets, y proteger la aplicación para que los usuarios no puedan violar los permisos (Ej. Error 403).
-*   **Archivos Afectados / Creados:**
-    *   `app/Livewire/Tickets/TicketDetail.php` (y `.blade.php`): Panel de gestión de un ticket individual.
-    *   `app/Policies/TicketPolicy.php`: Archivo que dicta qué usuario puede ver o modificar qué ticket (Ej. usuarios normales solo ven los que ellos mismos crearon).
-    *   `app/Http/Middleware/CheckRole.php`: Filtro de protección global de rutas que evalúa si un usuario posee o no privilegios de administrador.
-    *   `bootstrap/app.php`: Registro del alias de middleware `role`.
-    *   `README.md`: Documentación formal de la arquitectura y el proceso de instalación.
+### Fase 5: Vista de Detalle y Políticas de Seguridad
+*   Middleware `CheckRole.php` y Policies (`TicketPolicy.php`) para asegurar que usuarios limitados no accedan a información de administradores.
+*   Gestión individual del estado de los tickets.
+
+### Fase 6: Expansión Funcional (Auditoría y Módulos Extra)
+*   **Requerimientos:** Creación del módulo Requests con asignaciones, validaciones (comprobantes, guía de remisión) y sistema de comentarios en hilo (`RequestComment`).
+*   **Inventario:** Nuevo módulo (`Device`) integrado a Livewire para controlar el hardware por sucursal.
+*   **Horarios:** Integración del control de turnos y personal interno (`UserSchedule`) y outsourcing (`WorkShift`).
+*   **Logs:** Implementación de tablas `activity_logs` y `route_logs` para control y trazabilidad administrativa.
+*   **Configuración:** Pantalla base para configuraciones dinámicas (`Settings`).

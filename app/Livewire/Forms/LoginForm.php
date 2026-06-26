@@ -30,8 +30,30 @@ class LoginForm extends Form
     {
         $this->ensureIsNotRateLimited();
 
+        $user = \App\Models\User::where('username', $this->username)->first();
+
+        if ($user) {
+            if ($user->status === 'Bloqueada') {
+                throw ValidationException::withMessages([
+                    'form.username' => 'Tu cuenta ha sido bloqueada. Contacta a un administrador.',
+                ]);
+            }
+            if ($user->status === 'Inactivo') {
+                throw ValidationException::withMessages([
+                    'form.username' => 'Tu cuenta está inactiva. Contacta a un administrador.',
+                ]);
+            }
+        }
+
         if (! Auth::attempt($this->only(['username', 'password']), $this->remember)) {
-            RateLimiter::hit($this->throttleKey());
+            $attempts = RateLimiter::hit($this->throttleKey());
+
+            if ($user && $attempts >= 5) {
+                $user->update(['status' => 'Bloqueada']);
+                throw ValidationException::withMessages([
+                    'form.username' => 'Tu cuenta ha sido bloqueada por múltiples intentos fallidos.',
+                ]);
+            }
 
             throw ValidationException::withMessages([
                 'form.username' => trans('auth.failed'),

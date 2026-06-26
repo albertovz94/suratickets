@@ -21,7 +21,7 @@ class TicketPolicy
      */
     public function view(User $user, Ticket $ticket): bool
     {
-        return $user->role === 'admin' || $user->id === $ticket->creator_id;
+        return $user->hasAdminAccess() || $user->id === $ticket->creator_id;
     }
 
     /**
@@ -37,7 +37,7 @@ class TicketPolicy
      */
     public function update(User $user, Ticket $ticket): bool
     {
-        return $user->role === 'admin';
+        return $user->hasAdminAccess();
     }
 
     /**
@@ -45,6 +45,6 @@ class TicketPolicy
      */
     public function delete(User $user, Ticket $ticket): bool
     {
-        return $user->role === 'admin';
+        return $user->hasAdminAccess();
     }
 }
