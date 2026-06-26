@@ -94,10 +94,9 @@
                 </div>
 
                 <div class="flex items-center justify-end mt-8">
-                    <button type="submit" wire:loading.attr="disabled" class="blob-btn shadow-xl text-lg" style="max-width: 250px;">
-                        <span style="position:relative; z-index: 10;">{{ __('Guardar Equipo') }}</span>
-                        <span class="blob-btn__inner"><span class="blob-btn__blobs"><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span></span></span>
-                    </button>
+                    <x-btn-panel type="submit" wire:loading.attr="disabled" class="w-full sm:w-auto" style="min-width: 200px;">
+                        {{ __('Guardar Equipo') }}
+                    </x-btn-panel>
                 </div>
             </form>
         </div>

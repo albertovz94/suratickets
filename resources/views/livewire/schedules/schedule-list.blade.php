@@ -5,12 +5,18 @@
             <p class="text-sm text-gray-500">Monitorea quién está en turno y el esquema de trabajo del equipo.</p>
         </div>
         <div class="flex gap-2">
-            <a href="{{ route('schedules.outsourcing') }}" wire:navigate class="inline-flex items-center gap-2 bg-white text-suraki-primary border border-suraki-primary hover:bg-red-50 font-bold py-2.5 px-5 rounded-xl transition-all shadow-sm">
-                Control Outsourcing
+            <a href="{{ route('schedules.outsourcing') }}" wire:navigate class="blob-btn shadow-sm" style="width: 220px; padding: 10px 20px;">
+                <span style="position:relative; z-index: 10;" class="flex items-center gap-2 text-sm whitespace-nowrap">
+                    Gestión Outsourcing
+                </span>
+                <span class="blob-btn__inner"><span class="blob-btn__blobs"><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span></span></span>
             </a>
             @if(auth()->user()->hasAdminAccess())
-            <a href="{{ route('schedules.config') }}" wire:navigate class="inline-flex items-center gap-2 bg-suraki-primary hover:bg-suraki-secondary text-white font-bold py-2.5 px-5 rounded-xl transition-all shadow-sm">
-                Configurar Horarios
+            <a href="{{ route('schedules.config') }}" wire:navigate class="blob-btn shadow-sm" style="width: 220px; padding: 10px 20px;">
+                <span style="position:relative; z-index: 10;" class="flex items-center gap-2 text-sm whitespace-nowrap">
+                    Configurar Horarios Base
+                </span>
+                <span class="blob-btn__inner"><span class="blob-btn__blobs"><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span></span></span>
             </a>
             @endif
         </div>

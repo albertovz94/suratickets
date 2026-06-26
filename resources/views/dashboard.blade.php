@@ -8,11 +8,21 @@
                 <p class="text-sm text-suraki-tertiary mt-1">Bienvenido/a de nuevo, {{ auth()->user()->name }}</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('tickets.create') }}" wire:navigate class="inline-flex items-center gap-2 px-4 py-2.5 bg-suraki-primary text-white rounded-lg text-sm font-semibold hover:bg-suraki-primary-hover transition-all duration-200 shadow-sm shadow-suraki-primary/20">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Nuevo Ticket
+                <a href="{{ route('tickets.create') }}" wire:navigate class="blob-btn" style="width: 220px; padding: 10px 20px;">
+                    <span style="position:relative; z-index: 10;" class="flex items-center gap-2 text-sm whitespace-nowrap">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Nuevo Ticket
+                    </span>
+                    <span class="blob-btn__inner">
+                        <span class="blob-btn__blobs">
+                            <span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span>
+                        </span>
+                    </span>
                 </a>
             </div>
         </div>

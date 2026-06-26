@@ -12,7 +12,15 @@ class Request extends Model
         'description',
         'urgency',
         'status',
-        'assigned_to'
+        'assigned_to',
+        'admin_note',
+        'proof_photo_path',
+        'delivery_note',
+        'delivered_at'
+    ];
+
+    protected $casts = [
+        'delivered_at' => 'datetime',
     ];
 
     public function user()
@@ -23,5 +31,10 @@ class Request extends Model
     public function assignedTo()
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(RequestComment::class);
     }
 }

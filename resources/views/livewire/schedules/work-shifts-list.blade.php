@@ -51,9 +51,9 @@
                     </div>
                 </div>
 
-                <button type="submit" class="w-full mt-4 bg-gray-900 hover:bg-gray-800 text-white font-bold py-2.5 rounded-xl shadow-sm transition-all text-sm">
-                    Añadir a la Agenda
-                </button>
+                <x-btn-panel type="submit" class="w-full mt-4">
+                    Registrar Horario / Siguiente Semana
+                </x-btn-panel>
             </form>
         </div>
 
