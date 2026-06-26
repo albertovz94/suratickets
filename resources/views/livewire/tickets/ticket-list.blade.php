@@ -40,7 +40,7 @@
     </div>
 
     <div class="bg-white shadow-sm rounded-xl border border-suraki-neutral-dark overflow-hidden">
-        <ul role="list" class="divide-y divide-suraki-neutral-dark">
+        <ul role="list" wire:loading.class="hidden" class="divide-y divide-suraki-neutral-dark">
             @forelse($tickets as $ticket)
             <li class="animate-fade-in">
                 <a href="{{ route('tickets.show', $ticket) }}" wire:navigate class="block hover:bg-suraki-neutral transition-colors duration-150 cursor-pointer">
@@ -86,6 +86,24 @@
                 <p class="text-suraki-tertiary/60 text-sm mt-1">Intenta con otros filtros o crea un nuevo ticket.</p>
             </li>
             @endforelse
+        </ul>
+        <!-- Skeleton Loader -->
+        <ul role="list" wire:loading.class.remove="hidden" class="divide-y divide-suraki-neutral-dark hidden">
+            @for($i = 0; $i < 5; $i++)
+            <li class="px-5 py-4 sm:px-6">
+                <div class="flex items-center justify-between">
+                    <div class="h-5 bg-gray-200 rounded w-1/3 animate-pulse"></div>
+                    <div class="flex gap-2">
+                        <div class="h-6 w-16 bg-gray-200 rounded-full animate-pulse"></div>
+                        <div class="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+                <div class="mt-4 sm:flex sm:justify-between">
+                    <div class="h-4 bg-gray-200 rounded w-1/4 animate-pulse"></div>
+                    <div class="h-4 bg-gray-200 rounded w-24 mt-2 sm:mt-0 animate-pulse"></div>
+                </div>
+            </li>
+            @endfor
         </ul>
     </div>
     <div class="mt-4">

@@ -77,9 +77,16 @@ class TicketForm extends Component
 
     public function render()
     {
+        $dropdowns = \Illuminate\Support\Facades\Cache::remember('ticket_form_dropdowns', 3600, function() {
+            return [
+                'branches' => Branch::where('is_active', true)->get(),
+                'departments' => Department::all()
+            ];
+        });
+
         return view('livewire.tickets.ticket-form', [
-            'branches' => Branch::where('is_active', true)->get(),
-            'departments' => Department::all()
+            'branches' => $dropdowns['branches'],
+            'departments' => $dropdowns['departments']
         ])->layout('layouts.app');
     }
 }

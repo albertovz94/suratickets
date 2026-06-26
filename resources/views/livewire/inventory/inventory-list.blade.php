@@ -173,8 +173,8 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($devices as $device)
+                    <tbody wire:loading.class="hidden" class="bg-white divide-y divide-gray-200">
+                        @forelse($devices as $device)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <input type="checkbox" class="rounded border-gray-300 text-suraki-primary focus:ring-suraki-primary">
@@ -250,7 +250,54 @@
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                                No se encontraron equipos con los filtros actuales.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                    <!-- Skeleton Loader (Shown during filtering/pagination) -->
+                    <tbody wire:loading.class.remove="hidden" class="bg-white divide-y divide-gray-200 hidden">
+                        @for($i = 0; $i < 6; $i++)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-gray-200 animate-pulse flex-shrink-0"></div>
+                                    <div class="flex-1 w-full">
+                                        <div class="h-4 bg-gray-200 rounded w-24 mb-2 animate-pulse"></div>
+                                        <div class="h-3 bg-gray-200 rounded w-16 animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="h-4 w-28 bg-gray-200 rounded animate-pulse"></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="h-4 bg-gray-200 rounded w-24 mb-2 animate-pulse"></div>
+                                <div class="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="h-6 w-20 rounded-full bg-gray-200 animate-pulse"></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right">
+                                <div class="flex justify-end gap-2">
+                                    <div class="h-7 w-7 bg-gray-200 rounded animate-pulse"></div>
+                                    <div class="h-7 w-7 bg-gray-200 rounded animate-pulse"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        @endfor
                     </tbody>
                 </table>
                 <div class="px-6 py-4 border-t border-gray-200">

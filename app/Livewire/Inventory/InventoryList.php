@@ -95,28 +95,36 @@ class InventoryList extends Component
             $query->where('department_id', $this->department_id);
         }
 
-        // Estadísticas Reales
-        $totalEquipos = Device::count();
-        $activos = Device::where('status', 'Activo')->count();
-        $enReparacion = Device::where('status', 'En reparacion')->count();
-        $dadosBaja = Device::where('status', 'De baja')->count();
+        // Estadísticas Reales cacheadas por 5 min
+        $stats = \Illuminate\Support\Facades\Cache::remember('inventory_stats', 300, function() {
+            return [
+                'total' => Device::count(),
+                'activos' => Device::where('status', 'Activo')->count(),
+                'enReparacion' => Device::where('status', 'En reparacion')->count(),
+                'dadosBaja' => Device::where('status', 'De baja')->count(),
+            ];
+        });
 
-        // Unique values for dropdowns
-        $types = Device::select('type')->distinct()->pluck('type');
-        $statuses = Device::select('status')->distinct()->pluck('status');
-        $branches = \App\Models\Branch::where('is_active', true)->get();
-        $departments = \App\Models\Department::all();
+        // Unique values for dropdowns cacheadas por 1 hora
+        $dropdowns = \Illuminate\Support\Facades\Cache::remember('inventory_dropdowns', 3600, function() {
+            return [
+                'types' => Device::select('type')->distinct()->pluck('type'),
+                'statuses' => Device::select('status')->distinct()->pluck('status'),
+                'branches' => \App\Models\Branch::where('is_active', true)->get(),
+                'departments' => \App\Models\Department::all(),
+            ];
+        });
 
         return view('livewire.inventory.inventory-list', [
-            'devices' => $query->paginate(6),
-            'totalEquipos' => $totalEquipos,
-            'activos' => $activos,
-            'enReparacion' => $enReparacion,
-            'dadosBaja' => $dadosBaja,
-            'types' => $types,
-            'statuses' => $statuses,
-            'branches' => $branches,
-            'departments' => $departments,
+            'devices' => $query->with(['branch', 'department'])->paginate(6),
+            'totalEquipos' => $stats['total'],
+            'activos' => $stats['activos'],
+            'enReparacion' => $stats['enReparacion'],
+            'dadosBaja' => $stats['dadosBaja'],
+            'types' => $dropdowns['types'],
+            'statuses' => $dropdowns['statuses'],
+            'branches' => $dropdowns['branches'],
+            'departments' => $dropdowns['departments'],
         ])->layout('layouts.app');
     }
 }
