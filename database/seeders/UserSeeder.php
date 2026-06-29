@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@suraki.local',
             'username' => 'admin_sistemas',
             'password' => bcrypt('password'),
-            'rol' => 'admin',
+            'role' => 'admin',
         ]);
 
         \App\Models\User::create([
@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
             'email' => 'usuario@suraki.local',
             'username' => 'usuario_caja1',
             'password' => bcrypt('password'),
-            'rol' => 'usuario',
+            'role' => 'usuario',
             'branch_id' => 1,
         ]);
     }

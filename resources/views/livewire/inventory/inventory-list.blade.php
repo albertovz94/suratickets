@@ -207,7 +207,9 @@
                                 <p class="text-xs text-gray-400 mt-0.5">{{ optional($device->department)->name }}</p>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-600">{{ optional($device->assignee)->name ?? '--' }}</span>
+                                <span class="text-sm text-gray-600">
+                                    {{ $device->assignee ? trim($device->assignee->name . ' ' . ($device->assignee->last_name ?? '')) : '--' }}
+                                </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">

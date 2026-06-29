@@ -10,12 +10,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 #[Fillable(['name', 'last_name', 'email', 'phone', 'password', 'username', 'branch_id', 'department_id', 'role', 'status', 'avatar', 'bio', 'display_preference'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.
@@ -48,6 +50,11 @@ class User extends Authenticatable
     public function scopeAdmins($query)
     {
         return $query->where('role', 'admin');
+    }
+
+    public function scopeAssignableAdmins($query)
+    {
+        return $query->where('role', 'admin')->where('username', '!=', 'admin_sistemas');
     }
 
     public function assignedTickets()
@@ -92,64 +99,7 @@ class User extends Authenticatable
 
     public function isWorkingNow()
     {
-        $now = \Carbon\Carbon::now();
-        $schedule = $this->schedule;
-
-        if ($this->role === 'outsourcing') {
-            $activeShift = $this->workShifts()->whereDate('date', $now->toDateString())
-                ->where(function($query) {
-                    $query->where('status', 'en_curso')
-                          ->orWhere(function($q) {
-                              $q->whereNotNull('check_in')->whereNull('check_out');
-                          });
-                })->first();
-            return $activeShift !== null;
-        }
-
-        if (!$schedule) {
-            // Horario por defecto: 7 am a 10:30 pm
-            $currentTime = $now->format('H:i:s');
-            $start = '07:00:00';
-            $end = '22:30:00';
-            return $currentTime >= $start && $currentTime <= $end;
-        }
-
-        if ($schedule->type === 'fijo') {
-            $dayOfWeek = strtolower($now->englishDayOfWeek);
-            $startField = $dayOfWeek . '_start';
-            $endField = $dayOfWeek . '_end';
-
-            $start = $schedule->$startField;
-            $end = $schedule->$endField;
-
-            if ($start && $end) {
-                $startTime = \Carbon\Carbon::createFromFormat('H:i:s', $start);
-                $endTime = \Carbon\Carbon::createFromFormat('H:i:s', $end);
-                $currentTime = $now->format('H:i:s');
-
-                if ($endTime->lessThan($startTime)) {
-                    // Turno nocturno (ej: 22:00 a 06:00)
-                    return $currentTime >= $start || $currentTime <= $end;
-                } else {
-                    // Turno normal (ej: 08:00 a 17:00)
-                    return $currentTime >= $start && $currentTime <= $end;
-                }
-            }
-            return false;
-        }
-
-        if ($schedule->type === 'outsourcing') {
-            $activeShift = $this->workShifts()->whereDate('date', $now->toDateString())
-                ->where(function($query) {
-                    $query->where('status', 'en_curso')
-                          ->orWhere(function($q) {
-                              $q->whereNotNull('check_in')->whereNull('check_out');
-                          });
-                })->first();
-            return $activeShift !== null;
-        }
-
-        return false;
+        return resolve(\App\Services\ScheduleService::class)->isUserWorkingNow($this);
     }
 
     public function hasAdminAccess()

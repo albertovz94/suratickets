@@ -148,6 +148,7 @@
                                 <th class="px-6 py-4">Rol</th>
                                 <th class="px-6 py-4">Sucursal</th>
                                 <th class="px-6 py-4">Departamento</th>
+                                <th class="px-6 py-4">Equipo</th>
                                 <th class="px-6 py-4">Estado</th>
                                 <th class="px-6 py-4 text-center">Acciones</th>
                             </tr>
@@ -193,6 +194,19 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <p class="text-sm text-suraki-secondary">{{ optional($user->department)->name ?? 'Sin departamento' }}</p>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if($user->assigned_devices_count > 0)
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                                Tiene equipo ({{ $user->assigned_devices_count }})
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500 border border-gray-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                                Sin equipo
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 flex items-center h-[73px]">
                                         <button 

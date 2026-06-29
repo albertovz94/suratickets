@@ -67,7 +67,7 @@ class CreateTicketAction
      */
     private function findBestAvailableAdmin(): ?User
     {
-        $admins = User::admins()
+        $admins = User::assignableAdmins()
             ->withCount(['assignedTickets' => function ($query) {
                 $query->whereIn('status', ['abierto', 'asignado', 'en_proceso', 'pendiente']);
             }])

@@ -5,7 +5,7 @@ namespace App\Livewire\Requests;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
-use App\Models\Request;
+use App\Models\EquipmentRequest;
 use App\Models\RequestComment;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,7 +37,8 @@ class RequestList extends Component
 
     public function openActionModal($id, $action)
     {
-        if (!auth()->user()->hasAdminAccess()) {
+        $solicitud = EquipmentRequest::findOrFail($id);
+        if (auth()->user()->cannot('update', $solicitud)) {
             abort(403);
         }
 
@@ -61,7 +62,8 @@ class RequestList extends Component
 
     public function confirmAction()
     {
-        if (!auth()->user()->hasAdminAccess()) {
+        $solicitud = EquipmentRequest::findOrFail($this->selectedRequestId);
+        if (auth()->user()->cannot('update', $solicitud)) {
             abort(403);
         }
 
@@ -78,7 +80,6 @@ class RequestList extends Component
             $this->validate($rules);
         }
 
-        $solicitud = Request::findOrFail($this->selectedRequestId);
         $newStatus = '';
 
         if ($this->pendingAction === 'aprobar') {
@@ -109,7 +110,7 @@ class RequestList extends Component
 
     public function openDetailModal($id)
     {
-        $this->selectedRequest = Request::with(['user', 'assignedTo', 'comments.user'])->findOrFail($id);
+        $this->selectedRequest = EquipmentRequest::with(['user', 'assignedTo', 'comments.user'])->findOrFail($id);
         $this->newCommentBody = ''; // Resetear campo de comentario al abrir
         $this->detailModalVisible = true;
     }
@@ -125,22 +126,9 @@ class RequestList extends Component
     {
         if (!$this->selectedRequest) return;
 
-        // Validaciones de seguridad
-        $user = auth()->user();
-        $isAdmin = $user->hasAdminAccess();
-        
-        // Condiciones para poder comentar:
-        // 1. Debe estar 'en_proceso' (opcional, pero sugerido).
-        // 2. Si NO es admin, debe haber pasado 15 días o ya haber comentarios en el hilo.
-        if (!$isAdmin) {
-            $daysSinceCreation = $this->selectedRequest->created_at->diffInDays(now());
-            $hasComments = $this->selectedRequest->comments->count() > 0;
-            
-            if ($daysSinceCreation < 15 && !$hasComments) {
-                // No tiene permiso aún
-                session()->flash('error', 'Aún no puedes agregar notas a esta solicitud.');
-                return;
-            }
+        if (auth()->user()->cannot('comment', $this->selectedRequest)) {
+            session()->flash('error', 'Aún no puedes agregar notas a esta solicitud.');
+            return;
         }
 
         $this->validate([
@@ -155,12 +143,12 @@ class RequestList extends Component
 
         $this->newCommentBody = '';
         // Recargar la solicitud para obtener los comentarios frescos
-        $this->selectedRequest = Request::with(['user', 'assignedTo', 'comments.user'])->findOrFail($this->selectedRequest->id);
+        $this->selectedRequest = EquipmentRequest::with(['user', 'assignedTo', 'comments.user'])->findOrFail($this->selectedRequest->id);
     }
 
     public function render()
     {
-        $query = Request::query();
+        $query = EquipmentRequest::query();
 
         // Filtrar por la pestaña activa
         $query->where('status', $this->activeTab);

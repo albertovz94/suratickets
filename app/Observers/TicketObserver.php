@@ -46,13 +46,13 @@ class TicketObserver
      */
     public function updated(Ticket $ticket): void
     {
-        if ($ticket->isDirty('priority') && $ticket->priority === 'critica') {
+        if ($ticket->wasChanged('priority') && $ticket->priority === 'critica') {
             $admins = User::admins()->get();
             Notification::send($admins, new TicketCriticoNotification($ticket));
         }
 
         // Si el estado cambió a resuelto o cerrado
-        if ($ticket->isDirty('status') && in_array($ticket->status, ['resuelto', 'cerrado'])) {
+        if ($ticket->wasChanged('status') && in_array($ticket->status, ['resuelto', 'cerrado'])) {
             // Asegurarse de que no estuviese ya en estado de resolución
             if (!in_array($ticket->getOriginal('status'), ['resuelto', 'cerrado'])) {
                 $creatorName = $ticket->creator->name;

@@ -13,9 +13,21 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
 
+        // Force HTTPS in production
+        if (env('APP_ENV') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
+        // Append CheckUserStatus and LogRouteRequests to all web requests
+        $middleware->web(append: [
+            \App\Http\Middleware\CheckUserStatus::class,
+            \App\Http\Middleware\LogRouteRequests::class,
+        ]);
+
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

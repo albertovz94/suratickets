@@ -79,7 +79,7 @@ class ScheduleForm extends Component
             $data
         );
 
-        $this->dispatch('notify', message: 'Horario actualizado exitosamente.'); session()->flash('message', 'Horario actualizado exitosamente.');
+        session()->flash('message', 'Horario actualizado exitosamente.');
         return redirect()->route('schedules.index');
     }
 

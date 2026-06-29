@@ -31,12 +31,12 @@ class InventoryList extends Component
         $this->resetPage();
     }
 
-    public function updatingSucursalId()
+    public function updatingBranchId()
     {
         $this->resetPage();
     }
 
-    public function updatingDepartamentoId()
+    public function updatingDepartmentId()
     {
         $this->resetPage();
     }
@@ -45,7 +45,10 @@ class InventoryList extends Component
     {
         $device = Device::findOrFail($id);
         $device->delete();
-        $this->dispatch('notify', message: 'Equipo eliminado correctamente.'); session()->flash('message', 'Equipo eliminado correctamente.');
+        \App\Services\ActivityLogger::log('delete_device', $device, "Eliminó el equipo {$device->name} (S/N: {$device->serial_number})");
+        \Illuminate\Support\Facades\Cache::forget('inventory_stats');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
+        $this->dispatch('notify', message: 'Equipo eliminado correctamente.');
     }
 
     public function cycleEquipoStatus($id)
@@ -64,11 +67,15 @@ class InventoryList extends Component
         }
         
         $device->save();
+        \Illuminate\Support\Facades\Cache::forget('inventory_stats');
         $this->dispatch('show-toast', message: $message);
     }
 
     public function render()
     {
+        \Illuminate\Support\Facades\Cache::forget('inventory_stats');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
+
         $query = Device::query();
 
         if ($this->search) {

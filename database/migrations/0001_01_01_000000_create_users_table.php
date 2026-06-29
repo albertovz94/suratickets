@@ -40,7 +40,7 @@ return new class extends Migration
             $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
             $table->text('bio')->nullable();
             $table->string('display_preference')->default('name'); // name, full_name, username
-            $table->enum('role', ['admin', 'usuario'])->default('usuario');
+            $table->enum('role', ['admin', 'usuario', 'outsourcing'])->default('usuario');
             $table->enum('status', ['Activo', 'Bloqueada', 'Inactivo'])->default('Activo');
             $table->rememberToken();
             $table->timestamps();

@@ -57,7 +57,8 @@ class UserList extends Component
         }
 
         $user->delete();
-        $this->dispatch('notify', message: 'Usuario eliminado correctamente.'); session()->flash('message', 'Usuario eliminado correctamente.');
+        \App\Services\ActivityLogger::log('delete_user', $user, "Eliminó la cuenta de usuario {$user->name} ({$user->email})");
+        $this->dispatch('notify', message: 'Usuario eliminado correctamente.');
     }
 
     public function toggleUserStatus($userId)
@@ -81,6 +82,7 @@ class UserList extends Component
         }
 
         $user->save();
+        \App\Services\ActivityLogger::log('toggle_user_status', $user, "Cambió el estado del usuario {$user->name} a {$user->status}");
     }
 
     public function render()

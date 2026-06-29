@@ -53,7 +53,7 @@ class WorkShiftsList extends Component
         ]);
 
         $this->reset(['scheduled_start', 'scheduled_end']);
-        $this->dispatch('notify', message: 'Turno programado exitosamente.'); session()->flash('message', 'Turno programado exitosamente.');
+        $this->dispatch('notify', message: 'Turno programado exitosamente.');
     }
 
     public function checkIn($shiftId)
@@ -69,7 +69,7 @@ class WorkShiftsList extends Component
             'status' => 'en_curso'
         ]);
         
-        $this->dispatch('notify', message: 'Check-in registrado.'); session()->flash('message', 'Check-in registrado.');
+        $this->dispatch('notify', message: 'Check-in registrado.');
     }
 
     public function checkOut($shiftId)
@@ -85,7 +85,7 @@ class WorkShiftsList extends Component
             'status' => 'completado'
         ]);
         
-        $this->dispatch('notify', message: 'Check-out registrado.'); session()->flash('message', 'Check-out registrado.');
+        $this->dispatch('notify', message: 'Check-out registrado.');
     }
 
     public function updateStatus($shiftId, $status)

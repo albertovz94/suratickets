@@ -15,7 +15,7 @@ class DeviceSeeder extends Seeder
      */
     public function run(): void
     {
-        Equipo::truncate();
+        Device::truncate();
 
         $devicesData = [
             [
@@ -75,10 +75,10 @@ class DeviceSeeder extends Seeder
         ];
 
         foreach ($devicesData as $data) {
-            $branch = Sucursal::firstOrCreate(['name' => $data['sucursal']]);
-            $department = Departamento::firstOrCreate(['name' => $data['departamento'], 'branch_id' => $branch->id]);
+            $branch = Branch::firstOrCreate(['name' => $data['sucursal']]);
+            $department = Department::firstOrCreate(['name' => $data['departamento']]);
 
-            Equipo::create([
+            Device::create([
                 'name' => $data['name'],
                 'specs' => $data['specs'],
                 'type' => $data['type'],

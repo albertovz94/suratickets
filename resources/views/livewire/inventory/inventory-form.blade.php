@@ -91,6 +91,71 @@
                         </select>
                         <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
                     </div>
+
+                    <!-- Asignar a Usuario (Buscador Autocompletado) -->
+                    <div class="md:col-span-2 relative" x-data="{ open: false }" @click.away="open = false">
+                        <x-input-label for="userSearch" :value="__('Asignar a Usuario / Administrador')" />
+                        <div class="relative mt-1">
+                            <x-text-input 
+                                wire:model.live="userSearch" 
+                                id="userSearch" 
+                                @focus="open = true" 
+                                class="block w-full bg-white/50 pr-10" 
+                                type="text" 
+                                placeholder="Escribe el nombre, apellido o usuario para buscar..." 
+                                autocomplete="off"
+                            />
+                            
+                            @if($assigned_to)
+                                <button type="button" 
+                                    wire:click="$set('assigned_to', null); $set('userSearch', '');" 
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                                    title="Quitar asignación"
+                                >
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            @endif
+                        </div>
+                        <input type="hidden" wire:model="assigned_to">
+
+                        <!-- Dropdown list -->
+                        <div x-show="open && $wire.userSearch.length > 0" 
+                             x-transition
+                             class="absolute top-full left-0 z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-gray-100"
+                             style="display: none;"
+                        >
+                            @forelse($users as $user)
+                                @php
+                                    $fullName = trim($user->name . ' ' . ($user->last_name ?? ''));
+                                @endphp
+                                <button type="button" 
+                                    x-on:mousedown.prevent="
+                                        $wire.set('assigned_to', {{ $user->id }}); 
+                                        $wire.set('userSearch', '{{ addslashes($fullName) }}'); 
+                                        $wire.set('branch_id', '{{ $user->branch_id ?? '' }}');
+                                        $wire.set('department_id', '{{ $user->department_id ?? '' }}');
+                                        open = false;
+                                    "
+                                    class="w-full text-left px-4 py-3 text-sm hover:bg-suraki-neutral transition-colors flex items-center justify-between"
+                                >
+                                    <div>
+                                        <p class="font-semibold text-gray-900">{{ $user->name }} {{ $user->last_name }}</p>
+                                        <p class="text-xs text-gray-500 font-mono">
+                                            {{ $user->username }} | {{ $user->email }} | <span class="text-suraki-primary font-semibold">{{ optional($user->department)->name ?? 'Sin Departamento' }}</span>
+                                        </p>
+                                    </div>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $user->hasAdminAccess() ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-50 text-gray-700 border border-gray-200' }}">
+                                        {{ ucfirst($user->role) }}
+                                    </span>
+                                </button>
+                            @empty
+                                <div class="px-4 py-3 text-sm text-gray-500 text-center">No se encontraron usuarios</div>
+                            @endforelse
+                        </div>
+                        <x-input-error :messages="$errors->get('assigned_to')" class="mt-2" />
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-end mt-8">

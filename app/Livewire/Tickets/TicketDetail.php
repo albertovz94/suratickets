@@ -84,7 +84,7 @@ class TicketDetail extends Component
     #[Computed]
     public function admins()
     {
-        return User::admins()->get();
+        return User::assignableAdmins()->get();
     }
 
     #[Computed]

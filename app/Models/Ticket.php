@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Observers\TicketObserver;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 #[ObservedBy([TicketObserver::class])]
 class Ticket extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'title',
         'description',

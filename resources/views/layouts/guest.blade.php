@@ -15,7 +15,7 @@
     </head>
     <body class="font-sans antialiased" x-data="{ showLogin: false }">
         <!-- Full-screen split layout -->
-        <div class="min-h-screen flex relative bg-cover bg-no-repeat" style="background-image: url('{{ asset('suraki FULLHDDDD.png') }}'); background-position: center calc(50% - 50px);">
+        <div class="min-h-screen flex relative bg-cover bg-no-repeat" style="background-image: url('{{ asset('suraki FULLHDDDD.webp') }}'); background-position: center calc(50% - 50px);">
             <!-- Left Panel: Branding -->
             <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col justify-between p-12 pr-32 z-10">
                 <!-- Decorative background elements -->

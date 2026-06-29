@@ -49,7 +49,7 @@ class TicketForm extends Component
 
     public function checkItAvailability()
     {
-        $admins = User::admins()->get();
+        $admins = User::assignableAdmins()->get();
         
         $workingAdmins = $admins->filter(function($admin) {
             return $admin->isWorkingNow();
@@ -71,7 +71,7 @@ class TicketForm extends Component
 
         $action->execute($validatedData);
 
-        $this->dispatch('notify', message: 'Ticket creado y asignado exitosamente.'); session()->flash('message', 'Ticket creado y asignado exitosamente.');
+        session()->flash('message', 'Ticket creado y asignado exitosamente.');
         return redirect()->route('tickets.index');
     }
 

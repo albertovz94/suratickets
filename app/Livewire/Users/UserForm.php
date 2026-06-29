@@ -87,15 +87,15 @@ class UserForm extends Component
 
         if ($this->user_id) {
             User::where('id', $this->user_id)->update($data);
+            $updatedUser = User::find($this->user_id);
+            \App\Services\ActivityLogger::log('update_user', $updatedUser, "Actualizó la información del usuario {$updatedUser->name} ({$updatedUser->email})");
 
             // Optionally send email if password was changed
             if (!empty($this->password)) {
-                $updatedUser = User::find($this->user_id);
                 try {
                     Mail::to($updatedUser->email)->send(new UserCredentialsMail($updatedUser, $this->password));
                 } catch (\Exception $e) {
                     session()->flash('message', 'Usuario actualizado, pero hubo un error enviando el correo.');
-                    sleep(2);
                     return $this->redirectRoute('users.index', navigate: true);
                 }
             }
@@ -104,13 +104,13 @@ class UserForm extends Component
 
         } else {
             $newUser = User::create($data);
+            \App\Services\ActivityLogger::log('create_user', $newUser, "Creó el usuario {$newUser->name} ({$newUser->email}) con rol {$newUser->role}");
 
             if (!empty($this->password)) {
                 try {
                     Mail::to($newUser->email)->send(new UserCredentialsMail($newUser, $this->password));
                 } catch (\Exception $e) {
                     session()->flash('message', 'Usuario creado correctamente, pero hubo un error al enviar el correo.');
-                    sleep(2); // Retraso artificial para dar "respiro" y que se aprecie la pantalla de carga
                     return $this->redirectRoute('users.index', navigate: true);
                 }
             }
@@ -118,7 +118,6 @@ class UserForm extends Component
             session()->flash('message', 'Usuario creado correctamente y correo enviado con accesos.');
         }
 
-        sleep(2); // Retraso artificial para dar "respiro" y que se aprecie la pantalla de carga
         return $this->redirectRoute('users.index', navigate: true);
     }
 

@@ -52,11 +52,13 @@ class SettingsList extends Component
 
         if ($this->department_id) {
             Department::where('id', $this->department_id)->update(['name' => $this->department_name]);
-            $this->dispatch('notify', message: 'Departamento actualizado correctamente.'); session()->flash('message', 'Departamento actualizado correctamente.');
+            $this->dispatch('notify', message: 'Departamento actualizado correctamente.');
         } else {
             Department::create(['name' => $this->department_name]);
-            $this->dispatch('notify', message: 'Departamento creado correctamente.'); session()->flash('message', 'Departamento creado correctamente.');
+            $this->dispatch('notify', message: 'Departamento creado correctamente.');
         }
+        \Illuminate\Support\Facades\Cache::forget('ticket_form_dropdowns');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
         $this->closeDepartmentModal();
     }
 
@@ -68,7 +70,9 @@ class SettingsList extends Component
             return;
         }
         $department->delete();
-        $this->dispatch('notify', message: 'Departamento eliminado.'); session()->flash('message', 'Departamento eliminado.');
+        \Illuminate\Support\Facades\Cache::forget('ticket_form_dropdowns');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
+        $this->dispatch('notify', message: 'Departamento eliminado.');
     }
 
 
@@ -107,14 +111,16 @@ class SettingsList extends Component
                 'name' => $this->branch_name,
                 'is_active' => $this->branch_is_active
             ]);
-            $this->dispatch('notify', message: 'Sucursal actualizada correctamente.'); session()->flash('message', 'Sucursal actualizada correctamente.');
+            $this->dispatch('notify', message: 'Sucursal actualizada correctamente.');
         } else {
             Branch::create([
                 'name' => $this->branch_name,
                 'is_active' => $this->branch_is_active
             ]);
-            $this->dispatch('notify', message: 'Sucursal creada correctamente.'); session()->flash('message', 'Sucursal creada correctamente.');
+            $this->dispatch('notify', message: 'Sucursal creada correctamente.');
         }
+        \Illuminate\Support\Facades\Cache::forget('ticket_form_dropdowns');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
         $this->closeBranchModal();
     }
 
@@ -126,7 +132,9 @@ class SettingsList extends Component
             return;
         }
         $branch->delete();
-        $this->dispatch('notify', message: 'Sucursal eliminada.'); session()->flash('message', 'Sucursal eliminada.');
+        \Illuminate\Support\Facades\Cache::forget('ticket_form_dropdowns');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
+        $this->dispatch('notify', message: 'Sucursal eliminada.');
     }
 
     public function render()

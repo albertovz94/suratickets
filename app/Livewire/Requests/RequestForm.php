@@ -3,7 +3,7 @@
 namespace App\Livewire\Requests;
 
 use Livewire\Component;
-use App\Models\Request;
+use App\Models\EquipmentRequest;
 
 class RequestForm extends Component
 {
@@ -62,7 +62,7 @@ class RequestForm extends Component
     {
         $this->validate();
 
-        Request::create([
+        EquipmentRequest::create([
             'user_id' => auth()->id(),
             'device_type' => $this->device_type,
             'urgency' => $this->urgency,
@@ -71,14 +71,14 @@ class RequestForm extends Component
             'status' => 'pendiente',
         ]);
 
-        $this->dispatch('notify', message: 'Tu solicitud ha sido enviada exitosamente.'); session()->flash('message', 'Tu solicitud ha sido enviada exitosamente.');
+        session()->flash('message', 'Tu solicitud ha sido enviada exitosamente.');
 
         return redirect()->route('requests.index');
     }
 
     public function render()
     {
-        $outsourcingUsers = \App\Models\User::where('role', 'Outsourcing')->get();
+        $outsourcingUsers = \App\Models\User::where('role', 'outsourcing')->get();
         return view('livewire.requests.request-form', compact('outsourcingUsers'))->layout('layouts.app');
     }
 }
