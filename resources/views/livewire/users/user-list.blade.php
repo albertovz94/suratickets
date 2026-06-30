@@ -153,7 +153,7 @@
                                 <th class="px-6 py-4 text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-suraki-neutral">
+                        <tbody wire:loading.class="hidden" class="divide-y divide-suraki-neutral">
                             @forelse ($users as $user)
                                 <tr class="hover:bg-suraki-neutral/20 transition-colors">
                                     <td class="px-6 py-4">
@@ -253,11 +253,65 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="px-6 py-8 text-center text-sm text-suraki-tertiary">
-                                        No se encontraron usuarios que coincidan con la búsqueda.
+                                    <td colspan="9" class="px-6 py-16 text-center">
+                                        <div class="max-w-md mx-auto flex flex-col items-center">
+                                            <div class="w-16 h-16 bg-suraki-neutral rounded-2xl flex items-center justify-center text-suraki-tertiary/60 mb-4 border border-suraki-neutral-dark shadow-inner">
+                                                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                                                </svg>
+                                            </div>
+                                            <h3 class="text-base font-bold text-suraki-secondary">No se encontraron usuarios</h3>
+                                            <p class="text-sm text-suraki-tertiary mt-1">Intenta ajustando los filtros de rol, estado, departamento o cambia los términos de búsqueda.</p>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforelse
+                        </tbody>
+                        <!-- Skeleton Loader (Shown during filtering/pagination) -->
+                        <tbody wire:loading.class.remove="hidden" class="divide-y divide-suraki-neutral hidden">
+                            @for ($i = 0; $i < 6; $i++)
+                                <tr>
+                                    <td class="px-6 py-4">
+                                        <div class="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-full bg-gray-200 animate-pulse shrink-0"></div>
+                                            <div class="flex flex-col gap-1 w-24">
+                                                <div class="h-4 bg-gray-200 rounded animate-pulse"></div>
+                                                <div class="h-3 bg-gray-200 rounded animate-pulse"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex flex-col gap-1 w-32">
+                                            <div class="h-4 bg-gray-200 rounded animate-pulse"></div>
+                                            <div class="h-3 bg-gray-200 rounded animate-pulse"></div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="h-6 w-16 bg-gray-200 rounded-full animate-pulse"></div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="h-6 w-24 bg-gray-200 rounded-full animate-pulse"></div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="h-6 w-12 bg-gray-200 rounded-full animate-pulse"></div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <div class="h-7 w-7 bg-gray-200 rounded animate-pulse"></div>
+                                            <div class="h-7 w-7 bg-gray-200 rounded animate-pulse"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endfor
                         </tbody>
                     </table>
                 </div>

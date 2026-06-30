@@ -4,11 +4,12 @@ Sistema de Soporte TI Monolítico desarrollado exclusivamente para el departamen
 
 ## 🛠️ Stack Tecnológico
 
-*   **Backend & Framework:** Laravel 11 (PHP 8.3+)
-*   **Frontend & Reactividad:** Laravel Livewire 3 + Blade (Sin Vue/React, recargas dinámicas mediante componentes de servidor).
+*   **Backend & Framework:** Laravel 13.8 (PHP 8.3+)
+*   **Frontend & Reactividad:** Laravel Livewire 3.6 + Blade (Sin Vue/React, recargas dinámicas mediante componentes de servidor).
 *   **Estilos:** Tailwind CSS.
 *   **Base de Datos:** MySQL.
 *   **Procesamiento en Segundo Plano:** Base de datos nativa de Laravel (`QUEUE_CONNECTION=database`) para el envío de correos y procesos pesados sin bloquear la interfaz.
+*   **Autenticación:** Laravel Breeze + Livewire/Volt (Login por `username`).
 
 ---
 
@@ -31,36 +32,107 @@ Existen **tres roles** definidos en la base de datos (`enum`):
     *   Solo puede visualizar el progreso de lo que él mismo ha creado (`creator_id`).
     *   Interfaz limpia sin opciones avanzadas, menús de administración ni filtros complejos.
 
+### Seguridad de Acceso
+
+*   **Rate Limiting:** 5 intentos de login antes de bloqueo temporal. Auto-bloqueo permanente de cuenta tras 5 intentos fallidos consecutivos.
+*   **CheckUserStatus Middleware:** Las cuentas `Bloqueada` o `Inactivo` son deslogueadas automáticamente.
+*   **CheckRole Middleware:** Control de acceso granular por rol en rutas administrativas.
+*   **Policies:** `TicketPolicy` y `EquipmentRequestPolicy` para control de propiedad de datos.
+
 ---
 
-## 📦 Módulos del Sistema (Auditoría Actualizada)
+## 📦 Módulos del Sistema (Auditoría v2 — Junio 2026)
 
-A medida que el proyecto ha escalado, se han integrado diversos módulos esenciales:
+### 1. 🎫 Gestión de Tickets (Soporte Técnico)
+*   Control de incidentes por sucursal, área y equipo afectado.
+*   Prioridades (Baja, Media, Alta, Crítica) y estados dinámicos (Abierto, Asignado, En Proceso, Pendiente, Resuelto, Cerrado).
+*   **Auto-asignación inteligente** (`CreateTicketAction`): Analiza palabras clave para calcular prioridad y asigna al admin con menor carga de trabajo que esté en turno activo.
+*   **Chat de mensajes** en cada ticket con adjuntos.
+*   Observer para notificaciones automáticas al crear/actualizar tickets.
 
-1. **Gestión de Tickets (Soporte Técnico):**
-   * Control de incidentes por sucursal, área y equipo afectado.
-   * Prioridades (Baja, Media, Alta, Crítica) y estados dinámicos (Abierto, En Proceso, Pendiente, Resuelto, Cerrado).
-2. **Requerimientos (Requests):**
-   * Control de solicitudes específicas, asignación de responsables (`assigned_to`), urgencia y fecha de entrega.
-   * Sistema de subida de comprobantes (`proof`), guías de remisión (`delivery_note`) y sección de notas internas.
-   * Historial de comentarios (`RequestComment`) en tiempo real.
-3. **Control de Inventario (Inventory):**
-   * CRUD completo para la gestión del parque informático (`Device`) de cada sucursal y departamento.
-4. **Horarios y Turnos (Schedules):**
-   * Control de horarios de personal interno (`UserSchedule`).
-   * Gestión de turnos y personal externo (Outsourcing) mediante `WorkShift`.
-5. **Auditoría y Logs:**
-   * Tablas `activity_logs` y `route_logs` para llevar trazabilidad de las acciones y accesos de los usuarios en el sistema.
+### 2. 📋 Requerimientos (Requests)
+*   Control de solicitudes de equipamiento con formulario wizard de 3 pasos.
+*   Asignación de técnicos outsourcing (`assigned_to`), urgencia y flujo de estados (Pendiente → En Proceso → Entregado/Rechazado).
+*   Sistema de subida de comprobantes (`proof`), guías de remisión (`delivery_note`).
+*   Historial de comentarios (`RequestComment`) con política de 15 días para usuarios.
+
+### 3. 💻 Control de Inventario (Inventory)
+*   CRUD completo para la gestión del parque informático (`Device`) de cada sucursal y departamento.
+*   Tipos: Laptop, Desktop, Servidor, Red, Impresora, Otro.
+*   Ciclo de estados rápido: Activo ↔ En Reparación ↔ De Baja.
+*   Buscador con autocomplete de usuarios asignados.
+*   Importación masiva desde Excel (`EquiposImport`).
+*   Estadísticas en tiempo real con caché.
+
+### 4. 👥 Gestión de Usuarios
+*   CRUD completo con avatar, roles, sucursal, departamento.
+*   Envío automático de credenciales por email al crear usuario.
+*   Toggle de estado Activo/Inactivo.
+*   Soft Deletes para preservar integridad de datos históricos.
+
+### 5. 🕐 Horarios y Turnos (Schedules)
+*   Control de horarios fijos semanales (`UserSchedule`) para personal interno.
+*   Gestión de turnos outsourcing (`WorkShift`) con Check-in/Check-out.
+*   `ScheduleService` determina si un técnico está en turno activo (soporta turnos nocturnos).
+
+### 6. 📊 Reportes
+*   Métricas filtradas por período: Diario, Semanal, Quincenal, Mensual.
+*   Gráficas por departamento, tickets más comunes, distribución de estados.
+*   Tiempo promedio de resolución calculado.
+
+### 7. ⚙️ Configuración (Settings)
+*   CRUD de Departamentos y Sucursales.
+*   Validación de integridad referencial antes de eliminar.
+*   Invalidación de caché automática al modificar datos maestros.
+
+### 8. 🔔 Notificaciones
+*   Campanita In-App con polling (Livewire `wire:poll`).
+*   5 tipos de notificaciones: Ticket creado, Crítico (mail + in-app), Status actualizado, Password reset, Perfil actualizado.
+*   Toast notifications para feedback inmediato.
+
+### 9. 📝 Auditoría y Logs
+*   `ActivityLog`: Trazabilidad de acciones CRUD (crear, editar, eliminar) con modelo polimórfico.
+*   `RouteLog`: Registro de navegación HTTP (solo GET, excluye Livewire/debug).
+*   Ambos sistemas son fail-safe (no rompen la aplicación si falla el logging).
+
+### 10. 📈 Dashboard
+*   Gráficas interactivas filtradas por Día/Semana/Mes.
+*   `TicketStatsService` con queries optimizadas por aggregate SQL.
+*   Vista adaptada por rol (admins ven todo, usuarios ven solo lo propio).
 
 ---
 
 ## 🔔 Sistema de Notificaciones y Tiempo Real
 
-El proyecto está diseñado para funcionar de manera dinámica ("magia") sin recargar la página, utilizando el sistema de **Polling de Livewire** (`wire:poll`):
+El proyecto está diseñado para funcionar dinámicamente sin recargar la página, utilizando **Polling de Livewire** (`wire:poll`):
 
-*   **Campanita (In-App):** Ubicada en la barra de navegación. Notifica cambios de estado y asignaciones en tiempo real (Sondeo cada 5s).
-*   **Notificaciones Críticas (Observer):** Si un ticket se levanta con prioridad "Crítica", el `TicketObserver` dispara una alerta por Correo Electrónico (procesada por las Colas de Laravel) a todos los Administradores, además de la notificación interna.
+*   **Campanita (In-App):** Ubicada en la barra de navegación. Notifica cambios de estado y asignaciones en tiempo real.
+*   **Notificaciones Críticas (Observer):** Si un ticket se levanta con prioridad "Crítica", el `TicketObserver` dispara una alerta por Correo Electrónico (procesada por las Colas de Laravel) a todos los Administradores.
 *   **Dashboard en Vivo:** Las tablas reflejan los cambios que hagan otros usuarios instantáneamente.
+
+---
+
+## 🏗️ Arquitectura y Patrones
+
+```
+app/
+├── Actions/          ← Business logic actions (Single Responsibility)
+├── Http/Middleware/   ← CheckRole, CheckUserStatus, LogRouteRequests
+├── Livewire/         ← 16 componentes reactivos (UI + Controller)
+├── Models/           ← 12 modelos Eloquent con relaciones
+├── Notifications/    ← 5 canales de notificación
+├── Observers/        ← Event-driven (TicketObserver)
+├── Policies/         ← Authorization gates (2 policies)
+├── Services/         ← Business services (3 servicios)
+└── Providers/        ← Service + Volt providers
+```
+
+**Patrones utilizados:**
+*   **Action Pattern:** `CreateTicketAction` para desacoplar lógica del componente.
+*   **Observer Pattern:** `TicketObserver` para eventos del ciclo de vida.
+*   **Service Layer:** `ScheduleService`, `TicketStatsService`, `ActivityLogger`.
+*   **Policy Authorization:** Control de acceso basado en propiedad y roles.
+*   **Soft Deletes:** Preservación de datos históricos en tablas clave.
 
 ---
 
@@ -80,43 +152,70 @@ Si otro desarrollador o Agente de IA necesita levantar el entorno, estos son los
 3.  **Configurar Variables de Entorno:**
     Duplicar `.env.example` a `.env` y asegurar las siguientes variables:
     ```env
+    APP_NAME="Suraki HelpDesk"
     DB_CONNECTION=mysql
     DB_DATABASE=suraki_helpdesk
+    DB_PASSWORD=tu_contraseña_segura
     QUEUE_CONNECTION=database
+    SESSION_ENCRYPT=true
     ```
 4.  **Generar Key y Migrar:**
     ```bash
     php artisan key:generate
     php artisan migrate:fresh --seed
     ```
-    *(El seeder creará sucursales base y 2 usuarios de prueba: `admin_sistemas` y `usuario_caja1`, ambos con clave `password`).*
+    *(El seeder creará 6 sucursales, 6 departamentos, 1 usuario admin `admin_sistemas` con clave `password`, y 6 equipos de ejemplo).*
 5.  **Compilar Assets (Tailwind):**
     ```bash
     npm run build
     ```
-6.  **Levantar el Trabajador de Colas:** (Obligatorio para que salgan los correos)
+6.  **Levantar el Trabajador de Colas:** (Obligatorio para correos)
     ```bash
     php artisan queue:work
+    ```
+7.  **Desarrollo rápido** (Servidor + Queue + Logs + Vite en un comando):
+    ```bash
+    composer dev
     ```
 
 ---
 
-## 🚀 Hoja de Ruta y Posibles Mejoras (Expert Roadmap)
+## 📊 Métricas del Proyecto
 
-Tras una auditoría arquitectónica profunda, se plantean las siguientes optimizaciones de grado *Senior (15+ años exp)* para futuras iteraciones:
+| Métrica | Valor |
+|---------|-------|
+| Modelos Eloquent | 12 |
+| Componentes Livewire | 16 |
+| Rutas | 24 (18 web + 6 auth) |
+| Migraciones | 12 |
+| Services | 3 |
+| Policies | 2 |
+| Notifications | 5 |
+| Tests Feature | 4 |
+| Seeders | 5 |
 
-*   **Desacoplamiento (Service Classes):** Extraer la lógica de negocio pesada de los componentes de Livewire (ej. cálculos de inventario o asignaciones de requerimientos) hacia clases de Servicio (`App\Services`). Esto evitará "Fat Controllers" y facilitará las pruebas.
-*   **Optimización de Queries (N+1) y Caché:** Implementar *Eager Loading* de manera estricta en todas las vistas de tablas (Livewire) y aplicar caché en consultas frecuentes que mutan poco (Ej. listado de Sucursales y Departamentos usando `Cache::remember`).
-*   **Testing Automatizado:** Configurar e implementar `Pest PHP` para testear el backend y las interacciones de los componentes clave de Livewire para evitar regresiones.
-*   **UI/UX Avanzado:** Añadir "Skeleton Loaders" (pantallas de carga falsa) para las transiciones de Livewire y notificaciones Toast no intrusivas en los CRUDs.
-*   **Seguridad:** Implementar Rate Limiting más agresivo en las rutas de login y estudiar la viabilidad de 2FA para cuentas administrativas.
+---
+
+## 🚀 Hoja de Ruta y Mejoras Pendientes
+
+Tras la auditoría arquitectónica v2 (Junio 2026), se plantean las siguientes optimizaciones:
+
+*   **Refactorización de Reportes:** Migrar cálculos de stats de PHP (in-memory) a aggregate queries SQL para mejor rendimiento.
+*   **Optimización de Caché:** Corregir invalidación prematura en InventoryList y aplicar caché consistente en UserList.
+*   **Action Pattern extensivo:** Extraer lógica de `RequestForm::save()` y `UserForm::save()` a clases Action.
+*   **PHP Enums:** Reemplazar strings hardcoded de status/priority/role por Enum classes.
+*   **Tests ampliados:** Cubrir módulos de Requests, Inventory, Users y Schedules.
+*   **2FA para administradores:** Autenticación de dos factores.
+*   **API REST:** Preparar endpoints para futura app móvil.
+*   **Dark Mode:** Toggle de tema oscuro/claro.
+*   **Purga automática de logs:** Comando Artisan schedulado para limpiar logs > 90 días.
 
 ---
 
 ## 📜 Historial de Cambios (Changelog)
 
 ### Fase 1: Inicialización y Arquitectura Base
-*   Levantar Laravel 11, Livewire, BDD y autenticación básica de Breeze. (Archivos clave: `composer.json`, `.env`, configuración inicial).
+*   Levantar Laravel 13.8, Livewire 3.6, BDD y autenticación básica de Breeze.
 
 ### Fase 2: Modelado de Datos de Soporte
 *   Creación de migraciones para `Sucursales`, `Tickets` y personalización de la tabla `Users` con campos como `rol` y `username`.
@@ -133,9 +232,17 @@ Tras una auditoría arquitectónica profunda, se plantean las siguientes optimiz
 *   Middleware `CheckRole.php` y Policies (`TicketPolicy.php`) para asegurar que usuarios limitados no accedan a información de administradores.
 *   Gestión individual del estado de los tickets.
 
-### Fase 6: Expansión Funcional (Auditoría y Módulos Extra)
-*   **Requerimientos:** Creación del módulo Requests con asignaciones, validaciones (comprobantes, guía de remisión) y sistema de comentarios en hilo (`RequestComment`).
-*   **Inventario:** Nuevo módulo (`Device`) integrado a Livewire para controlar el hardware por sucursal.
-*   **Horarios:** Integración del control de turnos y personal interno (`UserSchedule`) y outsourcing (`WorkShift`).
-*   **Logs:** Implementación de tablas `activity_logs` y `route_logs` para control y trazabilidad administrativa.
-*   **Configuración:** Pantalla base para configuraciones dinámicas (`Settings`).
+### Fase 6: Expansión Funcional
+*   **Requerimientos:** Módulo Requests con wizard de 3 pasos, asignaciones, comprobantes y comentarios.
+*   **Inventario:** Módulo `Device` con CRUD, importación Excel y estadísticas cacheadas.
+*   **Horarios:** Control de turnos internos (`UserSchedule`) y outsourcing (`WorkShift`).
+*   **Logs:** `activity_logs` y `route_logs` para control y trazabilidad.
+*   **Configuración:** CRUD de departamentos y sucursales.
+
+### Fase 7: Hardening y Performance (Junio 2026)
+*   Índices de rendimiento en `tickets` y `users`.
+*   Soft Deletes en tablas clave (`users`, `tickets`, `devices`, `requests`).
+*   Action Pattern (`CreateTicketAction`) con auto-asignación inteligente.
+*   Service Layer (`ScheduleService`, `TicketStatsService`, `ActivityLogger`).
+*   Tests automatizados para Actions y Policies.
+*   Reportes con filtro temporal y métricas de resolución.

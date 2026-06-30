@@ -16,7 +16,13 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('device_type');
             $table->text('description');
+            $table->enum('urgency', ['baja', 'media', 'alta', 'critica'])->default('media');
             $table->string('status')->default('pendiente'); // pendiente, aprobado, rechazado, entregado
+            $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
+            $table->text('admin_note')->nullable();
+            $table->string('proof_photo_path')->nullable();
+            $table->string('delivery_note')->nullable();
+            $table->timestamp('delivered_at')->nullable();
             $table->timestamps();
         });
     }

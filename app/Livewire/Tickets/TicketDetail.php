@@ -97,7 +97,7 @@ class TicketDetail extends Component
     {
         $this->validate([
             'newMessage' => 'required|string|max:2000',
-            'attachment' => 'nullable|file|max:10240', // Max 10MB
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,zip,rar,txt|max:10240', // Max 10MB
         ]);
 
         $path = null;

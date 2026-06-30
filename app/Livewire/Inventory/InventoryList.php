@@ -68,14 +68,11 @@ class InventoryList extends Component
         
         $device->save();
         \Illuminate\Support\Facades\Cache::forget('inventory_stats');
-        $this->dispatch('show-toast', message: $message);
+        $this->dispatch('notify', message: $message);
     }
 
     public function render()
     {
-        \Illuminate\Support\Facades\Cache::forget('inventory_stats');
-        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
-
         $query = Device::query();
 
         if ($this->search) {

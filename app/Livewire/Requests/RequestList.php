@@ -137,7 +137,7 @@ class RequestList extends Component
 
         RequestComment::create([
             'request_id' => $this->selectedRequest->id,
-            'user_id' => $user->id,
+            'user_id' => auth()->id(),
             'body' => $this->newCommentBody,
         ]);
 

@@ -53,7 +53,7 @@
                         <th class="px-6 py-4 font-bold text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 text-gray-600">
+                <tbody wire:loading.class="hidden" class="divide-y divide-gray-100 text-gray-600">
                     @forelse($solicitudes as $solicitud)
                         <tr wire:key="solicitud-{{ $solicitud->id }}" class="hover:bg-gray-50 transition-colors">
                             <!-- ID and Date -->
@@ -144,11 +144,57 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-                                No hay solicitudes registradas en esta categoría.
+                            <td colspan="{{ auth()->user()->hasAdminAccess() ? 6 : 5 }}" class="px-6 py-16 text-center">
+                                <div class="max-w-md mx-auto flex flex-col items-center">
+                                    <div class="w-16 h-16 bg-suraki-neutral rounded-2xl flex items-center justify-center text-suraki-tertiary/60 mb-4 border border-suraki-neutral-dark shadow-inner">
+                                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.244 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.244 2.25H5.25A2.25 2.25 0 013 12V5.25"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-bold text-suraki-secondary">Sin solicitudes</h3>
+                                    <p class="text-sm text-suraki-tertiary mt-1">No hay solicitudes registradas bajo el estado actual o los términos especificados.</p>
+                                </div>
                             </td>
                         </tr>
                     @endforelse
+                </tbody>
+                <!-- Skeleton Loader -->
+                <tbody wire:loading.class.remove="hidden" class="divide-y divide-gray-100 text-gray-600 hidden">
+                    @for ($i = 0; $i < 5; $i++)
+                        <tr>
+                            <td class="px-6 py-4">
+                                <div class="h-4 bg-gray-200 rounded w-12 mb-1 animate-pulse"></div>
+                                <div class="h-3 bg-gray-200 rounded w-16 animate-pulse"></div>
+                            </td>
+                            @if(auth()->user()->hasAdminAccess())
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-gray-200 animate-pulse shrink-0"></div>
+                                        <div class="flex flex-col gap-1 w-24">
+                                            <div class="h-4 bg-gray-200 rounded animate-pulse"></div>
+                                            <div class="h-3 bg-gray-200 rounded animate-pulse"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                            @endif
+                            <td class="px-6 py-4">
+                                <div class="h-4 bg-gray-200 rounded w-28 mb-1 animate-pulse"></div>
+                                <div class="h-4 bg-gray-200 rounded w-12 animate-pulse"></div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="h-6 bg-gray-200 rounded-full w-20 animate-pulse"></div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    <div class="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
+                                    <div class="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    @endfor
                 </tbody>
             </table>
         </div>

@@ -31,7 +31,7 @@ class NotificationBell extends Component
             if ($latest && $latest->id !== $this->lastNotificationId) {
                 // If this isn't the first load, trigger the toast
                 if ($this->lastNotificationId !== null) {
-                    $this->dispatch('show-toast', message: $latest->data['message']);
+                    $this->dispatch('notify', message: $latest->data['message']);
                 }
                 $this->lastNotificationId = $latest->id;
             }

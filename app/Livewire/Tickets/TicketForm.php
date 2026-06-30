@@ -30,7 +30,7 @@ class TicketForm extends Component
         'description' => 'required|string|max:2000',
         'priority' => 'required|in:baja,media,alta,critica',
         'category' => 'required|in:hardware,software,redes,otros',
-        'attachment' => 'nullable|file|max:10240',
+        'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,zip,rar,txt|max:10240',
     ];
 
     public function mount()

@@ -69,16 +69,16 @@ class UserList extends Component
 
         $user = User::findOrFail($userId);
         if ($user->id === Auth::id()) {
-            $this->dispatch('show-toast', message: 'No puedes cambiar el estado de tu propia cuenta.');
+            $this->dispatch('notify', message: 'No puedes cambiar el estado de tu propia cuenta.');
             return;
         }
 
         if ($user->status === 'Activo') {
             $user->status = 'Inactivo';
-            $this->dispatch('show-toast', message: "El usuario {$user->name} ha sido deshabilitado.");
+            $this->dispatch('notify', message: "El usuario {$user->name} ha sido deshabilitado.");
         } else {
             $user->status = 'Activo';
-            $this->dispatch('show-toast', message: "El usuario {$user->name} ha sido habilitado.");
+            $this->dispatch('notify', message: "El usuario {$user->name} ha sido habilitado.");
         }
 
         $user->save();

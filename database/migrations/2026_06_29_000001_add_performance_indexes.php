@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::table('tickets', function (Blueprint $table) {
             $table->index('creator_id');
             $table->index('assigned_to');
+            $table->index(['status', 'created_at']);
         });
 
         Schema::table('users', function (Blueprint $table) {
@@ -28,6 +29,7 @@ return new class extends Migration
         Schema::table('tickets', function (Blueprint $table) {
             $table->dropIndex(['creator_id']);
             $table->dropIndex(['assigned_to']);
+            $table->dropIndex(['status', 'created_at']);
         });
 
         Schema::table('users', function (Blueprint $table) {

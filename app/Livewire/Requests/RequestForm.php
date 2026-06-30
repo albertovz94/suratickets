@@ -58,17 +58,16 @@ class RequestForm extends Component
         $this->step--;
     }
 
-    public function save()
+    public function save(\App\Actions\Requests\CreateEquipmentRequestAction $createAction)
     {
         $this->validate();
 
-        EquipmentRequest::create([
+        $createAction->execute([
             'user_id' => auth()->id(),
             'device_type' => $this->device_type,
             'urgency' => $this->urgency,
             'assigned_to' => $this->assigned_to,
             'description' => $this->description,
-            'status' => 'pendiente',
         ]);
 
         session()->flash('message', 'Tu solicitud ha sido enviada exitosamente.');

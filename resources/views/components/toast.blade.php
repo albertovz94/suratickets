@@ -18,6 +18,13 @@
                 this.showToast();
             });
 
+            window.addEventListener('show-toast', event => {
+                const data = event.detail[0] || event.detail;
+                this.message = data.message || data;
+                this.type = data.type || 'success';
+                this.showToast();
+            });
+
             // Soportar SPA navigations en Livewire 3
             document.addEventListener('livewire:navigated', () => {
                 if (this.$el.dataset.message) {
