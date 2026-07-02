@@ -47,7 +47,7 @@ class InventoryList extends Component
         $device->delete();
         \App\Services\ActivityLogger::log('delete_device', $device, "Eliminó el equipo {$device->name} (S/N: {$device->serial_number})");
         \Illuminate\Support\Facades\Cache::forget('inventory_stats');
-        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns_v3');
         $this->dispatch('notify', message: 'Equipo eliminado correctamente.');
     }
 
@@ -110,12 +110,12 @@ class InventoryList extends Component
         });
 
         // Unique values for dropdowns cacheadas por 1 hora
-        $dropdowns = \Illuminate\Support\Facades\Cache::remember('inventory_dropdowns', 3600, function() {
+        $dropdowns = \Illuminate\Support\Facades\Cache::remember('inventory_dropdowns_v3', 3600, function() {
             return [
-                'types' => Device::select('type')->distinct()->pluck('type'),
-                'statuses' => Device::select('status')->distinct()->pluck('status'),
-                'branches' => \App\Models\Branch::where('is_active', true)->get(),
-                'departments' => \App\Models\Department::all(),
+                'types' => Device::select('type')->distinct()->pluck('type')->toArray(),
+                'statuses' => Device::select('status')->distinct()->pluck('status')->toArray(),
+                'branches' => \App\Models\Branch::where('is_active', true)->select('id', 'name')->get()->toArray(),
+                'departments' => \App\Models\Department::select('id', 'name')->get()->toArray(),
             ];
         });
 

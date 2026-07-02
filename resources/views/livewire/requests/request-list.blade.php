@@ -18,60 +18,60 @@
     </div>
 
     <!-- Tabs Navigation -->
-    <div class="flex space-x-1 bg-gray-100 p-1 rounded-xl max-w-fit">
+    <div class="flex space-x-1 bg-gray-100 dark:bg-zinc-800 p-1 rounded-xl overflow-x-auto max-w-full">
         <button wire:click="setTab('pendiente')" 
-            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all {{ $activeTab === 'pendiente' ? 'bg-white text-suraki-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50' }}">
+            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all whitespace-nowrap {{ $activeTab === 'pendiente' ? 'bg-white dark:bg-zinc-700 text-suraki-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50 dark:text-zinc-400 dark:hover:text-zinc-200' }}">
             Pendientes
         </button>
         <button wire:click="setTab('en_proceso')" 
-            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all {{ $activeTab === 'en_proceso' ? 'bg-white text-suraki-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50' }}">
+            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all whitespace-nowrap {{ $activeTab === 'en_proceso' ? 'bg-white dark:bg-zinc-700 text-suraki-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50 dark:text-zinc-400 dark:hover:text-zinc-200' }}">
             En Proceso
         </button>
         <button wire:click="setTab('entregado')" 
-            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all {{ $activeTab === 'entregado' ? 'bg-white text-suraki-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50' }}">
+            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all whitespace-nowrap {{ $activeTab === 'entregado' ? 'bg-white dark:bg-zinc-700 text-suraki-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50 dark:text-zinc-400 dark:hover:text-zinc-200' }}">
             Entregados
         </button>
         <button wire:click="setTab('rechazado')" 
-            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all {{ $activeTab === 'rechazado' ? 'bg-white text-suraki-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50' }}">
+            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all whitespace-nowrap {{ $activeTab === 'rechazado' ? 'bg-white dark:bg-zinc-700 text-suraki-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50 dark:text-zinc-400 dark:hover:text-zinc-200' }}">
             Rechazados
         </button>
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-2xl shadow-sm border border-suraki-neutral-dark overflow-hidden">
+    <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-suraki-neutral-dark dark:border-zinc-800 overflow-hidden transition-colors">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-                <thead class="bg-gray-50 text-gray-900 border-b border-gray-100">
+                <thead class="bg-gray-50 dark:bg-zinc-800/50 text-gray-900 dark:text-zinc-200 border-b border-gray-100 dark:border-zinc-800">
                     <tr>
                         <th class="px-6 py-4 font-bold">ID / Fecha</th>
                         @if(auth()->user()->hasAdminAccess())
-                            <th class="px-6 py-4 font-bold">Usuario & Depto</th>
+                            <th class="px-6 py-4 font-bold hidden sm:table-cell">Usuario & Depto</th>
                         @endif
                         <th class="px-6 py-4 font-bold">Equipo / Urgencia</th>
-                        <th class="px-6 py-4 font-bold">Asignado a</th>
+                        <th class="px-6 py-4 font-bold hidden md:table-cell">Asignado a</th>
                         <th class="px-6 py-4 font-bold">Estado</th>
                         <th class="px-6 py-4 font-bold text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody wire:loading.class="hidden" class="divide-y divide-gray-100 text-gray-600">
+                <tbody wire:loading.class="hidden" class="divide-y divide-gray-100 dark:divide-zinc-800 text-gray-600 dark:text-zinc-300">
                     @forelse($solicitudes as $solicitud)
-                        <tr wire:key="solicitud-{{ $solicitud->id }}" class="hover:bg-gray-50 transition-colors">
+                        <tr wire:key="solicitud-{{ $solicitud->id }}" class="hover:bg-gray-50 dark:hover:bg-zinc-800/20 transition-colors">
                             <!-- ID and Date -->
                             <td class="px-6 py-4">
-                                <div class="font-semibold text-gray-900">#{{ $solicitud->id }}</div>
-                                <div class="text-xs text-gray-400 mt-1">{{ $solicitud->created_at->format('d/m/Y') }}</div>
+                                <div class="font-semibold text-gray-900 dark:text-zinc-100">#{{ $solicitud->id }}</div>
+                                <div class="text-xs text-gray-400 dark:text-zinc-500 mt-1">{{ $solicitud->created_at->format('d/m/Y') }}</div>
                             </td>
                             
                             <!-- User & Depto -->
                             @if(auth()->user()->hasAdminAccess())
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 hidden sm:table-cell">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-xs">
+                                        <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-zinc-800 flex items-center justify-center text-gray-600 dark:text-zinc-300 font-bold text-xs">
                                             {{ substr($solicitud->user->name ?? 'U', 0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="font-medium text-gray-900">{{ $solicitud->user->name ?? 'N/A' }}</div>
-                                            <div class="text-xs text-gray-500">{{ $solicitud->user->department->name ?? 'Sin Depto' }}</div>
+                                            <div class="font-medium text-gray-900 dark:text-zinc-100">{{ $solicitud->user->name ?? 'N/A' }}</div>
+                                            <div class="text-xs text-gray-500 dark:text-zinc-400">{{ $solicitud->user->department->name ?? 'Sin Depto' }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -81,40 +81,18 @@
                             <td class="px-6 py-4">
                                 <div class="font-semibold text-suraki-primary">{{ $solicitud->device_type }}</div>
                                 <div class="mt-1">
-                                    @php
-                                        $urgColor = match($solicitud->urgency) {
-                                            'baja' => 'bg-gray-100 text-gray-800',
-                                            'media' => 'bg-blue-100 text-blue-800',
-                                            'alta' => 'bg-orange-100 text-orange-800',
-                                            'critica' => 'bg-red-100 text-red-800',
-                                            default => 'bg-gray-100 text-gray-800'
-                                        };
-                                    @endphp
-                                    <span class="px-2 py-0.5 inline-flex text-[10px] leading-4 font-bold rounded-md uppercase {{ $urgColor }}">
-                                        {{ $solicitud->urgency ?? 'Media' }}
-                                    </span>
+                                    <x-badge type="priority" :value="$solicitud->urgency" />
                                 </div>
                             </td>
                             
                             <!-- Assigned -->
-                            <td class="px-6 py-4 font-medium text-gray-700">
+                            <td class="px-6 py-4 font-medium text-gray-700 dark:text-zinc-300 hidden md:table-cell">
                                 {{ $solicitud->assignedTo->name ?? 'Sin asignar' }}
                             </td>
                             
                             <!-- Status -->
                             <td class="px-6 py-4">
-                                @php
-                                    $colorClass = match($solicitud->status) {
-                                        'pendiente' => 'bg-yellow-100 text-yellow-800',
-                                        'en_proceso'  => 'bg-blue-100 text-blue-800',
-                                        'rechazado' => 'bg-red-100 text-red-800',
-                                        'entregado' => 'bg-green-100 text-green-800',
-                                        default => 'bg-gray-100 text-gray-800'
-                                    };
-                                @endphp
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full uppercase {{ $colorClass }}">
-                                    {{ str_replace('_', ' ', $solicitud->status) }}
-                                </span>
+                                <x-badge type="status" :value="$solicitud->status" />
                             </td>
 
                             <!-- Actions -->

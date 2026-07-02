@@ -11,6 +11,9 @@ Route::middleware(['guest', 'throttle:5,1'])->group(function () {
     Volt::route('login', 'pages.auth.login')
         ->name('login');
 
+    Volt::route('login/2fa', 'pages.auth.two-factor-challenge')
+        ->name('login.2fa');
+
     Volt::route('forgot-password', 'pages.auth.forgot-password')
         ->name('password.request');
 

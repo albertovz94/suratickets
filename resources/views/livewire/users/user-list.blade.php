@@ -139,25 +139,25 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-suraki-neutral/50 border-b border-suraki-neutral text-xs font-bold text-suraki-tertiary uppercase tracking-wider">
-                                <th class="px-6 py-4 w-10">
-                                    <input type="checkbox" class="rounded border-gray-300 text-suraki-primary focus:ring-suraki-primary">
+                            <tr class="bg-suraki-neutral/50 dark:bg-zinc-800/50 border-b border-suraki-neutral dark:border-zinc-800 text-xs font-bold text-suraki-tertiary dark:text-zinc-400 uppercase tracking-wider">
+                                <th class="px-6 py-4 w-10 hidden sm:table-cell">
+                                    <input type="checkbox" class="rounded border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 text-suraki-primary focus:ring-suraki-primary">
                                 </th>
                                 <th class="px-6 py-4">Usuario</th>
-                                <th class="px-6 py-4">Correo / Usuario</th>
-                                <th class="px-6 py-4">Rol</th>
-                                <th class="px-6 py-4">Sucursal</th>
-                                <th class="px-6 py-4">Departamento</th>
-                                <th class="px-6 py-4">Equipo</th>
+                                <th class="px-6 py-4 hidden md:table-cell">Correo / Usuario</th>
+                                <th class="px-6 py-4 hidden sm:table-cell">Rol</th>
+                                <th class="px-6 py-4 hidden lg:table-cell">Sucursal</th>
+                                <th class="px-6 py-4 hidden md:table-cell">Departamento</th>
+                                <th class="px-6 py-4 hidden lg:table-cell">Equipo</th>
                                 <th class="px-6 py-4">Estado</th>
                                 <th class="px-6 py-4 text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody wire:loading.class="hidden" class="divide-y divide-suraki-neutral">
+                        <tbody wire:loading.class="hidden" class="divide-y divide-suraki-neutral dark:divide-zinc-800">
                             @forelse ($users as $user)
-                                <tr class="hover:bg-suraki-neutral/20 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <input type="checkbox" value="{{ $user->id }}" class="rounded border-gray-300 text-suraki-primary focus:ring-suraki-primary">
+                                <tr class="hover:bg-suraki-neutral/20 dark:hover:bg-zinc-800/20 transition-colors">
+                                    <td class="px-6 py-4 hidden sm:table-cell">
+                                        <input type="checkbox" value="{{ $user->id }}" class="rounded border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 text-suraki-primary focus:ring-suraki-primary">
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
@@ -174,35 +174,32 @@
                                                 @endif
                                             </div>
                                             <div>
-                                                <p class="text-sm font-bold text-suraki-secondary">{{ $user->name }} {{ $user->last_name }}</p>
-                                                <p class="text-xs text-suraki-tertiary">{{ $user->assigned_devices_count }} equipos asignados</p>
+                                                <p class="text-sm font-bold text-suraki-secondary dark:text-zinc-100">{{ $user->name }} {{ $user->last_name }}</p>
+                                                <p class="text-xs text-suraki-tertiary dark:text-zinc-400">{{ $user->assigned_devices_count }} equipos asignados</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <p class="text-sm text-suraki-secondary">{{ $user->email }}</p>
-                                        <p class="text-xs text-suraki-tertiary">{{ $user->username }}</p>
+                                    <td class="px-6 py-4 hidden md:table-cell">
+                                        <p class="text-sm text-suraki-secondary dark:text-zinc-200">{{ $user->email }}</p>
+                                        <p class="text-xs text-suraki-tertiary dark:text-zinc-450">{{ $user->username }}</p>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold {{ $user->hasAdminAccess() ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700' }}">
-                                            <span class="w-1.5 h-1.5 rounded-full {{ $user->hasAdminAccess() ? 'bg-green-500' : 'bg-gray-500' }}"></span>
-                                            {{ ucfirst($user->role) }}
-                                        </span>
+                                    <td class="px-6 py-4 hidden sm:table-cell">
+                                        <x-badge type="role" :value="$user->role" />
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <p class="text-sm text-suraki-secondary">{{ optional($user->branch)->name ?? 'Sin sucursal' }}</p>
+                                    <td class="px-6 py-4 hidden lg:table-cell">
+                                        <p class="text-sm text-suraki-secondary dark:text-zinc-200">{{ optional($user->branch)->name ?? 'Sin sucursal' }}</p>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <p class="text-sm text-suraki-secondary">{{ optional($user->department)->name ?? 'Sin departamento' }}</p>
+                                    <td class="px-6 py-4 hidden md:table-cell">
+                                        <p class="text-sm text-suraki-secondary dark:text-zinc-200">{{ optional($user->department)->name ?? 'Sin departamento' }}</p>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 hidden lg:table-cell whitespace-nowrap">
                                         @if($user->assigned_devices_count > 0)
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200 dark:bg-green-950/40 dark:text-green-450 dark:border-green-900/50">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                                                 Tiene equipo ({{ $user->assigned_devices_count }})
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500 border border-gray-200">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500 border border-gray-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
                                                 Sin equipo
                                             </span>
@@ -243,7 +240,12 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                                                 </svg>
                                             </a>
-                                            <button wire:click="deleteUser({{ $user->id }})" wire:confirm="¿Estás seguro de eliminar este usuario?" class="p-1.5 text-suraki-tertiary hover:text-suraki-primary hover:bg-red-50 rounded transition-colors" title="Eliminar">
+                                            <button @click="$dispatch('open-confirmation', {
+                                                title: '¿Eliminar usuario?',
+                                                message: 'Esta acción es irreversible y removerá la cuenta del usuario permanentemente.',
+                                                confirmText: 'Eliminar usuario',
+                                                action: () => @this.deleteUser({{ $user->id }})
+                                            })" class="p-1.5 text-suraki-tertiary hover:text-suraki-primary hover:bg-red-50 dark:hover:bg-red-950/30 rounded transition-colors" title="Eliminar">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                                 </svg>

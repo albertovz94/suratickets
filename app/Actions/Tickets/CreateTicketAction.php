@@ -4,31 +4,33 @@ namespace App\Actions\Tickets;
 
 use App\Models\Ticket;
 use App\Models\User;
+use App\DTOs\TicketDTO;
 
 class CreateTicketAction
 {
     /**
      * Executes the creation of a Ticket including auto-assignment and priority resolution.
      *
-     * @param array $data
+     * @param TicketDTO $dto
      * @return Ticket
      */
-    public function execute(array $data): Ticket
+    public function execute(TicketDTO $dto): Ticket
     {
-        $data['priority'] = $this->calculatePriority($data['title'], $data['description']);
+        $payload = $dto->toDatabaseArray();
+        $payload['priority'] = $this->calculatePriority($dto->title, $dto->description);
         
         $assignedAdmin = $this->findBestAvailableAdmin();
 
         if ($assignedAdmin) {
-            $data['assigned_to'] = $assignedAdmin->id;
-            $data['status'] = 'asignado';
+            $payload['assigned_to'] = $assignedAdmin->id;
+            $payload['status'] = 'asignado';
         } else {
-            $data['status'] = 'abierto';
+            $payload['status'] = 'abierto';
         }
 
         // El TicketObserver se encargará de despachar las notificaciones
         // de 'creado' (si es crítico) o de avisar a los administradores.
-        return Ticket::create($data);
+        return Ticket::create($payload);
     }
 
     /**

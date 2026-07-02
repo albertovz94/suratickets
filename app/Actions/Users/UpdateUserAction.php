@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCredentialsMail;
 use App\Services\ActivityLogger;
+use App\DTOs\UserDTO;
 
 class UpdateUserAction
 {
@@ -14,28 +15,19 @@ class UpdateUserAction
      * Executes the update of an existing user.
      *
      * @param User $user
-     * @param array $data
+     * @param UserDTO $dto
      * @return User
      */
-    public function execute(User $user, array $data): User
+    public function execute(User $user, UserDTO $dto): User
     {
-        $payload = [
-            'name' => $data['name'],
-            'last_name' => $data['last_name'] ?? null,
-            'email' => $data['email'],
-            'username' => $data['username'] ?? null,
-            'role' => $data['role'],
-            'status' => $data['status'],
-            'department_id' => $data['department_id'],
-            'branch_id' => $data['branch_id'],
-        ];
+        $payload = $dto->toDatabaseArray();
 
-        if (isset($data['password']) && !empty($data['password'])) {
-            $payload['password'] = Hash::make($data['password']);
+        if ($dto->password) {
+            $payload['password'] = Hash::make($dto->password);
         }
 
-        if (isset($data['avatar']) && $data['avatar']) {
-            $payload['avatar'] = $data['avatar']->store('avatars', 'public');
+        if ($dto->avatar) {
+            $payload['avatar'] = $dto->avatar->store('avatars', 'public');
         }
 
         $user->update($payload);
@@ -43,9 +35,9 @@ class UpdateUserAction
         ActivityLogger::log('update_user', $user, "Actualizó la información del usuario {$user->name} ({$user->email})");
 
         // Enviar correo de credenciales si la contraseña fue cambiada
-        if (isset($data['password']) && !empty($data['password'])) {
+        if ($dto->password) {
             try {
-                Mail::to($user->email)->send(new UserCredentialsMail($user, $data['password']));
+                Mail::to($user->email)->send(new UserCredentialsMail($user, $dto->password));
             } catch (\Exception $e) {
                 report($e);
             }

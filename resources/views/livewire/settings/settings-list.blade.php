@@ -46,7 +46,12 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $d->devices_count }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <button wire:click="openDepartmentModal({{ $d->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
-                                <button wire:click="deleteDepartment({{ $d->id }})" wire:confirm="¿Seguro que deseas eliminar?" class="text-red-600 hover:text-red-900">Eliminar</button>
+                                <button @click="$dispatch('open-confirmation', {
+                                    title: '¿Eliminar departamento?',
+                                    message: 'Esta acción es irreversible y eliminará el departamento de forma permanente. Solo se completará si no tiene registros asociados.',
+                                    confirmText: 'Eliminar departamento',
+                                    action: () => @this.deleteDepartment({{ $d->id }})
+                                })" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 font-semibold focus:outline-none">Eliminar</button>
                             </td>
                         </tr>
                         @endforeach
@@ -89,7 +94,12 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <button wire:click="openBranchModal({{ $s->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
-                                <button wire:click="deleteBranch({{ $s->id }})" wire:confirm="¿Seguro que deseas eliminar?" class="text-red-600 hover:text-red-900">Eliminar</button>
+                                <button @click="$dispatch('open-confirmation', {
+                                    title: '¿Eliminar sucursal?',
+                                    message: 'Esta acción es irreversible y eliminará la sucursal de forma permanente. Solo se completará si no tiene registros asociados.',
+                                    confirmText: 'Eliminar sucursal',
+                                    action: () => @this.deleteBranch({{ $s->id }})
+                                })" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 font-semibold focus:outline-none">Eliminar</button>
                             </td>
                         </tr>
                         @endforeach

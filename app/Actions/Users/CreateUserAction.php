@@ -7,31 +7,23 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCredentialsMail;
 use App\Services\ActivityLogger;
+use App\DTOs\UserDTO;
 
 class CreateUserAction
 {
     /**
      * Executes the creation of a new user.
      *
-     * @param array $data
+     * @param UserDTO $dto
      * @return User
      */
-    public function execute(array $data): User
+    public function execute(UserDTO $dto): User
     {
-        $payload = [
-            'name' => $data['name'],
-            'last_name' => $data['last_name'] ?? null,
-            'email' => $data['email'],
-            'username' => $data['username'] ?? null,
-            'role' => $data['role'],
-            'status' => $data['status'] ?? 'Activo',
-            'department_id' => $data['department_id'],
-            'branch_id' => $data['branch_id'],
-            'password' => Hash::make($data['password']),
-        ];
+        $payload = $dto->toDatabaseArray();
+        $payload['password'] = Hash::make($dto->password);
 
-        if (isset($data['avatar']) && $data['avatar']) {
-            $payload['avatar'] = $data['avatar']->store('avatars', 'public');
+        if ($dto->avatar) {
+            $payload['avatar'] = $dto->avatar->store('avatars', 'public');
         }
 
         $user = User::create($payload);
@@ -40,7 +32,7 @@ class CreateUserAction
 
         // Envío asíncrono o síncrono del correo con accesos
         try {
-            Mail::to($user->email)->send(new UserCredentialsMail($user, $data['password']));
+            Mail::to($user->email)->send(new UserCredentialsMail($user, $dto->password));
         } catch (\Exception $e) {
             // Se propaga la excepción o se loguea para no romper la transacción si es crítico
             report($e);

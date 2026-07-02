@@ -126,17 +126,17 @@
 
     /* Card */
     .card-suraki {
-        @apply bg-white rounded-xl shadow-sm border border-suraki-neutral-dark overflow-hidden transition-shadow duration-200 hover:shadow-md;
+        @apply bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-suraki-neutral-dark dark:border-zinc-800 overflow-hidden transition-shadow duration-200 hover:shadow-md;
     }
 
     /* Glass Panel */
     .glass-panel {
-        @apply bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20;
+        @apply bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 dark:border-zinc-800;
     }
 
     /* Form inputs consistent style */
     .input-suraki {
-        @apply border-suraki-neutral-dark focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm transition-colors duration-150;
+        @apply border-suraki-neutral-dark dark:border-zinc-700 bg-white dark:bg-zinc-800 text-suraki-secondary dark:text-zinc-100 focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm transition-colors duration-150;
     }
 }
 
@@ -283,4 +283,138 @@
 }
 
 
+/* === Dark Mode Global Overrides === */
+.dark body {
+    background-color: #09090a;
+    color: #e4e4e7;
+}
 
+.dark .bg-white {
+    background-color: #121213 !important;
+}
+
+.dark .border-suraki-neutral-dark {
+    border-color: #1f1f21 !important;
+}
+
+.dark .text-suraki-secondary {
+    color: #f4f4f5 !important;
+}
+
+.dark .text-suraki-tertiary {
+    color: #a1a1aa !important;
+}
+
+.dark .bg-suraki-neutral {
+    background-color: #18181b !important;
+}
+
+.dark .border-gray-200 {
+    border-color: #27272a !important;
+}
+
+.dark .border-gray-300 {
+    border-color: #27272a !important;
+}
+
+.dark .bg-gray-50 {
+    background-color: #18181b !important;
+}
+
+.dark .bg-gray-100 {
+    background-color: #27272a !important;
+}
+
+.dark .text-gray-900 {
+    color: #f4f4f5 !important;
+}
+
+.dark .text-gray-700 {
+    color: #e4e4e7 !important;
+}
+
+.dark .text-gray-650 {
+    color: #d4d4d8 !important;
+}
+
+.dark .text-gray-600 {
+    color: #d4d4d8 !important;
+}
+
+.dark .text-gray-500 {
+    color: #a1a1aa !important;
+}
+
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #27272a !important;
+}
+
+.dark .divide-suraki-neutral > :not([hidden]) ~ :not([hidden]) {
+    border-color: #1f1f21 !important;
+}
+
+.dark .hover\:bg-suraki-neutral\/20:hover {
+    background-color: rgba(30, 30, 31, 0.4) !important;
+}
+
+.dark .hover\:bg-suraki-neutral:hover {
+    background-color: #1c1c1e !important;
+}
+
+.dark .bg-suraki-neutral\/50 {
+    background-color: rgba(24, 24, 27, 0.5) !important;
+}
+
+.dark .border-suraki-neutral {
+    border-color: #1f1f21 !important;
+}
+
+.dark input, .dark select, .dark textarea {
+    background-color: #1c1c1e !important;
+    border-color: #27272a !important;
+    color: #ffffff !important;
+}
+
+.dark input::placeholder, .dark textarea::placeholder {
+    color: #71717a !important;
+}
+
+.dark .border-gray-100 {
+    border-color: #27272a !important;
+}
+
+.dark .peer-checked\:bg-suraki-primary\/5:checked + div,
+.dark .peer-checked\:bg-suraki-primary\/5 {
+    background-color: rgba(255, 30, 30, 0.08) !important;
+}
+
+.dark .bg-yellow-50 {
+    background-color: rgba(234, 179, 8, 0.08) !important;
+    color: #eab308 !important;
+    border-color: rgba(234, 179, 8, 0.15) !important;
+}
+
+.dark .bg-blue-50 {
+    background-color: rgba(59, 130, 246, 0.08) !important;
+    color: #60a5fa !important;
+    border-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+.dark .bg-red-50 {
+    background-color: rgba(239, 68, 68, 0.08) !important;
+    color: #f87171 !important;
+    border-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Custom scrollbars for dark mode */
+.dark ::-webkit-scrollbar-track {
+    background: #121213;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #27272a;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+}

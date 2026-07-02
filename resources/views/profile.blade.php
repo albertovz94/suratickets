@@ -19,6 +19,14 @@
                 </div>
             </div>
 
+            @if(auth()->user()->hasAdminAccess())
+            <div class="p-4 sm:p-8 card-suraki">
+                <div class="max-w-xl">
+                    <livewire:profile.two-factor-authentication-form />
+                </div>
+            </div>
+            @endif
+
             <div class="p-4 sm:p-8 card-suraki">
                 <div class="max-w-xl">
                     <livewire:profile.delete-user-form />

@@ -48,17 +48,13 @@
                         <div class="flex items-center justify-between">
                             <p class="text-sm font-semibold text-suraki-primary truncate">{{ $ticket->title }}</p>
                             <div class="ml-2 flex-shrink-0 flex gap-2">
-                                <span class="badge-status badge-{{ $ticket->priority }}">
-                                    {{ ucfirst($ticket->priority) }}
-                                </span>
-                                @if($ticket->categoria)
+                                <x-badge type="priority" :value="$ticket->priority" />
+                                @if($ticket->category)
                                 <span class="badge-status" style="background-color: #f3f4f6; color: #4b5563; border-color: #d1d5db;">
-                                    {{ ucfirst($ticket->categoria) }}
+                                    {{ ucfirst($ticket->category) }}
                                 </span>
                                 @endif
-                                <span class="badge-status badge-{{ $ticket->status }}">
-                                    {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
-                                </span>
+                                <x-badge type="status" :value="$ticket->status" />
                             </div>
                         </div>
                         <div class="mt-2 sm:flex sm:justify-between">
