@@ -41,6 +41,21 @@ class LogRouteRequests
             } catch (\Exception $e) {
                 // Fail silently to avoid breaking the application request lifecycle on DB issue
             }
+
+            // Audit sensitive administration reads
+            if (Auth::check() && Auth::user()->hasAdminAccess()) {
+                $sensitivePaths = ['usuarios', 'configuracion', 'reportes', 'inventario'];
+                foreach ($sensitivePaths as $sensitivePath) {
+                    if (str_starts_with($path, $sensitivePath)) {
+                        \App\Services\ActivityLogger::log(
+                            'admin_read_sensitive',
+                            null,
+                            "El administrador leyó información sensible en la ruta: /{$path}"
+                        );
+                        break;
+                    }
+                }
+            }
         }
 
         return $response;

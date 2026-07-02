@@ -115,7 +115,12 @@
                     <select wire:model.live="type" class="block w-full md:w-40 py-2 px-3 border border-suraki-neutral-dark bg-white rounded-lg text-sm focus:outline-none focus:ring-suraki-primary focus:border-suraki-primary">
                         <option value="">Todos los tipos</option>
                         @foreach($types as $t)
-                            <option value="{{ $t }}">{{ $t }}</option>
+                            @php
+                                $typeVal = is_array($t) ? ($t['type'] ?? '') : (is_object($t) ? ($t->type ?? '') : $t);
+                            @endphp
+                            @if(!empty($typeVal))
+                                <option value="{{ $typeVal }}">{{ $typeVal }}</option>
+                            @endif
                         @endforeach
                     </select>
 
@@ -129,59 +134,71 @@
                     <select wire:model.live="branch_id" class="block w-full md:w-48 py-2 px-3 border border-suraki-neutral-dark bg-white rounded-lg text-sm focus:outline-none focus:ring-suraki-primary focus:border-suraki-primary">
                         <option value="">Todas las sucursales</option>
                         @foreach($branches as $s)
-                            <option value="{{ $s->id }}">{{ $s->name }}</option>
+                            @php
+                                $bId = is_array($s) ? ($s['id'] ?? '') : (is_object($s) ? ($s->id ?? '') : '');
+                                $bName = is_array($s) ? ($s['name'] ?? '') : (is_object($s) ? ($s->name ?? '') : $s);
+                            @endphp
+                            @if($bId)
+                                <option value="{{ $bId }}">{{ $bName }}</option>
+                            @endif
                         @endforeach
                     </select>
 
                     <select wire:model.live="department_id" class="block w-full md:w-48 py-2 px-3 border border-suraki-neutral-dark bg-white rounded-lg text-sm focus:outline-none focus:ring-suraki-primary focus:border-suraki-primary">
                         <option value="">Todos los departamentos</option>
                         @foreach($departments as $d)
-                            <option value="{{ $d->id }}">{{ $d->name }}</option>
+                            @php
+                                $dId = is_array($d) ? ($d['id'] ?? '') : (is_object($d) ? ($d->id ?? '') : '');
+                                $dName = is_array($d) ? ($d['name'] ?? '') : (is_object($d) ? ($d->name ?? '') : $d);
+                            @endphp
+                            @if($dId)
+                                <option value="{{ $dId }}">{{ $dName }}</option>
+                            @endif
                         @endforeach
                     </select>
                 </div>
             </div>
 
             <!-- Tabla de Inventario -->
-            <div class="bg-white rounded-2xl border border-suraki-neutral-dark overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+            <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-suraki-neutral-dark dark:border-zinc-800 overflow-hidden transition-colors">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-zinc-800">
+                    <thead class="bg-gray-50 dark:bg-zinc-800/50">
                         <tr>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-12">
-                                <input type="checkbox" class="rounded border-gray-300 text-suraki-primary focus:ring-suraki-primary">
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider w-12 hidden sm:table-cell">
+                                <input type="checkbox" class="rounded border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 text-suraki-primary focus:ring-suraki-primary">
                             </th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
                                 EQUIPO
                             </th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider hidden md:table-cell">
                                 TIPO
                             </th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider hidden lg:table-cell">
                                 SERIAL / ASSET TAG
                             </th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider hidden sm:table-cell">
                                 SUCURSAL / DEPARTAMENTO
                             </th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider hidden md:table-cell">
                                 ASIGNADO A
                             </th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
                                 ESTADO
                             </th>
-                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
                                 ACCIONES
                             </th>
                         </tr>
                     </thead>
-                    <tbody wire:loading.class="hidden" class="bg-white divide-y divide-gray-200">
+                    <tbody wire:loading.class="hidden" class="bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-800">
                         @forelse($devices as $device)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <input type="checkbox" class="rounded border-gray-300 text-suraki-primary focus:ring-suraki-primary">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-zinc-800/20 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                                <input type="checkbox" class="rounded border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 text-suraki-primary focus:ring-suraki-primary">
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-lg {{ $device->type === 'Laptop' ? 'bg-red-50 text-red-500' : ($device->type === 'Desktop' ? 'bg-blue-50 text-blue-500' : ($device->type === 'Servidor' ? 'bg-purple-50 text-purple-500' : 'bg-gray-100 text-gray-500')) }} flex items-center justify-center flex-shrink-0">
+                                    <div class="w-10 h-10 rounded-lg {{ $device->type === 'Laptop' ? 'bg-red-50 text-red-500 dark:bg-red-950/20 dark:text-red-400' : ($device->type === 'Desktop' ? 'bg-blue-50 text-blue-500 dark:bg-blue-950/20 dark:text-blue-400' : ($device->type === 'Servidor' ? 'bg-purple-50 text-purple-500 dark:bg-purple-950/20 dark:text-purple-400' : 'bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-zinc-400')) }} flex items-center justify-center flex-shrink-0">
                                         @if($device->type === 'Laptop' || $device->type === 'Desktop')
                                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                                         @elseif($device->type === 'Servidor')
@@ -191,23 +208,23 @@
                                         @endif
                                     </div>
                                     <div>
-                                        <p class="text-sm font-bold text-suraki-secondary">{{ $device->name }}</p>
-                                        <p class="text-xs text-gray-500 mt-0.5">{{ $device->specs }}</p>
+                                        <p class="text-sm font-bold text-suraki-secondary dark:text-zinc-100">{{ $device->name }}</p>
+                                        <p class="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">{{ $device->specs }}</p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-600">{{ $device->type }}</span>
+                            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                                <span class="text-sm text-gray-600 dark:text-zinc-300">{{ $device->type }}</span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-600">{{ $device->serial_number }}</span>
+                            <td class="px-6 py-4 whitespace-nowrap hidden lg:table-cell">
+                                <span class="text-sm text-gray-600 dark:text-zinc-300">{{ $device->serial_number }}</span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <p class="text-sm text-gray-600">{{ optional($device->branch)->name }}</p>
-                                <p class="text-xs text-gray-400 mt-0.5">{{ optional($device->department)->name }}</p>
+                            <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                                <p class="text-sm text-gray-600 dark:text-zinc-300">{{ optional($device->branch)->name }}</p>
+                                <p class="text-xs text-gray-400 dark:text-zinc-500 mt-0.5">{{ optional($device->department)->name }}</p>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-600">
+                            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                                <span class="text-sm text-gray-600 dark:text-zinc-300">
                                     {{ $device->assignee ? trim($device->assignee->name . ' ' . ($device->assignee->last_name ?? '')) : '--' }}
                                 </span>
                             </td>
@@ -246,7 +263,12 @@
                                     <a href="{{ route('inventory.edit', $device->id) }}" wire:navigate class="text-gray-400 hover:text-suraki-primary transition-colors p-1.5 border border-gray-200 rounded-md hover:bg-gray-50">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                     </a>
-                                    <button wire:click="deleteEquipo({{ $device->id }})" wire:confirm="¿Seguro que deseas eliminar este equipo?" class="text-gray-400 hover:text-red-500 transition-colors p-1.5 border border-gray-200 rounded-md hover:bg-gray-50">
+                                    <button @click="$dispatch('open-confirmation', {
+                                        title: '¿Eliminar equipo?',
+                                        message: 'El equipo será removido del inventario permanentemente.',
+                                        confirmText: 'Eliminar equipo',
+                                        action: () => @this.deleteEquipo({{ $device->id }})
+                                    })" class="text-gray-400 hover:text-red-500 dark:hover:bg-red-950/30 transition-colors p-1.5 border border-gray-200 dark:border-zinc-800 rounded-md hover:bg-gray-50">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                     </button>
                                 </div>

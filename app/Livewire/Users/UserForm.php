@@ -9,6 +9,7 @@ use App\Models\Branch;
 use App\Livewire\Forms\UserFormObject;
 use App\Actions\Users\CreateUserAction;
 use App\Actions\Users\UpdateUserAction;
+use App\DTOs\UserDTO;
 use Livewire\WithFileUploads;
 
 class UserForm extends Component
@@ -31,7 +32,7 @@ class UserForm extends Component
     {
         $this->form->validate();
 
-        $data = [
+        $dto = UserDTO::fromArray([
             'name' => $this->form->name,
             'last_name' => $this->form->last_name,
             'email' => $this->form->email,
@@ -42,14 +43,14 @@ class UserForm extends Component
             'branch_id' => $this->form->branch_id,
             'password' => $this->form->password,
             'avatar' => $this->form->avatar,
-        ];
+        ]);
 
         if ($this->user_id) {
             $user = User::findOrFail($this->user_id);
-            $updateUser->execute($user, $data);
+            $updateUser->execute($user, $dto);
             session()->flash('message', 'Usuario actualizado correctamente.');
         } else {
-            $createUser->execute($data);
+            $createUser->execute($dto);
             session()->flash('message', 'Usuario creado correctamente y correo enviado con accesos.');
         }
 

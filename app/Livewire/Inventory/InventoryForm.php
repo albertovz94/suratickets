@@ -81,7 +81,7 @@ class InventoryForm extends Component
         }
 
         \Illuminate\Support\Facades\Cache::forget('inventory_stats');
-        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns_v3');
 
         return redirect()->route('inventory.index');
     }

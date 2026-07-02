@@ -58,7 +58,7 @@ class SettingsList extends Component
             $this->dispatch('notify', message: 'Departamento creado correctamente.');
         }
         \Illuminate\Support\Facades\Cache::forget('ticket_form_dropdowns');
-        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns_v3');
         $this->closeDepartmentModal();
     }
 
@@ -71,7 +71,7 @@ class SettingsList extends Component
         }
         $department->delete();
         \Illuminate\Support\Facades\Cache::forget('ticket_form_dropdowns');
-        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns_v3');
         $this->dispatch('notify', message: 'Departamento eliminado.');
     }
 
@@ -120,7 +120,7 @@ class SettingsList extends Component
             $this->dispatch('notify', message: 'Sucursal creada correctamente.');
         }
         \Illuminate\Support\Facades\Cache::forget('ticket_form_dropdowns');
-        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns_v3');
         $this->closeBranchModal();
     }
 
@@ -133,7 +133,7 @@ class SettingsList extends Component
         }
         $branch->delete();
         \Illuminate\Support\Facades\Cache::forget('ticket_form_dropdowns');
-        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns');
+        \Illuminate\Support\Facades\Cache::forget('inventory_dropdowns_v3');
         $this->dispatch('notify', message: 'Sucursal eliminada.');
     }
 

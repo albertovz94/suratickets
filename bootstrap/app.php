@@ -18,10 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
-        // Append CheckUserStatus and LogRouteRequests to all web requests
+        // Append security and audit middlewares to all web requests
         $middleware->web(append: [
             \App\Http\Middleware\CheckUserStatus::class,
             \App\Http\Middleware\LogRouteRequests::class,
+            \App\Http\Middleware\AddContentSecurityPolicyHeaders::class,
+            'throttle:global',
         ]);
 
         $middleware->alias([

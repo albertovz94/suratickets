@@ -164,7 +164,7 @@
                         <div class="space-y-3 text-sm">
                             <div>
                                 <p class="text-xs text-suraki-tertiary mb-1">Categoría</p>
-                                <span class="font-medium text-suraki-secondary capitalize">{{ $ticket->categoria ?? 'Otros' }}</span>
+                                <span class="font-medium text-suraki-secondary capitalize">{{ $ticket->category ?? 'Otros' }}</span>
                             </div>
                             <div>
                                 <p class="text-xs text-suraki-tertiary mb-1">Departamento</p>

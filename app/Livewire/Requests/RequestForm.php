@@ -62,13 +62,15 @@ class RequestForm extends Component
     {
         $this->validate();
 
-        $createAction->execute([
+        $dto = \App\DTOs\EquipmentRequestDTO::fromArray([
             'user_id' => auth()->id(),
             'device_type' => $this->device_type,
             'urgency' => $this->urgency,
             'assigned_to' => $this->assigned_to,
             'description' => $this->description,
         ]);
+
+        $createAction->execute($dto);
 
         session()->flash('message', 'Tu solicitud ha sido enviada exitosamente.');
 

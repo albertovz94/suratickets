@@ -18,7 +18,7 @@ new class extends Component
 
 <div>
     <!-- Sidebar overlay (mobile) -->
-    <div x-show="sidebarOpen" class="fixed inset-0 z-40 bg-black/50 md:hidden" @click="sidebarOpen = false" style="display: none;"></div>
+    <div x-show="sidebarOpen" class="fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity" @click="sidebarOpen = false" style="display: none;" aria-hidden="true"></div>
 
     <!-- Sidebar Container -->
     <aside :class="{
@@ -27,18 +27,21 @@ new class extends Component
             'w-[280px] min-w-[280px]': !sidebarCollapsed,
             'w-[88px] min-w-[88px]': sidebarCollapsed
         }" 
-        class="fixed inset-y-0 left-0 z-50 flex flex-col bg-white rounded-2xl p-4 transition-all duration-300 md:static md:translate-x-0 h-full shadow-sm border border-suraki-neutral-dark overflow-hidden">
+        class="fixed inset-y-0 left-0 z-50 flex flex-col bg-white dark:bg-zinc-900 rounded-2xl p-4 transition-all duration-300 md:static md:translate-x-0 h-full shadow-sm border border-suraki-neutral-dark dark:border-zinc-800 overflow-hidden"
+        role="complementary"
+        aria-label="Navegación lateral"
+    >
         
         <!-- Header / Logo -->
         <div class="flex items-center justify-between mb-8 px-2 mt-2">
-            <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-3 overflow-hidden">
-                <img src="{{ asset('icono.png') }}" alt="Suraki" class="w-8 h-8 object-contain shrink-0">
+            <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-3 overflow-hidden" aria-label="Ir a Inicio">
+                <img src="{{ asset('icono.png') }}" alt="Suraki Logo" class="w-8 h-8 object-contain shrink-0">
                 <div x-show="!sidebarCollapsed" class="flex flex-col transition-opacity duration-300">
-                    <span class="font-heading font-bold text-xl text-suraki-secondary leading-none">Suraki Tickets</span>
+                    <span class="font-heading font-bold text-xl text-suraki-secondary dark:text-zinc-100 leading-none">Suraki Tickets</span>
                     <span class="text-[11px] font-bold text-suraki-primary uppercase tracking-wider mt-0.5">Soporte IT</span>
                 </div>
             </a>
-            <button @click="sidebarOpen = false" class="md:hidden text-suraki-tertiary">
+            <button @click="sidebarOpen = false" class="md:hidden text-suraki-tertiary dark:text-zinc-400 focus:outline-none" aria-label="Cerrar menú de navegación lateral">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -46,10 +49,11 @@ new class extends Component
         </div>
 
         <!-- Navigation Modules -->
-        <nav class="flex-1 space-y-2">
+        <nav class="flex-1 space-y-2" aria-label="Menú principal de navegación">
             @if(auth()->user()->hasAdminAccess())
             <a href="{{ route('dashboard') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary dark:text-zinc-400 hover:bg-suraki-neutral dark:hover:bg-zinc-800 hover:text-suraki-secondary dark:hover:text-zinc-200' }}"
+               {!! request()->routeIs('dashboard') ? 'aria-current="page"' : '' !!}
                :title="sidebarCollapsed ? 'Panel Principal' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -61,7 +65,8 @@ new class extends Component
             @endif
 
             <a href="{{ route('tickets.index') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('tickets.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('tickets.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary dark:text-zinc-400 hover:bg-suraki-neutral dark:hover:bg-zinc-800 hover:text-suraki-secondary dark:hover:text-zinc-200' }}"
+               {!! request()->routeIs('tickets.*') ? 'aria-current="page"' : '' !!}
                :title="sidebarCollapsed ? 'Tickets' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -72,7 +77,8 @@ new class extends Component
             </a>
 
             <a href="{{ route('requests.index') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('requests.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('requests.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary dark:text-zinc-400 hover:bg-suraki-neutral dark:hover:bg-zinc-800 hover:text-suraki-secondary dark:hover:text-zinc-200' }}"
+               {!! request()->routeIs('requests.*') ? 'aria-current="page"' : '' !!}
                :title="sidebarCollapsed ? 'Solicitudes IT' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -84,7 +90,8 @@ new class extends Component
 
             @if(auth()->user()->hasAdminAccess() || auth()->user()->department_id === 1)
             <a href="{{ route('schedules.index') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('schedules.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('schedules.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary dark:text-zinc-400 hover:bg-suraki-neutral dark:hover:bg-zinc-800 hover:text-suraki-secondary dark:hover:text-zinc-200' }}"
+               {!! request()->routeIs('schedules.*') ? 'aria-current="page"' : '' !!}
                :title="sidebarCollapsed ? 'Horarios IT' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -94,9 +101,11 @@ new class extends Component
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Horarios IT</span>
             </a>
             @endif
+
             @if(auth()->user()->hasAdminAccess())
             <a href="{{ route('inventory.index') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('inventory.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('inventory.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary dark:text-zinc-400 hover:bg-suraki-neutral dark:hover:bg-zinc-800 hover:text-suraki-secondary dark:hover:text-zinc-200' }}"
+               {!! request()->routeIs('inventory.*') ? 'aria-current="page"' : '' !!}
                :title="sidebarCollapsed ? 'Inventario' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -109,7 +118,8 @@ new class extends Component
 
             @if(auth()->user()->hasAdminAccess())
             <a href="{{ route('users.index') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('users.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('users.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary dark:text-zinc-400 hover:bg-suraki-neutral dark:hover:bg-zinc-800 hover:text-suraki-secondary dark:hover:text-zinc-200' }}"
+               {!! request()->routeIs('users.*') ? 'aria-current="page"' : '' !!}
                :title="sidebarCollapsed ? 'Usuarios' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -120,7 +130,8 @@ new class extends Component
             </a>
 
             <a href="{{ route('reports.index') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('reports.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('reports.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary dark:text-zinc-400 hover:bg-suraki-neutral dark:hover:bg-zinc-800 hover:text-suraki-secondary dark:hover:text-zinc-200' }}"
+               {!! request()->routeIs('reports.*') ? 'aria-current="page"' : '' !!}
                :title="sidebarCollapsed ? 'Reportes' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -130,9 +141,9 @@ new class extends Component
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Reportes</span>
             </a>
 
-
             <a href="{{ route('settings.index') }}" wire:navigate 
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('settings.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary hover:bg-suraki-neutral hover:text-suraki-secondary' }}"
+               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors duration-200 {{ request()->routeIs('settings.*') ? 'bg-suraki-primary text-white shadow-sm shadow-suraki-primary/30' : 'text-suraki-tertiary dark:text-zinc-400 hover:bg-suraki-neutral dark:hover:bg-zinc-800 hover:text-suraki-secondary dark:hover:text-zinc-200' }}"
+               {!! request()->routeIs('settings.*') ? 'aria-current="page"' : '' !!}
                :title="sidebarCollapsed ? 'Configuración' : ''">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -142,12 +153,11 @@ new class extends Component
                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap transition-opacity duration-300">Configuración</span>
             </a>
             @endif
-
         </nav>
 
         <!-- Sidebar Collapse Toggle Button -->
         <div class="mb-4 hidden md:flex items-center justify-center">
-            <button @click="sidebarCollapsed = !sidebarCollapsed" class="p-2 rounded-full bg-suraki-neutral text-suraki-tertiary hover:text-suraki-secondary hover:bg-gray-200 transition-colors shadow-sm border border-suraki-neutral-dark" title="Expandir/Contraer Menú">
+            <button @click="sidebarCollapsed = !sidebarCollapsed" class="p-2 rounded-full bg-suraki-neutral dark:bg-zinc-800 text-suraki-tertiary dark:text-zinc-400 hover:text-suraki-secondary dark:hover:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors shadow-sm border border-suraki-neutral-dark dark:border-zinc-700" aria-label="Contraer o expandir menú de navegación" title="Expandir/Contraer Menú">
                 <svg x-show="!sidebarCollapsed" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
                 </svg>
@@ -158,8 +168,8 @@ new class extends Component
         </div>
 
         <!-- Footer / User Actions -->
-        <div class="mt-auto pt-6 border-t border-suraki-neutral-dark">
-            <button wire:click="logout" x-on:click="window.useLoading().show('Cerrando sesión...', 6000)" class="flex w-full items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors duration-200" :class="{'justify-center': sidebarCollapsed}" :title="sidebarCollapsed ? 'Cerrar Sesión' : ''">
+        <div class="mt-auto pt-6 border-t border-suraki-neutral-dark dark:border-zinc-800">
+            <button wire:click="logout" x-on:click="window.useLoading().show('Cerrando sesión...', 6000)" class="flex w-full items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors duration-200" :class="{'justify-center': sidebarCollapsed}" :title="sidebarCollapsed ? 'Cerrar Sesión' : ''" aria-label="Cerrar sesión">
                 <div class="w-6 h-6 flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />

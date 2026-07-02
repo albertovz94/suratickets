@@ -69,7 +69,9 @@ class TicketForm extends Component
             $validatedData['attachment_path'] = $this->attachment->store('attachments', 'public');
         }
 
-        $action->execute($validatedData);
+        $dto = \App\DTOs\TicketDTO::fromArray($validatedData);
+
+        $action->execute($dto);
 
         session()->flash('message', 'Ticket creado y asignado exitosamente.');
         return redirect()->route('tickets.index');

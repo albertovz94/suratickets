@@ -20,7 +20,18 @@ new #[Layout('layouts.guest')] class extends Component
 
         Session::regenerate();
 
-        if (Auth::user()->hasAdminAccess()) {
+        $user = Auth::user();
+        if ($user->two_factor_enabled) {
+            Session::put('2fa:user_id', $user->id);
+            Session::put('2fa:remember', $this->form->remember);
+            
+            Auth::logout();
+            
+            $this->redirect(route('login.2fa'), navigate: true);
+            return;
+        }
+
+        if ($user->hasAdminAccess()) {
             $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
         } else {
             $this->redirectIntended(default: route('tickets.index', absolute: false), navigate: true);
