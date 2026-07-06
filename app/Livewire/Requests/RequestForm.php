@@ -79,7 +79,12 @@ class RequestForm extends Component
 
     public function render()
     {
-        $outsourcingUsers = \App\Models\User::where('role', 'outsourcing')->get();
+        $outsourcingUsers = \App\Models\User::where('role', 'outsourcing')
+            ->where('status', 'Activo')
+            ->get()
+            ->filter(function($user) {
+                return $user->isWorkingNow();
+            });
         return view('livewire.requests.request-form', compact('outsourcingUsers'))->layout('layouts.app');
     }
 }
