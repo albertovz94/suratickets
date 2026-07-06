@@ -76,7 +76,7 @@
                     @endif
 
                     <!-- Historial de Mensajes (Auto-actualizable) -->
-                    <div wire:poll.180s>
+                    <div wire:poll.3s>
                         @foreach($this->ticketMessages as $msg)
                         <div class="bg-{{ $msg->user->hasAdminAccess() ? 'suraki-neutral' : 'white' }} p-6 rounded-xl border border-suraki-neutral-dark flex gap-4 mb-6 last:mb-0">
                             <div class="flex-shrink-0">

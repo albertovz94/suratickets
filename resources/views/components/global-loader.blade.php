@@ -76,4 +76,16 @@
     document.addEventListener('livewire:navigated', () => {
         window.useLoading().hide();
     });
+
+    // Automatically hide loader when any Livewire request finishes successfully or fails
+    document.addEventListener('livewire:init', () => {
+        Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+            succeed(({ snapshot, effect }) => {
+                window.useLoading().hide();
+            });
+            fail(() => {
+                window.useLoading().hide();
+            });
+        });
+    });
 </script>

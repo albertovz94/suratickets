@@ -103,6 +103,8 @@ class RequestList extends Component
         $solicitud->status = $newStatus;
         $solicitud->save();
         
+        $solicitud->user->notify(new \App\Notifications\EquipmentRequestStatusUpdated($solicitud, "Tu Solicitud IT #{$solicitud->id} ahora está: {$newStatus}."));
+        
         $this->dispatch('notify', message: "Solicitud #{$solicitud->id} actualizada a '{$newStatus}'.");
         
         $this->closeActionModal();

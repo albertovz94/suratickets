@@ -51,9 +51,9 @@
                     @foreach($categories as $name => $icon)
                     <label class="cursor-pointer">
                         <input type="radio" name="device_type" wire:model.live="device_type" value="{{ $name }}" class="peer sr-only">
-                        <div class="rounded-xl border-2 border-gray-100 p-4 hover:border-suraki-primary/50 peer-checked:border-suraki-primary peer-checked:bg-suraki-primary/5 transition-all text-center h-full flex flex-col items-center justify-center gap-2">
+                        <div class="rounded-xl border-2 border-gray-100 p-4 hover:border-suraki-primary/50 peer-checked:border-suraki-primary peer-checked:bg-suraki-primary peer-checked:text-white transition-all text-center h-full flex flex-col items-center justify-center gap-2">
                             <span class="text-3xl">{{ $icon }}</span>
-                            <span class="text-sm font-semibold text-gray-700 peer-checked:text-suraki-primary">{{ $name }}</span>
+                            <span class="text-sm font-semibold text-gray-700 peer-checked:text-white">{{ $name }}</span>
                         </div>
                     </label>
                     @endforeach

@@ -30,7 +30,7 @@
         <div class="max-h-80 overflow-y-auto">
             @forelse($notifications as $notification)
                 <div class="p-4 border-b border-suraki-neutral-dark last:border-b-0 hover:bg-suraki-neutral transition-colors cursor-pointer {{ is_null($notification->read_at) ? 'bg-red-50/50' : '' }}"
-                     wire:click="markAsRead('{{ $notification->id }}', {{ isset($notification->data['ticket_id']) ? $notification->data['ticket_id'] : 'null' }})">
+                     wire:click="markAsRead('{{ $notification->id }}', {{ isset($notification->data['ticket_id']) ? $notification->data['ticket_id'] : 'null' }}, {{ isset($notification->data['request_id']) ? $notification->data['request_id'] : 'null' }})">
                     
                     <div class="flex gap-3">
                         <div class="mt-0.5">
@@ -44,6 +44,8 @@
                             <p class="text-xs font-medium text-suraki-secondary mb-1">{{ $notification->data['message'] }}</p>
                             @if(isset($notification->data['ticket_id']))
                                 <p class="text-xs text-suraki-tertiary"><strong>TK-{{ $notification->data['ticket_id'] }}:</strong> {{ $notification->data['title'] ?? '' }}</p>
+                            @elseif(isset($notification->data['request_id']))
+                                <p class="text-xs text-suraki-tertiary"><strong>REQ-{{ $notification->data['request_id'] }}</strong></p>
                             @endif
                             <p class="text-[10px] text-suraki-tertiary mt-2 flex items-center gap-1">
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>

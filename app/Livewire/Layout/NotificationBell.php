@@ -46,7 +46,7 @@ class NotificationBell extends Component
         $this->isOpen = !$this->isOpen;
     }
 
-    public function markAsRead($notificationId, $ticketId = null)
+    public function markAsRead($notificationId, $ticketId = null, $requestId = null)
     {
         $notification = Auth::user()->notifications()->find($notificationId);
         if ($notification) {
@@ -59,7 +59,11 @@ class NotificationBell extends Component
             return redirect()->route('tickets.show', $ticketId);
         }
 
-        if ($notification->type === \App\Notifications\PasswordResetAdminNotification::class) {
+        if ($requestId) {
+            return redirect()->route('requests.index');
+        }
+
+        if ($notification && $notification->type === \App\Notifications\PasswordResetAdminNotification::class) {
             return redirect()->route('users.index');
         }
     }

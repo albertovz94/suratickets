@@ -54,7 +54,7 @@ class User extends Authenticatable
 
     public function scopeAssignableAdmins($query)
     {
-        return $query->where('role', 'admin')->where('username', '!=', 'admin_sistemas');
+        return $query->whereIn('role', ['admin', 'outsourcing'])->where('username', '!=', 'admin_sistemas');
     }
 
     public function assignedTickets()
