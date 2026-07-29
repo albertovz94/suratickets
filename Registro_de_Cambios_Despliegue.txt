@@ -1,0 +1,23 @@
+RESUMEN DE CAMBIOS Y CORRECCIONES PARA EL PASE A PRODUCCIÓN (CPANEL)
+===================================================================
+
+1. Optimización del Empaquetado para cPanel:
+   - Se reescribió el script de empaquetado (`empaquetar.ps1`).
+   - Problema original: El servidor cPanel se quedaba colgado o daba timeout al extraer un único archivo ZIP gigante de 46MB (que en realidad pesaba más de 400MB antes de limpiar las carpetas ocultas). Además, daba un warning de "backslashes" por usar el compresor nativo de Windows.
+   - Solución implementada:
+     * Se limpió el historial de repositorios ocultos (`.git`) y cachés dentro de la carpeta `vendor`, reduciendo su peso drásticamente de 441 MB a unos pocos megabytes útiles.
+     * Se implementó un script PHP puente (`comprimir_cpanel.php`) que fuerza la compresión con el formato de barras estándar de Linux (`/`).
+     * El sistema ahora divide inteligentemente las dependencias generando 4 archivos ligeros (1 app principal y 3 partes de vendor) que cPanel extrae de forma instantánea sin bloqueos.
+
+2. Identificación de Credenciales de Producción:
+   - Se analizó el archivo `surak_helpdesk.sql` para determinar los usuarios válidos para el ingreso en el entorno en vivo.
+   - Se detectó que el sistema usa el campo `username` y no el correo para el login. 
+   - Se validaron los usuarios `admin_sistemas` y `Soporte IT Alberto Sarmiento`.
+   - Se generó el comando SQL encriptado en Bcrypt para resetear la contraseña del administrador general a "Administrador123*" directamente desde phpMyAdmin.
+
+3. Filtro en el Panel de "Rendimiento de Sistemas" (Dashboard):
+   - Problema original: El widget mostraba a la cuenta maestra "Administrador", lo cual no refleja el rendimiento real de los técnicos de soporte y outsourcing.
+   - Solución implementada: Se modificó la consulta en `resources/views/dashboard.blade.php`.
+     * Ahora solo muestra usuarios con rol de `admin` o `outsourcing`.
+     * Solo muestra a los técnicos cuyo estado sea `Activo`.
+     * Excluye explícitamente a la cuenta del sistema llamada "Administrador", garantizando que solo aparezcan los nombres propios del equipo de Soporte TI.

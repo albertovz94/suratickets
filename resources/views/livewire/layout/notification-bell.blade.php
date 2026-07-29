@@ -35,9 +35,13 @@
                     <div class="flex gap-3">
                         <div class="mt-0.5">
                             @if(is_null($notification->read_at))
-                                <div class="w-2 h-2 mt-1.5 rounded-full bg-red-500"></div>
+                                <button wire:click.stop="markAsRead('{{ $notification->id }}')" class="w-5 h-5 mt-1 rounded-full bg-red-50 hover:bg-green-100 border border-red-200 hover:border-green-300 flex items-center justify-center text-red-500 hover:text-green-600 transition-colors" title="Marcar como leído">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                </button>
                             @else
-                                <div class="w-2 h-2 mt-1.5 rounded-full bg-gray-300"></div>
+                                <div class="w-5 h-5 mt-1 rounded-full flex items-center justify-center text-gray-400">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                </div>
                             @endif
                         </div>
                         <div>

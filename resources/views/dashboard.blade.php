@@ -75,7 +75,10 @@
                 // Rendimiento de Sistemas
                 $agents = collect();
                 if ($user->hasAdminAccess()) {
-                    $agents = \App\Models\User::where('role', 'admin')->withCount([
+                    $agents = \App\Models\User::whereIn('role', ['admin', 'outsourcing'])
+                        ->where('status', 'Activo')
+                        ->where('name', '!=', 'Administrador')
+                        ->withCount([
                         'assignedTickets as resolved_count' => function ($query) {
                             $query->whereIn('status', ['resuelto', 'cerrado']);
                         },

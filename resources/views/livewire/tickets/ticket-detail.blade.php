@@ -290,7 +290,7 @@
                                 <x-input-error :messages="$errors->get('resolution_summary')" class="mt-2" />
                             </div>
                             <!-- Mensaje de guardado exitoso invisible -->
-                            <div x-data="{ show: false }" x-on:ticket-saved.window="show = true; setTimeout(() => show = false, 2000)" class="text-sm text-green-600 font-medium flex items-center gap-1" style="display: none;" x-show="show">
+                            <div x-data="{ show: false, flash() { this.show = true; setTimeout(() => this.show = false, 2000); } }" x-on:ticket-saved.window="flash()" class="text-sm text-green-600 font-medium flex items-center gap-1" style="display: none;" x-show="show">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                 Cambios guardados
                             </div>

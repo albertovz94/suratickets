@@ -11,8 +11,8 @@ class NotificationBell extends Component
     public $unreadCount;
     public $isOpen = false;
 
-    // Actualiza la cuenta cada 30 segundos
-    protected $listeners = ['echo:private-App.Models.User.' . 'id' . ',Illuminate\\Notifications\\Events\\BroadcastNotificationCreated' => 'loadNotifications'];
+    // Actualiza la cuenta cada 30 segundos (Vía wire:poll en la vista, se remueve el listener de Echo que causaba error)
+    // protected $listeners = ['echo:private-App.Models.User.' . 'id' . ',Illuminate\\Notifications\\Events\\BroadcastNotificationCreated' => 'loadNotifications'];
 
     public function mount()
     {

@@ -23,11 +23,11 @@ class AddContentSecurityPolicyHeaders
         // Define a strict but compatible Content Security Policy for our Livewire/Vite application
         // We include unsafe-inline and unsafe-eval because Alpine.js/Livewire require them to evaluate page directives.
         $csp = "default-src 'self'; " .
-               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; " .
+               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " .
                "font-src 'self' https://fonts.gstatic.com; " .
                "img-src 'self' data: https:; " .
-               "connect-src 'self'; " .
+               "connect-src 'self' https://cdn.jsdelivr.net; " .
                "frame-ancestors 'none';";
 
         $response->headers->set('Content-Security-Policy', $csp);

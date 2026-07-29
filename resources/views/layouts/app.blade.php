@@ -115,17 +115,6 @@
 
                     <!-- Right side: Notifications & Profile -->
                     <div class="flex items-center ml-4 space-x-2 md:space-x-4">
-                        <!-- Dark Mode Toggle Button -->
-                        <button @click="darkMode = !darkMode" class="p-2 text-suraki-tertiary hover:text-suraki-primary dark:hover:text-suraki-primary rounded-xl transition-colors hover:bg-suraki-neutral dark:hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-suraki-primary/50" aria-label="Cambiar tema" title="Cambiar tema claro/oscuro">
-                            <!-- Sun icon -->
-                            <svg x-show="darkMode" class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="display: none;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.364 17.636l-.707.707M17.636 17.636l-.707-.707M6.364 6.364l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                            </svg>
-                            <!-- Moon icon -->
-                            <svg x-show="!darkMode" class="w-5 h-5 text-suraki-tertiary" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                            </svg>
-                        </button>
 
                         <livewire:layout.notification-bell />
                         
@@ -154,6 +143,13 @@
                 </div>
             </div>
         </div>
+
+        <!-- Floating Action Button (FAB) para crear tickets en móvil -->
+        <a href="{{ route('tickets.create') }}" wire:navigate class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-suraki-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-suraki-primary-hover hover:scale-105 transition-transform z-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-suraki-primary">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+        </a>
 
         <!-- Global Toast Notification System -->
         <x-toast />
