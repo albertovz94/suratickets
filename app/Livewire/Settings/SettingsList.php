@@ -82,6 +82,57 @@ class SettingsList extends Component
         }
     }
 
+    public function createManualBackup()
+    {
+        try {
+            $zipPath = SafeZipExtractor::backupCurrentCode('manual_backup');
+            $filename = basename($zipPath);
+            $this->deployMessage = "¡Respaldo manual creado con éxito: {$filename}!";
+            $this->dispatch('notify', message: 'Respaldo manual generado.');
+        } catch (\Exception $e) {
+            $this->deployError = "Error al crear el respaldo: " . $e->getMessage();
+        }
+    }
+
+    public function restoreBackup($filename)
+    {
+        // Evitar Path Traversal
+        $filename = basename($filename);
+        $zipPath = storage_path('app/backups/' . $filename);
+
+        if (!File::exists($zipPath)) {
+            $zipPath = base_path($filename);
+        }
+
+        if (!File::exists($zipPath)) {
+            $this->deployError = "El archivo de respaldo seleccionado no existe.";
+            return;
+        }
+
+        try {
+            // 1. Respaldo de seguridad previo
+            SafeZipExtractor::backupCurrentCode('backup_before_restore_' . date('His'));
+
+            // 2. Extraer respaldo sobre el sistema
+            $result = SafeZipExtractor::extract($zipPath);
+
+            // 3. Migraciones y Caché
+            try {
+                Artisan::call('migrate', ['--force' => true]);
+            } catch (\Exception $e) {}
+
+            Artisan::call('config:clear');
+            Artisan::call('cache:clear');
+            Artisan::call('view:clear');
+            Artisan::call('route:clear');
+
+            $this->deployMessage = "¡Sistema restaurado con éxito al punto del respaldo '{$filename}'!";
+            $this->dispatch('notify', message: 'Respaldo restaurado correctamente.');
+        } catch (\Exception $e) {
+            $this->deployError = "Error al restaurar el respaldo: " . $e->getMessage();
+        }
+    }
+
     // --- DEPARTAMENTOS ---
 
     public function openDepartmentModal($id = null)
@@ -198,9 +249,27 @@ class SettingsList extends Component
 
     public function render()
     {
+        $backups = [];
+        $backupDir = storage_path('app/backups');
+        if (File::exists($backupDir)) {
+            $files = File::files($backupDir);
+            foreach ($files as $file) {
+                if (strtolower($file->getExtension()) === 'zip') {
+                    $backups[] = [
+                        'filename' => $file->getFilename(),
+                        'size' => round($file->getSize() / 1024 / 1024, 2) . ' MB',
+                        'created_at' => date('Y-m-d H:i:s', $file->getMTime()),
+                        'timestamp' => $file->getMTime(),
+                    ];
+                }
+            }
+            usort($backups, fn($a, $b) => $b['timestamp'] - $a['timestamp']);
+        }
+
         return view('livewire.settings.settings-list', [
             'departments' => Department::withCount(['users', 'devices'])->get(),
             'branches' => Branch::withCount(['devices'])->get(),
+            'backups' => $backups,
         ])->layout('layouts.app');
     }
 }

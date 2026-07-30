@@ -112,48 +112,111 @@
             </div>
             @endif
 
-            <!-- Contenido Actualizaciones ZIP -->
+            <!-- Contenido Actualizaciones ZIP y Respaldos -->
             @if($activeTab === 'updates')
-            <div class="max-w-3xl">
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-6">
-                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 mb-2">
-                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                        Cargar Paquete de Actualización (.ZIP)
-                    </h3>
-                    <p class="text-sm text-slate-600 mb-4">
-                        Sube el archivo <code>actualizacion_suraki_helpdesk.zip</code> generado localmente. El sistema creará un respaldo de seguridad del código actual automáticamente, reemplazará los archivos necesarios, ejecutará migraciones de base de datos y limpiará la caché.
-                    </p>
+            <div>
+                <!-- Banner Alerta de Emergencia -->
+                <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-4 shadow-sm">
+                    <div class="p-2 bg-amber-100 rounded-xl text-amber-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-amber-900">Panel de Recuperación de Emergencia (Standalone)</h4>
+                        <p class="text-xs text-amber-700 mt-1">
+                            Si el sistema sufre una caída severa o error fatal (pantalla blanca/error 500) y no puedes entrar a la web, puedes ingresar a:
+                            <a href="{{ url('/safe_deploy.php') }}" target="_blank" class="font-bold underline hover:text-amber-900 ml-1">{{ url('/safe_deploy.php') }}</a>
+                            (funciona de forma independiente fuera del sistema).
+                        </p>
+                    </div>
+                </div>
 
-                    @if($deployMessage)
-                        <div class="mb-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-sm font-medium">
-                            {{ $deployMessage }}
-                        </div>
-                    @endif
+                @if($deployMessage)
+                    <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl text-sm font-medium flex items-center justify-between shadow-sm">
+                        <span>{{ $deployMessage }}</span>
+                    </div>
+                @endif
 
-                    @if($deployError)
-                        <div class="mb-4 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-sm font-medium">
-                            {{ $deployError }}
-                        </div>
-                    @endif
+                @if($deployError)
+                    <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-sm font-medium flex items-center justify-between shadow-sm">
+                        <span>{{ $deployError }}</span>
+                    </div>
+                @endif
 
-                    <form wire:submit.prevent="processDeploy" class="space-y-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Columna 1: Carga de ZIP -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Seleccionar archivo ZIP:</label>
-                            <input type="file" wire:model="zip_file" accept=".zip" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
-                            <x-input-error :messages="$errors->get('zip_file')" class="mt-2" />
-                        </div>
+                            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 mb-2">
+                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                Cargar Paquete de Actualización (.ZIP)
+                            </h3>
+                            <p class="text-xs text-slate-600 mb-6">
+                                Sube el paquete <code>actualizacion_suraki_helpdesk.zip</code>. Se creará un respaldo automático antes de instalar los archivos y ejecutar las migraciones.
+                            </p>
 
-                        <div wire:loading wire:target="zip_file" class="text-xs text-indigo-600 font-medium">
-                            Cargando archivo al servidor...
-                        </div>
+                            <form wire:submit.prevent="processDeploy" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Seleccionar archivo ZIP:</label>
+                                    <input type="file" wire:model="zip_file" accept=".zip" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                                    <x-input-error :messages="$errors->get('zip_file')" class="mt-2" />
+                                </div>
 
-                        <div class="pt-2">
-                            <x-btn-panel type="submit" wire:loading.attr="disabled" wire:target="processDeploy">
-                                <span wire:loading.remove wire:target="processDeploy">Procesar e Instalar Actualización</span>
-                                <span wire:loading wire:target="processDeploy">Procesando y Respaldando...</span>
-                            </x-btn-panel>
+                                <div wire:loading wire:target="zip_file" class="text-xs text-indigo-600 font-medium">
+                                    Subiendo archivo al servidor...
+                                </div>
+
+                                <div class="pt-2">
+                                    <x-btn-panel type="submit" class="w-full justify-center" wire:loading.attr="disabled" wire:target="processDeploy">
+                                        <span wire:loading.remove wire:target="processDeploy">Procesar e Instalar Actualización</span>
+                                        <span wire:loading wire:target="processDeploy">Procesando e Instalando...</span>
+                                    </x-btn-panel>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
+
+                    <!-- Columna 2: Historial de Respaldos y Restauración -->
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Respaldos Disponibles
+                                    </h3>
+                                    <p class="text-xs text-slate-500">Puntos de restauración guardados en el servidor.</p>
+                                </div>
+
+                                <button wire:click="createManualBackup" wire:loading.attr="disabled" type="button" class="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-xl border border-emerald-200 transition-colors flex items-center gap-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    <span>Generar Respaldo Ahora</span>
+                                </button>
+                            </div>
+
+                            <div class="space-y-3 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar">
+                                @forelse($backups as $b)
+                                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3 text-xs">
+                                        <div class="min-w-0 flex-1">
+                                            <p class="font-bold text-slate-800 truncate" title="{{ $b['filename'] }}">{{ $b['filename'] }}</p>
+                                            <p class="text-slate-400 text-[11px] mt-0.5">{{ $b['created_at'] }} &bull; <span class="font-medium text-slate-600">{{ $b['size'] }}</span></p>
+                                        </div>
+                                        <button @click="$dispatch('open-confirmation', {
+                                            title: '¿Restaurar este respaldo?',
+                                            message: 'El sistema regresará al estado guardado en {{ $b['filename'] }}. Se creará un respaldo de seguridad antes de continuar.',
+                                            confirmText: 'Restaurar Sistema Ahora',
+                                            action: () => @this.restoreBackup('{{ $b['filename'] }}')
+                                        })" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-sm transition-colors whitespace-nowrap">
+                                            Restaurar
+                                        </button>
+                                    </div>
+                                @empty
+                                    <div class="py-8 text-center text-slate-400 text-xs border border-dashed rounded-xl">
+                                        No hay respaldos guardados aún.
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             @endif
