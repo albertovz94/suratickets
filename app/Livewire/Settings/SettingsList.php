@@ -3,11 +3,17 @@
 namespace App\Livewire\Settings;
 
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use App\Models\Department;
 use App\Models\Branch;
+use App\Services\SafeZipExtractor;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 
 class SettingsList extends Component
 {
+    use WithFileUploads;
+
     public $activeTab = 'departments';
 
     // Modelos para creación/edición
@@ -18,9 +24,62 @@ class SettingsList extends Component
     public $showDepartmentModal = false;
     public $showBranchModal = false;
 
+    // Despliegue / Actualización ZIP
+    public $zip_file;
+    public $deployMessage = null;
+    public $deployError = null;
+
     public function setTab($tab)
     {
         $this->activeTab = $tab;
+        $this->deployMessage = null;
+        $this->deployError = null;
+    }
+
+    // --- DESPLIEGUE Y ACTUALIZACIÓN ---
+    public function processDeploy()
+    {
+        $this->validate([
+            'zip_file' => 'required|file|mimes:zip|max:51200', // Máx 50MB
+        ], [
+            'zip_file.required' => 'Debes seleccionar un archivo ZIP.',
+            'zip_file.mimes' => 'El archivo debe estar en formato .ZIP',
+            'zip_file.max' => 'El archivo ZIP no puede superar los 50MB.',
+        ]);
+
+        try {
+            $this->deployMessage = null;
+            $this->deployError = null;
+
+            // 1. Guardar archivo temporalmente
+            $tempPath = $this->zip_file->getRealPath();
+
+            // 2. Hacer respaldo automático del código actual
+            SafeZipExtractor::backupCurrentCode('auto_backup_before_deploy');
+
+            // 3. Extraer actualización sobre el proyecto
+            $result = SafeZipExtractor::extract($tempPath);
+
+            // 4. Ejecutar migraciones si las hay
+            try {
+                Artisan::call('migrate', ['--force' => true]);
+            } catch (\Exception $e) {
+                // Continuar aunque falle migración minor
+            }
+
+            // 5. Limpiar cachés
+            Artisan::call('config:clear');
+            Artisan::call('cache:clear');
+            Artisan::call('view:clear');
+            Artisan::call('route:clear');
+
+            $this->reset('zip_file');
+            $this->deployMessage = "¡Actualización aplicada con éxito! Se extrajeron {$result['extracted_count']} archivos y se creó un respaldo automático.";
+            $this->dispatch('notify', message: 'Sistema actualizado correctamente.');
+
+        } catch (\Exception $e) {
+            $this->deployError = "Error al procesar la actualización: " . $e->getMessage();
+        }
     }
 
     // --- DEPARTAMENTOS ---

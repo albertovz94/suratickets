@@ -15,6 +15,10 @@
                     <button wire:click="setTab('branches')" class="{{ $activeTab === 'branches' ? 'border-suraki-primary text-suraki-primary' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
                         Sucursales
                     </button>
+                    <button wire:click="setTab('updates')" class="{{ $activeTab === 'updates' ? 'border-suraki-primary text-suraki-primary' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Actualizar Sistema (ZIP)
+                    </button>
                 </nav>
             </div>
 
@@ -105,6 +109,52 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+            @endif
+
+            <!-- Contenido Actualizaciones ZIP -->
+            @if($activeTab === 'updates')
+            <div class="max-w-3xl">
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-6">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 mb-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                        Cargar Paquete de Actualización (.ZIP)
+                    </h3>
+                    <p class="text-sm text-slate-600 mb-4">
+                        Sube el archivo <code>actualizacion_suraki_helpdesk.zip</code> generado localmente. El sistema creará un respaldo de seguridad del código actual automáticamente, reemplazará los archivos necesarios, ejecutará migraciones de base de datos y limpiará la caché.
+                    </p>
+
+                    @if($deployMessage)
+                        <div class="mb-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-sm font-medium">
+                            {{ $deployMessage }}
+                        </div>
+                    @endif
+
+                    @if($deployError)
+                        <div class="mb-4 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-sm font-medium">
+                            {{ $deployError }}
+                        </div>
+                    @endif
+
+                    <form wire:submit.prevent="processDeploy" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Seleccionar archivo ZIP:</label>
+                            <input type="file" wire:model="zip_file" accept=".zip" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                            <x-input-error :messages="$errors->get('zip_file')" class="mt-2" />
+                        </div>
+
+                        <div wire:loading wire:target="zip_file" class="text-xs text-indigo-600 font-medium">
+                            Cargando archivo al servidor...
+                        </div>
+
+                        <div class="pt-2">
+                            <x-btn-panel type="submit" wire:loading.attr="disabled" wire:target="processDeploy">
+                                <span wire:loading.remove wire:target="processDeploy">Procesar e Instalar Actualización</span>
+                                <span wire:loading wire:target="processDeploy">Procesando y Respaldando...</span>
+                            </x-btn-panel>
+                        </div>
+                    </form>
+                </div>
             </div>
             @endif
         </div>
