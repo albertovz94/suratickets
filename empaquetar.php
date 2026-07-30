@@ -23,18 +23,27 @@ if ($zip->open($zipName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
         }
     };
 
-    // Añadir backend (app)
+    // 1. Backend (app)
     $addFolderToZip(__DIR__ . '/app', 'app');
     
-    // Añadir rutas (routes)
+    // 2. Rutas (routes)
     $addFolderToZip(__DIR__ . '/routes', 'routes');
     
-    // Añadir vistas (resources/views)
-    $addFolderToZip(__DIR__ . '/resources/views', 'resources/views');
+    // 3. Vistas y Resources (resources)
+    $addFolderToZip(__DIR__ . '/resources', 'resources');
+
+    // 4. Migraciones de Base de Datos (database/migrations)
+    $addFolderToZip(__DIR__ . '/database/migrations', 'database/migrations');
     
-    // Añadir Frontend compilado (Vite / public)
-    // Se mapea a public_html/build por si usas ese formato en tu hosting de producción
+    // 5. Frontend compilado Assets (public/build & public_html/build)
+    $addFolderToZip(__DIR__ . '/public/build', 'public/build');
     $addFolderToZip(__DIR__ . '/public/build', 'public_html/build');
+
+    // 6. Archivo de Recuperación Autónomo de Emergencia
+    if (file_exists(__DIR__ . '/public/safe_deploy.php')) {
+        $zip->addFile(__DIR__ . '/public/safe_deploy.php', 'public/safe_deploy.php');
+        $zip->addFile(__DIR__ . '/public/safe_deploy.php', 'public_html/safe_deploy.php');
+    }
 
     $zip->close();
     echo "¡Archivo ZIP '$zipName' creado con éxito!\n";
