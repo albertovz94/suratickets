@@ -110,6 +110,18 @@ function safeExtractZip($zipPath, $baseDir) {
         if ($content !== false) {
             file_put_contents($dest, $content);
             $extracted++;
+
+            if (strpos($normalized, 'public/') === 0) {
+                $alt = $baseDir . '/public_html/' . substr($normalized, 7);
+                $altDir = dirname($alt);
+                if (!is_dir($altDir)) mkdir($altDir, 0755, true);
+                file_put_contents($alt, $content);
+            } elseif (strpos($normalized, 'public_html/') === 0) {
+                $alt = $baseDir . '/public/' . substr($normalized, 12);
+                $altDir = dirname($alt);
+                if (!is_dir($altDir)) mkdir($altDir, 0755, true);
+                file_put_contents($alt, $content);
+            }
         }
     }
     $zip->close();

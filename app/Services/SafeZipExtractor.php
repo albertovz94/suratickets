@@ -89,22 +89,35 @@ class SafeZipExtractor
                 continue;
             }
 
-            $targetPathName = $normalizedName;
-            if ($isCpanel && strpos($normalizedName, 'public/') === 0) {
-                $targetPathName = 'public_html/' . substr($normalizedName, 7);
-            }
-
-            $destination = base_path($targetPathName);
-            $destinationDir = dirname($destination);
-
-            if (!File::exists($destinationDir)) {
-                File::makeDirectory($destinationDir, 0755, true);
-            }
-
             $content = $zip->getFromIndex($i);
             if ($content !== false) {
+                // Escribir en destino principal
+                $destination = base_path($normalizedName);
+                $destinationDir = dirname($destination);
+                if (!File::exists($destinationDir)) {
+                    File::makeDirectory($destinationDir, 0755, true);
+                }
                 File::put($destination, $content);
-                $filesExtracted[] = $targetPathName;
+                $filesExtracted[] = $normalizedName;
+
+                // Si es un archivo de public/ o public_html/, replicarlo en el otro directorio para asegurar compatibilidad
+                if (strpos($normalizedName, 'public/') === 0) {
+                    $altName = 'public_html/' . substr($normalizedName, 7);
+                    $altDest = base_path($altName);
+                    $altDir = dirname($altDest);
+                    if (!File::exists($altDir)) {
+                        File::makeDirectory($altDir, 0755, true);
+                    }
+                    File::put($altDest, $content);
+                } elseif (strpos($normalizedName, 'public_html/') === 0) {
+                    $altName = 'public/' . substr($normalizedName, 12);
+                    $altDest = base_path($altName);
+                    $altDir = dirname($altDest);
+                    if (!File::exists($altDir)) {
+                        File::makeDirectory($altDir, 0755, true);
+                    }
+                    File::put($altDest, $content);
+                }
             }
         }
 
