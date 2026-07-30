@@ -110,6 +110,22 @@ class SafeZipExtractor
 
         $zip->close();
 
+        // Reset de OPcache de PHP si está habilitado en el servidor (Nginx/Apache)
+        if (function_exists('opcache_reset')) {
+            @opcache_reset();
+        }
+
+        // Limpiar archivos de vista compilados manualmente en storage
+        $viewsPath = storage_path('framework/views');
+        if (File::exists($viewsPath)) {
+            $files = File::files($viewsPath);
+            foreach ($files as $f) {
+                if ($f->getFilename() !== '.gitignore') {
+                    @File::delete($f->getRealPath());
+                }
+            }
+        }
+
         return [
             'extracted_count' => count($filesExtracted),
             'skipped_count' => count($filesSkipped),

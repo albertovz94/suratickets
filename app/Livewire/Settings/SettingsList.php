@@ -74,8 +74,13 @@ class SettingsList extends Component
             Artisan::call('route:clear');
 
             $this->reset('zip_file');
-            $this->deployMessage = "¡Actualización aplicada con éxito! Se extrajeron {$result['extracted_count']} archivos y se creó un respaldo automático.";
-            $this->dispatch('notify', message: 'Sistema actualizado correctamente.');
+            
+            if (function_exists('opcache_reset')) {
+                @opcache_reset();
+            }
+
+            session()->flash('message', "¡Actualización aplicada con éxito! Se extrajeron {$result['extracted_count']} archivos.");
+            return $this->redirect(route('settings.index'), navigate: false);
 
         } catch (\Exception $e) {
             $this->deployError = "Error al procesar la actualización: " . $e->getMessage();
