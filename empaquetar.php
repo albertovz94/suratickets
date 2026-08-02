@@ -39,10 +39,15 @@ if ($zip->open($zipName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
     $addFolderToZip(__DIR__ . '/public/build', 'public/build');
     $addFolderToZip(__DIR__ . '/public/build', 'public_html/build');
 
-    // 6. Archivo de Recuperación Autónomo de Emergencia
+    // 6. Archivo de Recuperación Autónomo de Emergencia y Firebase Service Worker
     if (file_exists(__DIR__ . '/public/safe_deploy.php')) {
         $zip->addFile(__DIR__ . '/public/safe_deploy.php', 'public/safe_deploy.php');
         $zip->addFile(__DIR__ . '/public/safe_deploy.php', 'public_html/safe_deploy.php');
+    }
+
+    if (file_exists(__DIR__ . '/public/firebase-messaging-sw.js')) {
+        $zip->addFile(__DIR__ . '/public/firebase-messaging-sw.js', 'public/firebase-messaging-sw.js');
+        $zip->addFile(__DIR__ . '/public/firebase-messaging-sw.js', 'public_html/firebase-messaging-sw.js');
     }
 
     $zip->close();

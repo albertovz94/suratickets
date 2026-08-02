@@ -181,6 +181,13 @@
                     });
                 }
             });
+
+            // Registro del Service Worker de Firebase para notificaciones Push en segundo plano (Móvil y PC)
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                    .then(reg => console.log('Firebase Service Worker registrado:', reg.scope))
+                    .catch(err => console.error('Error registrando Firebase Service Worker:', err));
+            }
         </script>
     </body>
 </html>
