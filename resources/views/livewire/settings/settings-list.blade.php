@@ -194,7 +194,7 @@
                             </div>
 
                             <div class="space-y-3 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar">
-                                @forelse($backups as $b)
+                                @forelse($backups ?? [] as $b)
                                     <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3 text-xs">
                                         <div class="min-w-0 flex-1">
                                             <p class="font-bold text-slate-800 truncate" title="{{ $b['filename'] }}">{{ $b['filename'] }}</p>

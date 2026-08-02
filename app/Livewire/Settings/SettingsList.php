@@ -28,6 +28,7 @@ class SettingsList extends Component
     public $zip_file;
     public $deployMessage = null;
     public $deployError = null;
+    public $backups = [];
 
     // Configuración de Telegram Bot
     public $telegram_chat_id;
@@ -319,14 +320,14 @@ class SettingsList extends Component
                         'timestamp' => $file->getMTime(),
                     ];
                 }
-            }
             usort($backups, fn($a, $b) => $b['timestamp'] - $a['timestamp']);
         }
+        $this->backups = $backups;
 
         return view('livewire.settings.settings-list', [
             'departments' => Department::withCount(['users', 'devices'])->get(),
             'branches' => Branch::withCount(['devices'])->get(),
-            'backups' => $backups,
+            'backups' => $this->backups,
         ])->layout('layouts.app');
     }
 }
