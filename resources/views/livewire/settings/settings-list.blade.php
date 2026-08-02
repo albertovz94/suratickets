@@ -218,6 +218,35 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Sección: Configuración del Bot de Telegram -->
+                <div class="mt-8 bg-sky-50/70 border border-sky-200 rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-sky-900 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.37-.49 1.02-.75 3.99-1.74 6.66-2.89 8.01-3.45 3.82-1.59 4.61-1.87 5.13-1.88.11 0 .37.03.54.18.14.12.18.28.2.45-.02.07-.02.13-.03.24z"/></svg>
+                                Integración con Telegram Bot (@SuraHelpdeskbot)
+                            </h3>
+                            <p class="text-xs text-sky-700 mt-1">Recibe notificaciones automáticas con los detalles de cada ticket creado o resuelto en tu grupo de Telegram.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold uppercase text-sky-800 mb-1">Telegram Chat ID (del Grupo o Canal):</label>
+                            <input type="text" wire:model="telegram_chat_id" placeholder="Ejemplo: -100123456789 o @tu_grupo" class="w-full text-xs px-4 py-2.5 bg-white border border-sky-300 rounded-xl focus:ring-2 focus:ring-sky-500 text-slate-800 font-mono">
+                            <span class="text-[11px] text-sky-600 mt-1 block">Asegúrate de haber agregado al bot <code>@SuraHelpdeskbot</code> como administrador a tu grupo.</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button wire:click="saveTelegramConfig" type="button" class="flex-1 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl shadow-sm transition-colors">
+                                Guardar Chat ID
+                            </button>
+                            <button wire:click="sendTelegramTest" type="button" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-sm transition-colors whitespace-nowrap">
+                                🧪 Probar
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             @endif
         </div>

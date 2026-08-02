@@ -29,6 +29,58 @@ class SettingsList extends Component
     public $deployMessage = null;
     public $deployError = null;
 
+    // Configuración de Telegram Bot
+    public $telegram_chat_id;
+
+    public function mount()
+    {
+        $this->telegram_chat_id = env('TELEGRAM_CHAT_ID', '');
+    }
+
+    public function saveTelegramConfig()
+    {
+        $this->validate(['telegram_chat_id' => 'required|string']);
+        $envPath = base_path('.env');
+        if (File::exists($envPath)) {
+            $content = File::get($envPath);
+            if (strpos($content, 'TELEGRAM_CHAT_ID=') !== false) {
+                $content = preg_replace('/^TELEGRAM_CHAT_ID=.*$/m', 'TELEGRAM_CHAT_ID=' . trim($this->telegram_chat_id), $content);
+            } else {
+                $content .= "\nTELEGRAM_CHAT_ID=" . trim($this->telegram_chat_id);
+            }
+            File::put($envPath, $content);
+        }
+        $this->deployMessage = "Chat ID de Telegram guardado correctamente.";
+        $this->dispatch('notify', message: 'Configuración de Telegram guardada.');
+    }
+
+    public function sendTelegramTest()
+    {
+        $chatId = trim(env('TELEGRAM_CHAT_ID', $this->telegram_chat_id));
+        if (!$chatId) {
+            $this->deployError = "Por favor ingresa primero el Chat ID de Telegram.";
+            return;
+        }
+
+        $botToken = env('TELEGRAM_BOT_TOKEN', '8732518099:AAFDcVJidoESQCx46ykwpOVRuFcXUkVZG2Q');
+        try {
+            $response = \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => "🧪 <b>¡Prueba Exitosa de Suraki HelpDesk!</b>\n\nLas notificaciones automáticas de tickets y alertas están conectadas correctamente.",
+                'parse_mode' => 'HTML',
+            ]);
+
+            if ($response->successful()) {
+                $this->deployMessage = "¡Mensaje de prueba enviado con éxito al chat de Telegram!";
+                $this->dispatch('notify', message: 'Notificación de prueba enviada a Telegram.');
+            } else {
+                $this->deployError = "Error de Telegram: " . $response->json('description', 'Fallo al enviar.');
+            }
+        } catch (\Exception $e) {
+            $this->deployError = "Error de conexión con Telegram: " . $e->getMessage();
+        }
+    }
+
     public function setTab($tab)
     {
         $this->activeTab = $tab;

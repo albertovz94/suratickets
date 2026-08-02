@@ -172,5 +172,27 @@
 
         <!-- Global confirmation modal -->
         <x-confirmation-modal />
+
+        <script>
+            // Solicitar permiso de Notificaciones Push al usuario
+            document.addEventListener('DOMContentLoaded', () => {
+                if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                    Notification.requestPermission();
+                }
+            });
+
+            window.addEventListener('browser-push', event => {
+                const title = event.detail.title || 'Suraki HelpDesk';
+                const body = event.detail.body || 'Tienes una nueva notificación.';
+                
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification(title, {
+                        body: body,
+                        icon: '/favicon.ico',
+                        tag: 'suraki-push'
+                    });
+                }
+            });
+        </script>
     </body>
 </html>

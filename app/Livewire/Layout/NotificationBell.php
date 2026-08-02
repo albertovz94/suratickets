@@ -32,6 +32,7 @@ class NotificationBell extends Component
                 // If this isn't the first load, trigger the toast
                 if ($this->lastNotificationId !== null) {
                     $this->dispatch('notify', message: $latest->data['message']);
+                    $this->dispatch('browser-push', title: '🚨 Notificación Suraki HelpDesk', body: $latest->data['message']);
                 }
                 $this->lastNotificationId = $latest->id;
             }

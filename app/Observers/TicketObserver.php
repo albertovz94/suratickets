@@ -6,6 +6,7 @@ use App\Models\Ticket;
 use App\Models\User;
 use App\Notifications\TicketCriticoNotification;
 use App\Notifications\TicketCreated;
+use App\Services\TelegramService;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,6 +40,9 @@ class TicketObserver
             $message = "Nuevo ticket reportado. Asignado automáticamente a: " . $assignedName;
             Notification::send($admins, new TicketCreated($ticket, $message));
         }
+
+        // Notificación automática por Telegram
+        TelegramService::sendTicketNotification($ticket, 'created');
     }
 
     /**
@@ -65,6 +69,9 @@ class TicketObserver
                 
                 $admins = User::admins()->get();
                 Notification::send($admins, new TicketCreated($ticket, $message));
+
+                // Notificación por Telegram al resolver
+                TelegramService::sendTicketNotification($ticket, 'resolved');
             }
         }
     }
