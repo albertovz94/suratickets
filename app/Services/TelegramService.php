@@ -13,7 +13,7 @@ class TelegramService
      */
     public static function sendTicketNotification(Ticket $ticket, string $type = 'created')
     {
-        $botToken = env('TELEGRAM_BOT_TOKEN', '8732518099:AAFDcVJidoESQCx46ykwpOVRuFcXUkVZG2Q');
+        $botToken = env('TELEGRAM_BOT_TOKEN', '8646858864:AAHrnNtBw19jjupBJNjewZmsSBAYxxwf1wQ');
         $chatId = env('TELEGRAM_CHAT_ID');
 
         if (!$botToken || !$chatId) {

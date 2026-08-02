@@ -62,7 +62,7 @@ class SettingsList extends Component
             return;
         }
 
-        $botToken = env('TELEGRAM_BOT_TOKEN', '8732518099:AAFDcVJidoESQCx46ykwpOVRuFcXUkVZG2Q');
+        $botToken = env('TELEGRAM_BOT_TOKEN', '8646858864:AAHrnNtBw19jjupBJNjewZmsSBAYxxwf1wQ');
         try {
             $response = \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
                 'chat_id' => $chatId,
