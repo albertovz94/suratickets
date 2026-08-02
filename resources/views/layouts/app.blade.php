@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+      class="light"
       x-data="{ 
-          darkMode: localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches),
           shortcutsModalOpen: false
       }"
-      x-init="$watch('darkMode', val => {
-          localStorage.setItem('theme', val ? 'dark' : 'light');
-          if (val) {
-              document.documentElement.classList.add('dark');
-          } else {
-              document.documentElement.classList.remove('dark');
-          }
-      })"
-      :class="{ 'dark': darkMode }"
       x-on:keydown.window="
           if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) return;
           
@@ -54,15 +45,12 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <script>
-            // Sync theme immediately to prevent flashing and sync wire:navigate page changes
+            // Forzar siempre modo claro en todos los dispositivos (móviles y escritorio)
             (function() {
                 function applyTheme() {
-                    const theme = localStorage.getItem('theme');
-                    if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                        document.documentElement.classList.add('dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                    }
+                    localStorage.setItem('theme', 'light');
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
                 }
                 applyTheme();
                 document.addEventListener('livewire:navigated', applyTheme);
