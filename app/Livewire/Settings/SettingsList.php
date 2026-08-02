@@ -34,7 +34,7 @@ class SettingsList extends Component
 
     public function mount()
     {
-        $this->telegram_chat_id = env('TELEGRAM_CHAT_ID', '');
+        $this->telegram_chat_id = env('TELEGRAM_CHAT_ID', '-5035415559');
     }
 
     public function saveTelegramConfig()
