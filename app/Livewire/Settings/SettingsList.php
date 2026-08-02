@@ -320,6 +320,7 @@ class SettingsList extends Component
                         'timestamp' => $file->getMTime(),
                     ];
                 }
+            }
             usort($backups, fn($a, $b) => $b['timestamp'] - $a['timestamp']);
         }
         $this->backups = $backups;
