@@ -22,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Blade::component('breadcrumbs', \App\View\Components\Breadcrumbs::class);
         \Illuminate\Support\Facades\Blade::component('badge', \App\View\Components\Badge::class);
 
+        // Registrar observador de Tickets para notificaciones de Telegram e in-app
+        \App\Models\Ticket::observe(\App\Observers\TicketObserver::class);
+
         \Illuminate\Support\Facades\RateLimiter::for('global', function (\Illuminate\Http\Request $request) {
             return \Illuminate\Cache\RateLimiting\Limit::perMinute(100)->by($request->ip());
         });
