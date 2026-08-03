@@ -100,7 +100,34 @@
             </defs>
         </svg>
 
+        <!-- Floating Notification Permission Request for Mobile (Login Screen) -->
+        <div x-data="{ showPushPrompt: ('Notification' in window && Notification.permission === 'default') }" 
+             x-show="showPushPrompt" 
+             x-transition 
+             class="fixed top-4 left-4 right-4 z-50 bg-slate-900/95 text-white p-3 rounded-2xl shadow-2xl border border-slate-700 backdrop-blur-md flex items-center justify-between gap-3 text-xs md:hidden" 
+             style="display: none;">
+            <div class="flex items-center gap-2">
+                <span class="text-base">🔔</span>
+                <span>¿Activar notificaciones en tu celular?</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button @click="Notification.requestPermission().then(p => { showPushPrompt = false; if(p==='granted') alert('¡Notificaciones Push activadas!'); })" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs transition-colors whitespace-nowrap">
+                    Activar
+                </button>
+                <button @click="showPushPrompt = false" class="text-slate-400 p-1 hover:text-white">✕</button>
+            </div>
+        </div>
+
         <x-toast />
         <x-global-loader />
+
+        <script>
+            // Registro del Service Worker de Firebase para notificaciones Push en segundo plano (Móvil y PC)
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                    .then(reg => console.log('Firebase Service Worker registrado (guest):', reg.scope))
+                    .catch(err => console.error('Error registrando Firebase Service Worker:', err));
+            }
+        </script>
     </body>
 </html>
