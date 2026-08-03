@@ -28,13 +28,15 @@ class NotificationBell extends Component
             $this->unreadCount = Auth::user()->unreadNotifications()->count();
 
             $latest = Auth::user()->unreadNotifications()->first();
-            if ($latest && $latest->id !== $this->lastNotificationId) {
-                // If this isn't the first load, trigger the toast
-                if ($this->lastNotificationId !== null) {
+            if ($latest) {
+                if ($this->lastNotificationId !== $latest->id) {
                     $this->dispatch('notify', message: $latest->data['message']);
-                    $this->dispatch('browser-push', title: '🚨 Notificación Suraki HelpDesk', body: $latest->data['message']);
+                    $this->dispatch('browser-push', [
+                        'title' => '🚨 Suraki HelpDesk',
+                        'body' => $latest->data['message']
+                    ]);
+                    $this->lastNotificationId = $latest->id;
                 }
-                $this->lastNotificationId = $latest->id;
             }
         } else {
             $this->notifications = collect();

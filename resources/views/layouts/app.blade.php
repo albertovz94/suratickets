@@ -188,15 +188,28 @@
             });
 
             window.addEventListener('browser-push', event => {
-                const title = event.detail.title || 'Suraki HelpDesk';
-                const body = event.detail.body || 'Tienes una nueva notificación.';
+                const detail = Array.isArray(event.detail) ? event.detail[0] : (event.detail || {});
+                const title = detail.title || event.detail.title || '🚨 Suraki HelpDesk';
+                const body = detail.body || event.detail.body || 'Tienes una nueva notificación.';
                 
                 if ('Notification' in window && Notification.permission === 'granted') {
-                    new Notification(title, {
+                    const options = {
                         body: body,
-                        icon: '/favicon.ico',
-                        tag: 'suraki-push'
-                    });
+                        icon: '/icono.png',
+                        badge: '/icono.png',
+                        vibrate: [200, 100, 200],
+                        tag: 'suraki-push-' + Date.now()
+                    };
+
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.ready.then(reg => {
+                            reg.showNotification(title, options);
+                        }).catch(() => {
+                            new Notification(title, options);
+                        });
+                    } else {
+                        new Notification(title, options);
+                    }
                 }
             });
 
