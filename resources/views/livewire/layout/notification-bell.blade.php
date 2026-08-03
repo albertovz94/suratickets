@@ -22,9 +22,12 @@
         
         <div class="p-4 border-b border-suraki-neutral-dark flex justify-between items-center bg-suraki-neutral/30">
             <h3 class="text-sm font-bold text-suraki-secondary">Notificaciones</h3>
-            @if($unreadCount > 0)
-                <button wire:click="markAllAsRead" class="text-xs text-suraki-primary hover:text-suraki-primary-hover font-medium">Marcar todo como leído</button>
-            @endif
+            <div class="flex items-center gap-2">
+                <button wire:click="sendTestPush" type="button" class="text-[11px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-lg transition-colors border border-indigo-200">🧪 Probar Push</button>
+                @if($unreadCount > 0)
+                    <button wire:click="markAllAsRead" class="text-xs text-suraki-primary hover:text-suraki-primary-hover font-medium">Marcar todo como leído</button>
+                @endif
+            </div>
         </div>
 
         <!-- Botón explícito para solicitar Notificaciones Push en Celulares y PC -->

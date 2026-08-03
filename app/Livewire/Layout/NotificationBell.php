@@ -44,6 +44,15 @@ class NotificationBell extends Component
         }
     }
 
+    public function sendTestPush()
+    {
+        $this->dispatch('browser-push', [
+            'title' => '🧪 Notificación de Prueba Suraki',
+            'body' => '¡Excelente! Las notificaciones Push en tu navegador y dispositivo funcionan correctamente.'
+        ]);
+        $this->dispatch('notify', message: 'Notificación de prueba enviada.');
+    }
+
     public function toggle()
     {
         $this->isOpen = !$this->isOpen;
