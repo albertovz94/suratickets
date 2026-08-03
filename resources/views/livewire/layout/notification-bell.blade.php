@@ -27,6 +27,14 @@
             @endif
         </div>
 
+        <!-- Botón explícito para solicitar Notificaciones Push en Celulares y PC -->
+        <div class="p-3 bg-amber-50 border-b border-amber-200 flex items-center justify-between text-xs text-amber-800" x-data="{ pushGranted: ('Notification' in window && Notification.permission === 'granted') }" x-show="!pushGranted">
+            <span class="text-[11px] font-medium">¿Alertas en tu teléfono o PC?</span>
+            <button @click="if ('Notification' in window) { Notification.requestPermission().then(p => { if (p === 'granted') { pushGranted = true; alert('¡Notificaciones Push activadas en tu dispositivo!'); } else { alert('Debes permitir las notificaciones en los ajustes de tu navegador.'); } }); } else { alert('Este navegador no soporta notificaciones push.'); }" type="button" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-[11px] transition-colors shadow-sm flex items-center gap-1">
+                🔔 Activar Push
+            </button>
+        </div>
+
         <div class="max-h-80 overflow-y-auto">
             @forelse($notifications as $notification)
                 <div class="p-4 border-b border-suraki-neutral-dark last:border-b-0 hover:bg-suraki-neutral transition-colors cursor-pointer {{ is_null($notification->read_at) ? 'bg-red-50/50' : '' }}"
