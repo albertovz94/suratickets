@@ -10,8 +10,6 @@
         @endif
     </button>
 
-    {{-- Overlay oscuro solo en móvil --}}
-    <div x-show="bellOpen" x-transition.opacity class="fixed inset-0 bg-black/30 z-40 sm:hidden" @click="bellOpen = false" style="display: none;"></div>
 
     {{-- Panel de notificaciones --}}
     <div x-show="bellOpen" 
@@ -21,7 +19,7 @@
          x-transition:leave="transition ease-in duration-100"
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 translate-y-2"
-         class="fixed inset-x-3 top-16 z-50 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden"
+         class="absolute right-0 top-full mt-2 w-[calc(100vw-2.5rem)] max-w-sm sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden"
          style="display: none;">
         
         {{-- Header --}}
