@@ -28,9 +28,16 @@ new class extends Component
             throw $e;
         }
 
-        Auth::user()->update([
+        $user = Auth::user();
+        $user->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserCredentialsMail($user, $validated['password']));
+        } catch (\Exception $e) {
+            report($e);
+        }
 
         $this->reset('current_password', 'password', 'password_confirmation');
 

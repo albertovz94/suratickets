@@ -69,17 +69,27 @@ new #[Layout('layouts.guest')] class extends Component
 
         <!-- Password -->
         <div>
-            <div class="relative mt-1">
+            <div class="relative mt-1" x-data="{ showPass: false }">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                     </svg>
                 </div>
-                <input wire:model="form.password" id="password" class="block w-full pl-12 pr-4 py-3 border border-orange-200 rounded-xl focus:ring-suraki-primary focus:border-suraki-primary bg-gray-50/50 text-gray-900 transition-colors"
+                <input wire:model="form.password" id="password" class="block w-full pl-12 pr-12 py-3 border border-orange-200 rounded-xl focus:ring-suraki-primary focus:border-suraki-primary bg-gray-50/50 text-gray-900 transition-colors"
+                                :type="showPass ? 'text' : 'password'"
                                 type="password"
                                 name="password"
                                 required autocomplete="current-password"
                                 placeholder="Contraseña" />
+                <button type="button" @click="showPass = !showPass" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none" tabindex="-1" title="Mostrar / Ocultar contraseña">
+                    <svg x-show="!showPass" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    <svg x-show="showPass" class="h-5 w-5 text-suraki-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a10.03 10.03 0 012.122-.363c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21f-9-9M3 3l18 18" />
+                    </svg>
+                </button>
             </div>
             <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
         </div>
