@@ -1,5 +1,5 @@
-<div class="relative" wire:poll.15s.visible="loadNotifications" x-data="{ open: false }" @click.outside="open = false">
-    <button @click="open = !open" class="relative p-2 text-suraki-tertiary hover:text-suraki-primary transition-colors duration-200">
+<div class="relative" wire:poll.15s.visible="loadNotifications" x-data="{ bellOpen: false, hasPushPermission: ('Notification' in window && Notification.permission === 'granted') }" @click.outside="bellOpen = false">
+    <button @click="bellOpen = !bellOpen" class="relative p-2 text-suraki-tertiary hover:text-suraki-primary transition-colors duration-200">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
         </svg>
@@ -10,7 +10,7 @@
         @endif
     </button>
 
-    <div x-show="open" 
+    <div x-show="bellOpen" 
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0 scale-95"
          x-transition:enter-end="opacity-100 scale-100"
@@ -31,9 +31,9 @@
         </div>
 
         <!-- Botón explícito para solicitar Notificaciones Push en Celulares y PC -->
-        <div class="p-3 bg-amber-50 border-b border-amber-200 flex items-center justify-between text-xs text-amber-800" x-data="{ pushGranted: ('Notification' in window && Notification.permission === 'granted') }" x-show="!pushGranted">
+        <div class="p-3 bg-amber-50 border-b border-amber-200 flex items-center justify-between text-xs text-amber-800" x-show="!hasPushPermission">
             <span class="text-[11px] font-medium">¿Alertas en tu teléfono o PC?</span>
-            <button @click="if ('Notification' in window) { Notification.requestPermission().then(p => { if (p === 'granted') { pushGranted = true; alert('¡Notificaciones Push activadas en tu dispositivo!'); } else { alert('Debes permitir las notificaciones en los ajustes de tu navegador.'); } }); } else { alert('Este navegador no soporta notificaciones push.'); }" type="button" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-[11px] transition-colors shadow-sm flex items-center gap-1">
+            <button @click="if ('Notification' in window) { if (Notification.permission === 'denied') { alert('⚠️ Las notificaciones están bloqueadas en tu navegador. Para activarlas: Haz clic en el ícono de la tuerca/candado al lado de la dirección de la web (arriba a la izquierda) y cambia Notificaciones a Permitir.'); } else { Notification.requestPermission().then(p => { if (p === 'granted') { hasPushPermission = true; alert('¡Notificaciones Push activadas!'); } else { alert('Permiso denegado.'); } }); } } else { alert('Este navegador no soporta notificaciones push.'); }" type="button" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-[11px] transition-colors shadow-sm flex items-center gap-1">
                 🔔 Activar Push
             </button>
         </div>
