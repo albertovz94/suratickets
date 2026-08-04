@@ -31,7 +31,9 @@ class TicketObserver
      */
     public function created(Ticket $ticket): void
     {
-        $admins = User::admins()->get();
+        // Obtener admins, excluyendo al creador del ticket para no duplicar notificaciones
+        $creatorId = $ticket->user_id ?? (Auth::check() ? Auth::id() : null);
+        $admins = User::admins()->when($creatorId, fn($q) => $q->where('id', '!=', $creatorId))->get();
 
         if ($ticket->priority === 'critica') {
             Notification::send($admins, new TicketCriticoNotification($ticket));
@@ -65,9 +67,15 @@ class TicketObserver
                 
                 $message = "El ticket #{$ticket->id} de {$creatorName} ({$deptName}) ha sido marcado como " . ucfirst($ticket->status) . " por {$resolverName}.";
                 
+                // Notificar al creador del ticket
                 Notification::send($ticket->creator, new TicketCreated($ticket, $message));
                 
-                $admins = User::admins()->get();
+                // Notificar a admins, excluyendo al creador (ya notificado arriba) y al resolutor
+                $excludeIds = [$ticket->creator->id];
+                if (Auth::check()) {
+                    $excludeIds[] = Auth::id();
+                }
+                $admins = User::admins()->whereNotIn('id', $excludeIds)->get();
                 Notification::send($admins, new TicketCreated($ticket, $message));
 
                 // Notificación por Telegram al resolver

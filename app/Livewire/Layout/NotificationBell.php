@@ -27,16 +27,11 @@ class NotificationBell extends Component
             $this->notifications = Auth::user()->notifications()->take(5)->get();
             $this->unreadCount = Auth::user()->unreadNotifications()->count();
 
+            // Mostrar toast solo si hay una nueva notificación que aún no se ha visto
             $latest = Auth::user()->unreadNotifications()->first();
-            if ($latest) {
-                if ($this->lastNotificationId !== $latest->id) {
-                    $this->dispatch('notify', message: $latest->data['message']);
-                    $this->dispatch('browser-push', [
-                        'title' => '🚨 Suraki HelpDesk',
-                        'body' => $latest->data['message']
-                    ]);
-                    $this->lastNotificationId = $latest->id;
-                }
+            if ($latest && $this->lastNotificationId !== $latest->id) {
+                $this->dispatch('notify', message: $latest->data['message']);
+                $this->lastNotificationId = $latest->id;
             }
         } else {
             $this->notifications = collect();
