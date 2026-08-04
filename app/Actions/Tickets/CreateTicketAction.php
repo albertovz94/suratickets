@@ -17,7 +17,15 @@ class CreateTicketAction
     public function execute(TicketDTO $dto): Ticket
     {
         $payload = $dto->toDatabaseArray();
-        $payload['priority'] = $this->calculatePriority($dto->title, $dto->description);
+        
+        // Auto-detectar Prioridad y Categoría si no vienen especificados o si vienen con valores por defecto
+        if (empty($payload['priority']) || $payload['priority'] === 'baja') {
+            $payload['priority'] = $this->calculatePriority($dto->title, $dto->description);
+        }
+        
+        if (empty($payload['category']) || $payload['category'] === 'otros') {
+            $payload['category'] = $this->calculateCategory($dto->title, $dto->description);
+        }
         
         $assignedAdmin = $this->findBestAvailableAdmin();
 
@@ -28,25 +36,20 @@ class CreateTicketAction
             $payload['status'] = 'abierto';
         }
 
-        // El TicketObserver se encargará de despachar las notificaciones
-        // de 'creado' (si es crítico) o de avisar a los administradores.
         return Ticket::create($payload);
     }
 
     /**
      * Calculates the ticket priority based on text content.
-     *
-     * @param string $title
-     * @param string $description
-     * @return string
      */
     private function calculatePriority(string $title, string $description): string
     {
-        $textToAnalyze = strtolower($title . ' ' . $description);
+        $textToAnalyze = mb_strtolower($title . ' ' . $description);
         
-        $criticalWords = ['caído', 'caido', 'urgente', 'servidor', 'no enciende', 'internet', 'red', 'imposible', 'critico', 'crítico'];
-        $highWords = ['lento', 'error', 'falla', 'pantalla azul', 'virus'];
-        
+        $criticalWords = ['urgente', 'emergencia', 'incendio', 'servidor caido', 'servidor caído', 'sin sistema', 'bloqueo total', 'sin venta', 'critico', 'crítico', 'parado'];
+        $highWords = ['caído', 'caido', 'sin internet', 'no enciende', 'no imprime', 'pantalla azul', 'imposible trabajar', 'virus', 'alta'];
+        $lowWords = ['consulta', 'sugerencia', 'duda', 'mantenimiento', 'baja'];
+
         foreach ($criticalWords as $word) {
             if (str_contains($textToAnalyze, $word)) {
                 return 'critica';
@@ -59,7 +62,45 @@ class CreateTicketAction
             }
         }
 
-        return 'baja';
+        foreach ($lowWords as $word) {
+            if (str_contains($textToAnalyze, $word)) {
+                return 'baja';
+            }
+        }
+
+        return 'media';
+    }
+
+    /**
+     * Calculates the ticket category based on text content keywords.
+     */
+    private function calculateCategory(string $title, string $description): string
+    {
+        $textToAnalyze = mb_strtolower($title . ' ' . $description);
+
+        $hardwareWords = ['impresora', 'impresoras', 'pantalla', 'monitor', 'mouse', 'teclado', 'laptop', 'pc', 'computadora', 'equipo', 'disco', 'ram', 'cargador', 'toner', 'tóner', 'camara', 'cámara', 'batería', 'bateria', 'ups', 'escáner', 'escaner', 'hardware', 'cpu', 'cable', 'hdmi', 'vga', 'imprimir'];
+        $redesWords = ['internet', 'wifi', 'wi-fi', 'red', 'redes', 'conexion', 'conexión', 'conectar', 'cable de red', 'router', 'switch', 'ping', 'ip', 'sin internet', 'dns', 'vpn', 'navegador'];
+        $softwareWords = ['sistema', 'programa', 'excel', 'word', 'windows', 'error', 'licencia', 'clave', 'contraseña', 'contrasena', 'correo', 'outlook', 'pdf', 'antivirus', 'bloqueado', 'software', 'sap', 'odoo', 'app', 'login', 'usuario'];
+
+        foreach ($hardwareWords as $word) {
+            if (str_contains($textToAnalyze, $word)) {
+                return 'hardware';
+            }
+        }
+
+        foreach ($redesWords as $word) {
+            if (str_contains($textToAnalyze, $word)) {
+                return 'redes';
+            }
+        }
+
+        foreach ($softwareWords as $word) {
+            if (str_contains($textToAnalyze, $word)) {
+                return 'software';
+            }
+        }
+
+        return 'otros';
     }
 
     /**

@@ -19,17 +19,17 @@ class TicketForm extends Component
     public $description = '';
     public $branch_id = '';
     public $department_id = '';
-    public $priority = 'baja';
+    public $priority = 'media';
     public $date_time = '';
-    public $category = '';
+    public $category = 'otros';
     public $attachment;
     public $is_it_available = true;
 
     protected $rules = [
         'title' => 'required|string|max:255',
         'description' => 'required|string|max:2000',
-        'priority' => 'required|in:baja,media,alta,critica',
-        'category' => 'required|in:hardware,software,redes,otros',
+        'priority' => 'nullable|in:baja,media,alta,critica',
+        'category' => 'nullable|in:hardware,software,redes,otros',
         'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,zip,rar,txt|max:10240',
     ];
 

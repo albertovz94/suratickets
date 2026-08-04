@@ -72,30 +72,7 @@
                                 <x-input-error :messages="$errors->get('description')" class="mt-2" />
                             </div>
 
-                            <div>
-                                <x-input-label for="priority" value="Nivel de Prioridad" />
-                                <select wire:model="priority" id="priority" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary rounded-lg shadow-sm" required>
-                                    <option value="baja">Baja</option>
-                                    <option value="media">Media</option>
-                                    <option value="alta">Alta</option>
-                                    <option value="critica">Crítica (Emergencia)</option>
-                                </select>
-                                <x-input-error :messages="$errors->get('priority')" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="category" value="Categoría" />
-                                <select wire:model="category" id="category" class="mt-1 block w-full border-suraki-neutral-dark focus:border-suraki-primary rounded-lg shadow-sm" required>
-                                    <option value="" disabled>Selecciona una categoría</option>
-                                    <option value="hardware">Hardware</option>
-                                    <option value="software">Software</option>
-                                    <option value="redes">Redes</option>
-                                    <option value="otros">Otros</option>
-                                </select>
-                                <x-input-error :messages="$errors->get('category')" class="mt-2" />
-                            </div>
-                            
-                            <div>
+                            <div class="md:col-span-2">
                                 <x-input-label value="Fecha de Registro" />
                                 <x-text-input type="text" class="mt-1 block w-full bg-gray-50 text-gray-500 cursor-not-allowed border-suraki-neutral-dark" wire:model="date_time" disabled />
                             </div>
