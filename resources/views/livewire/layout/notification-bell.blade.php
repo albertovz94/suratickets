@@ -17,15 +17,15 @@
          x-transition:leave="transition ease-in duration-75"
          x-transition:leave-start="opacity-100 scale-100"
          x-transition:leave-end="opacity-0 scale-95"
-         class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-suraki-neutral-dark z-50 overflow-hidden"
+         class="fixed left-4 right-4 sm:absolute sm:left-auto sm:right-0 mt-2 sm:w-80 bg-white rounded-2xl shadow-2xl border border-suraki-neutral-dark z-50 overflow-hidden"
          style="display: none;">
         
-        <div class="p-4 border-b border-suraki-neutral-dark flex justify-between items-center bg-suraki-neutral/30">
+        <div class="p-3.5 border-b border-suraki-neutral-dark flex justify-between items-center gap-2 bg-suraki-neutral/30">
             <h3 class="text-sm font-bold text-suraki-secondary">Notificaciones</h3>
-            <div class="flex items-center gap-2">
-                <button wire:click="sendTestPush" type="button" class="text-[11px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-lg transition-colors border border-indigo-200">🧪 Probar Push</button>
+            <div class="flex items-center gap-1.5">
+                <button wire:click="sendTestPush" type="button" class="text-[11px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded-lg transition-colors border border-indigo-200 shadow-sm flex items-center gap-1">🧪 Probar Push</button>
                 @if($unreadCount > 0)
-                    <button wire:click="markAllAsRead" class="text-xs text-suraki-primary hover:text-suraki-primary-hover font-medium">Marcar todo como leído</button>
+                    <button wire:click="markAllAsRead" class="text-xs text-suraki-primary hover:text-suraki-primary-hover font-medium">Marcar todo leído</button>
                 @endif
             </div>
         </div>
@@ -40,11 +40,11 @@
 
         <div class="max-h-80 overflow-y-auto">
             @forelse($notifications as $notification)
-                <div class="p-4 border-b border-suraki-neutral-dark last:border-b-0 hover:bg-suraki-neutral transition-colors cursor-pointer {{ is_null($notification->read_at) ? 'bg-red-50/50' : '' }}"
+                <div class="p-3.5 border-b border-suraki-neutral-dark last:border-b-0 hover:bg-suraki-neutral transition-colors cursor-pointer {{ is_null($notification->read_at) ? 'bg-red-50/50' : '' }}"
                      wire:click="markAsRead('{{ $notification->id }}', {{ isset($notification->data['ticket_id']) ? $notification->data['ticket_id'] : 'null' }}, {{ isset($notification->data['request_id']) ? $notification->data['request_id'] : 'null' }})">
                     
                     <div class="flex gap-3">
-                        <div class="mt-0.5">
+                        <div class="mt-0.5 shrink-0">
                             @if(is_null($notification->read_at))
                                 <button wire:click.stop="markAsRead('{{ $notification->id }}')" class="w-5 h-5 mt-1 rounded-full bg-red-50 hover:bg-green-100 border border-red-200 hover:border-green-300 flex items-center justify-center text-red-500 hover:text-green-600 transition-colors" title="Marcar como leído">
                                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
@@ -55,14 +55,14 @@
                                 </div>
                             @endif
                         </div>
-                        <div>
-                            <p class="text-xs font-medium text-suraki-secondary mb-1">{{ $notification->data['message'] }}</p>
+                        <div class="min-w-0 flex-1 break-words">
+                            <p class="text-xs font-medium text-suraki-secondary mb-1 leading-snug">{{ $notification->data['message'] }}</p>
                             @if(isset($notification->data['ticket_id']))
                                 <p class="text-xs text-suraki-tertiary"><strong>TK-{{ $notification->data['ticket_id'] }}:</strong> {{ $notification->data['title'] ?? '' }}</p>
                             @elseif(isset($notification->data['request_id']))
                                 <p class="text-xs text-suraki-tertiary"><strong>REQ-{{ $notification->data['request_id'] }}</strong></p>
                             @endif
-                            <p class="text-[10px] text-suraki-tertiary mt-2 flex items-center gap-1">
+                            <p class="text-[10px] text-suraki-tertiary mt-1.5 flex items-center gap-1">
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 {{ $notification->created_at->diffForHumans() }}
                             </p>
