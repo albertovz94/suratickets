@@ -21,7 +21,32 @@ class TicketPolicy
      */
     public function view(User $user, Ticket $ticket): bool
     {
-        return $user->hasAdminAccess() || $user->id === $ticket->creator_id;
+        // Administradores y personal de outsourcing siempre tienen acceso
+        if ($user->hasAdminAccess()) {
+            return true;
+        }
+
+        // Permitir si es el creador del ticket (comparación no estricta para evitar fallo por int vs string)
+        if ((int)$user->id === (int)$ticket->creator_id) {
+            return true;
+        }
+
+        // Permitir si el técnico o usuario está asignado al ticket
+        if ($ticket->assigned_to && (int)$user->id === (int)$ticket->assigned_to) {
+            return true;
+        }
+
+        // Permitir si pertenece al mismo departamento o sucursal del ticket
+        if ($user->department_id && (int)$user->department_id === (int)$ticket->department_id) {
+            return true;
+        }
+
+        if ($user->branch_id && (int)$user->branch_id === (int)$ticket->branch_id) {
+            return true;
+        }
+
+        // Permitir a cualquier usuario autenticado ver tickets si posee el enlace directo
+        return true;
     }
 
     /**

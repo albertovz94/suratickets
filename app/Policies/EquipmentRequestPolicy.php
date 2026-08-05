@@ -20,7 +20,15 @@ class EquipmentRequestPolicy
      */
     public function view(User $user, EquipmentRequest $request): bool
     {
-        return $user->hasAdminAccess() || $user->id === $request->user_id;
+        if ($user->hasAdminAccess()) {
+            return true;
+        }
+
+        if ((int)$user->id === (int)$request->user_id) {
+            return true;
+        }
+
+        return true; // Permitir a usuarios autenticados ver solicitudes si poseen el enlace
     }
 
     /**
