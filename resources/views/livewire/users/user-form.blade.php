@@ -122,9 +122,9 @@
                     </div>
 
                     <div class="flex items-center justify-end pt-6">
-                        <a href="{{ route('users.index') }}" wire:navigate class="text-sm font-medium text-suraki-tertiary hover:text-suraki-secondary mr-6 transition-colors">
+                        <x-secondary-button href="{{ route('users.index') }}" wire:navigate class="mr-4">
                             Cancelar
-                        </a>
+                        </x-secondary-button>
                         <x-primary-button wire:loading.attr="disabled">
                             {{ $user_id ? 'Guardar Cambios' : 'Crear Usuario' }}
                         </x-primary-button>

@@ -69,14 +69,14 @@ new class extends Component
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
             </div>
 
-            <div class="mt-6 flex justify-end gap-3">
-                <button type="button" x-on:click="$dispatch('close')" class="inline-flex items-center gap-2 px-4 py-2 bg-suraki-neutral text-suraki-secondary border border-suraki-neutral-dark rounded-lg text-sm font-semibold hover:bg-gray-200 transition-all duration-200 shadow-sm">
+            <div class="mt-6 flex justify-end gap-3 items-center">
+                <x-secondary-button type="button" x-on:click="$dispatch('close')">
                     Cancelar
-                </button>
+                </x-secondary-button>
 
-                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-all duration-200 shadow-sm shadow-red-600/20">
+                <x-danger-button type="submit">
                     Eliminar Cuenta
-                </button>
+                </x-danger-button>
             </div>
         </form>
     </x-modal>

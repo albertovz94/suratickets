@@ -100,9 +100,9 @@
                         </div>
 
                         <div class="flex items-center justify-end pt-4 border-t border-suraki-neutral-dark">
-                            <a href="{{ route('dashboard') }}" wire:navigate class="text-sm text-suraki-tertiary hover:text-suraki-secondary transition-colors duration-150 mr-4">
+                            <x-secondary-button href="{{ route('tickets.index') }}" wire:navigate class="mr-4">
                                 Cancelar
-                            </a>
+                            </x-secondary-button>
                             <x-primary-button wire:loading.attr="disabled">
                                 <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

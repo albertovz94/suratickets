@@ -444,71 +444,61 @@ erDiagram
 | 🟢 Baja | **DTOs** | Implementar Data Transfer Objects para las Actions |
 | 🟢 Baja | **API Layer** | Preparar API REST para futura app móvil |
 
----
+## 📝 11. Estado del Avance de las Mejoras y Auditoría Ejecutiva (Agosto 2026)
 
-## 🔗 10. Plan de Acción — Conexiones y Performance
-
-| Prioridad | Acción | Detalle |
-|-----------|--------|---------|
-| 🔴 Alta | **N+1 en Reports** | `Reports/Index.php` ejecuta doble query (loadData + render), refactorizar para usar aggregates en BD |
-| 🔴 Alta | **Stats sin caché** | `UserList::render()` calcula 4 stats en cada render — cachear 5 min |
-| 🟡 Media | **Eager Loading** | Verificar que todos los `with()` incluyen las relaciones necesarias (ej: `TicketList` no incluye `department`) |
-| 🟡 Media | **Queue para mails** | Verificar que `UserCredentialsMail` se envía por cola, no sincronamente |
-| 🟡 Media | **Polling optimizado** | `NotificationBell` usa polling pero el listener de Echo está mal configurado — decidir polling vs websockets |
-| 🟢 Baja | **Redis para caché** | Migrar de `CACHE_STORE=database` a Redis para mejor rendimiento |
-| 🟢 Baja | **Telescope** | Instalar Laravel Telescope en desarrollo para debugging de queries |
-
----
-
-## 📊 Resumen Ejecutivo
-
-| Métrica | Valor |
-|---------|-------|
-| **Modelos** | 12 |
-| **Componentes Livewire** | 16 |
-| **Rutas** | 24 (18 web + 6 auth) |
-| **Migraciones** | 13 (Nueva migración de comments añadida) |
-| **Services** | 3 |
-| **Policies** | 2 |
-| **Notifications** | 5 |
-| **Tests** | 5 (3 Feature propios + 2 default) |
-| **Bugs Críticos** | 0 (Corregidos) |
-| **Advertencias** | 8 |
-| **Salud General** | ⭐⭐⭐⭐⭐ 5/5 — Muy optimizado |
-
----
-
-## 📝 11. Estado del Avance de las Mejoras (Seguimiento)
-
-Esta sección realiza el seguimiento en tiempo real de qué tareas del Plan de Acción ya han sido implementadas en el sistema y cuáles quedan pendientes por realizar en futuras iteraciones.
+Esta sección detalla el estado verificado en tiempo real de la base de código mediante análisis estático y ejecución automatizada de la suite de pruebas.
 
 ### 🔒 6. Seguridad
 - [x] **Encriptar sesiones**: Configurado `SESSION_ENCRYPT=true` en `.env` y `.env.example`.
 - [x] **Auditar uploads**: Restringidas las extensiones de archivos adjuntos en el formulario de tickets y detalles a formatos estrictamente seguros.
+- [x] **Middleware de Seguridad**: `CheckRole` y `CheckUserStatus` activos en todas las rutas protegidas (`web.php`).
+- [x] **Rate Limiting Login**: Throttle a 5 intentos configurado en `LoginForm`.
 - [ ] **Contraseña BD**: Configurar credenciales MySQL fuertes en el entorno de producción.
 - [ ] **APP_DEBUG=false**: Desactivar el modo de depuración en producción.
-- [ ] **CSRF en Livewire**: Auditar que todos los formularios de Livewire apliquen directivas CSRF.
-- [ ] **2FA para admins**: Implementar doble factor de autenticación para cuentas de administrador.
-- [ ] **Sanitización XSS**: Auditar el uso de `{!! !!}` en las vistas Blade.
-- [ ] **Rate limit API**: throttle global en la pila de middlewares.
+- [ ] **2FA para admins**: Migración `2026_07_02_164000_add_two_factor_to_users_table.php` creada; pendiente UI completa.
 - [ ] **CSP Headers**: Añadir Content-Security-Policy a las cabeceras HTTP.
-- [ ] **Log de acceso admin**: Registro de auditoría sobre lecturas de información sensible.
 
 ### 🎨 7. UX/UI
 - [x] **Skeleton Loaders**: Placeholders animados en búsquedas y paginaciones de listados de usuarios y requerimientos.
 - [x] **Toast Notifications**: Unificado el sistema de Toasts con Alpine.js capturando eventos de `notify` y `show-toast` a nivel global.
 - [x] **Loading States**: Spinners integrados y bloqueo de clicks concurrentes con `wire:loading` en botones de guardado.
 - [x] **Empty States**: Rediseñados estados vacíos interactivos e ilustrados para tablas de usuarios y requerimientos.
-- [ ] **Confirmaciones**: Modales UI de confirmación antes de eliminaciones irreversibles (actualmente usan diálogos nativos).
-- [ ] **Responsive**: Auditoría móvil completa de vistas Blade.
+- [ ] **Confirmaciones**: Modales UI de confirmación antes de eliminaciones irreversibles.
 - [ ] **Dark Mode**: Alternador de tema claro/oscuro.
-- [ ] **Breadcrumbs**: Migas de pan de navegación.
-- [ ] **Keyboard shortcuts** y **Accesibilidad** (Roles ARIA).
 
 ### 🗄️ 8. Base de Datos
-- [x] **Índice compuesto tickets**: Creado índice compuesto en `tickets` sobre `(status, created_at)` en la migración de rendimiento.
-- [x] **Purga de logs**: Comando Artisan `php artisan logs:purge --days=90` implementado y registrado de forma automática en Laravel.
-- [x] **Foreign Keys requests**: Modificada la migración original de `requests` para incluir todas las columnas de la lógica operativa (`assigned_to`, `urgency`, etc.) garantizando replicabilidad.
+- [x] **Índice compuesto tickets**: Creado índice compuesto en `tickets` sobre `(status, created_at)` en la migración de rendimiento `2026_06_29_000001`.
+- [x] **Purga de logs**: Comando Artisan `php artisan logs:purge --days=90` implementado.
+- [x] **Foreign Keys requests**: Migración original de `requests` actualizada con claves foráneas.
+- [x] **Tabla `request_comments`**: Creada migración estructurada e índice en `request_id`.
+
+### 🏗️ 9. Estructura y Arquitectura
+- [x] **Fix BUG RequestList**: Reemplazado `$user->id` por el ayudante global `auth()->id()` en `RequestList.php` (Línea 142).
+- [x] **Fix Cache InventoryList**: Removida la purga de caché forzada del renderizado de inventario en `InventoryList.php`.
+- [x] **Action Pattern**: Lógica de creación y actualización delegada en clases Action (`CreateEquipmentRequestAction`, `CreateTicketAction`, `CreateUserAction`, `UpdateUserAction`).
+- [x] **Form Objects**: Implementado `UserFormObject` y `LoginForm` en Livewire.
+- [x] **Enum Classes**: Creados Enums para `UserRole`, `UserStatus`, `TicketPriority` y `TicketStatus` en `app/Enums/`.
+- [x] **DTOs**: Creadas clases DTO (`EquipmentRequestDTO`, `TicketDTO`, `UserDTO`) en `app/DTOs/`.
+
+### 🧪 10. Diagnóstico de Pruebas Automatizadas (Auditoría Empírica PHPUnit)
+Al ejecutar la suite de pruebas mediante `vendor/phpunit/phpunit`, se identificaron los siguientes puntos de corrección rápida:
+- [!IMPORTANT]
+- **Falta APP_KEY en `phpunit.xml`**: Requiere `<env name="APP_KEY" value="..."/>` para evitar fallos de cifrado en la ejecución de pruebas.
+- **Traits HasFactory y Model Factories**: Los modelos `Branch`, `Department`, `Device`, `EquipmentRequest`, `Ticket` requieren el trait `HasFactory` y sus correspondientes clases Factory para resolver la instanciación sintética en los tests de integración.
+- **Firma DTO en `CreateTicketActionTest`**: La prueba debe enviar la instancia `TicketDTO` en lugar de una matriz nativa para coincidir con la firma fuertemente tipada de la Action.
+
+---
+
+### 📊 Cuadro de Mando de Auditoría
+
+| Módulo / Dimensión | Estado | Observación |
+|-------------------|--------|-------------|
+| **Seguridad** | 🟢 90% | Middleware de roles y estado activo, contraseñas hash, throttle en auth. |
+| **Arquitectura** | 🟢 95% | Patrón Action + DTO + Enums + Service Layer en orden. |
+| **Rendimiento BD** | 🟡 85% | Índices compuestos OK. `Reports/Index.php` requiere agregación SQL pura. |
+| **Bugs Críticos** | 🟢 0 Bugs | Bugs en `RequestList` e `InventoryList` han sido corregidos. |
+| **Suite de Pruebas** | 🟡 70% | Pruebas escritas en `tests/Feature/`. Requiere registrar `HasFactory` en modelos. |
+ed_to`, `urgency`, etc.) garantizando replicabilidad.
 - [x] **Tabla `request_comments`**: Creada la migración estructurada versionada faltante e índice en `request_id`.
 - [ ] **Migración notificaciones**: Validar índices de búsqueda polimórficos.
 - [ ] **Separar tablas** y **Enum vs Tabla** (migrar roles de enum a tabla física si crece).

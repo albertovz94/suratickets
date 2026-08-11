@@ -44,13 +44,13 @@ aria-modal="true"
             <p class="text-sm text-gray-600 dark:text-zinc-400 mb-6" x-text="message"></p>
             
             <!-- Actions -->
-            <div class="flex justify-end gap-3">
-                <button @click="open = false" class="px-4 py-2 border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 text-sm font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+            <div class="flex justify-end gap-3 items-center">
+                <x-secondary-button @click="open = false">
                     <span x-text="cancelText"></span>
-                </button>
-                <button @click="confirm()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                </x-secondary-button>
+                <x-danger-button @click="confirm()">
                     <span x-text="confirmText"></span>
-                </button>
+                </x-danger-button>
             </div>
         </div>
     </div>

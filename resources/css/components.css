@@ -1,0 +1,63 @@
+/* === Reusable Component Classes === */
+@layer components {
+    /* Status Badges */
+    .badge-status {
+        @apply px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full font-mono tracking-wide;
+    }
+
+    .badge-abierto {
+        @apply bg-blue-100 text-blue-800;
+    }
+
+    .badge-asignado {
+        @apply bg-purple-100 text-purple-800;
+    }
+
+    .badge-en_proceso {
+        @apply bg-amber-100 text-amber-800;
+    }
+
+    .badge-pendiente {
+        @apply bg-orange-100 text-orange-800;
+    }
+
+    .badge-resuelto {
+        @apply bg-emerald-100 text-emerald-800;
+    }
+
+    .badge-cerrado {
+        @apply bg-gray-100 text-gray-600;
+    }
+
+    /* Priority Badges */
+    .badge-baja {
+        @apply bg-green-100 text-green-800;
+    }
+
+    .badge-media {
+        @apply bg-yellow-100 text-yellow-800;
+    }
+
+    .badge-alta {
+        @apply bg-orange-100 text-orange-800;
+    }
+
+    .badge-critica {
+        @apply bg-red-100 text-red-800;
+    }
+
+    /* Card */
+    .card-suraki {
+        @apply bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-suraki-neutral-dark dark:border-zinc-800 overflow-hidden transition-shadow duration-200 hover:shadow-md;
+    }
+
+    /* Glass Panel */
+    .glass-panel {
+        @apply bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 dark:border-zinc-800;
+    }
+
+    /* Form inputs consistent style */
+    .input-suraki {
+        @apply border-suraki-neutral-dark dark:border-zinc-700 bg-white dark:bg-zinc-800 text-suraki-secondary dark:text-zinc-100 focus:border-suraki-primary focus:ring-suraki-primary rounded-lg shadow-sm transition-colors duration-150;
+    }
+}

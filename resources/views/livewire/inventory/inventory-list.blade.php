@@ -9,10 +9,10 @@
             </div>
             
             <div class="flex gap-3">
-                <button class="px-4 py-2 bg-white border border-suraki-neutral-dark rounded-lg text-sm font-medium text-suraki-secondary hover:bg-gray-50 flex items-center gap-2 transition-colors">
+                <x-secondary-button class="flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     Exportar
-                </button>
+                </x-secondary-button>
                 <a href="{{ route('inventory.create') }}" wire:navigate class="blob-btn shadow-sm" style="width: 220px; padding: 10px 20px;">
                     <span style="position:relative; z-index: 10;" class="flex items-center gap-2 text-sm whitespace-nowrap">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>

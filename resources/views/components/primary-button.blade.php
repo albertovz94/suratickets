@@ -1,4 +1,4 @@
-<button {{ $attributes->merge(['type' => 'submit', 'class' => 'blob-btn inline-flex items-center font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-suraki-primary focus:ring-offset-2 shadow-sm']) }} style="padding: 12px 16px; width: auto; font-size: 12px; border:none;">
+<button {{ $attributes->merge(['type' => 'submit', 'class' => 'blob-btn inline-flex items-center justify-center font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-suraki-primary focus:ring-offset-2 shadow-sm']) }}>
     <span style="position:relative; z-index: 10;" class="flex items-center gap-2">
         <svg wire:loading class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -15,3 +15,4 @@
         </span>
     </span>
 </button>
+

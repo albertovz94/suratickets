@@ -175,9 +175,9 @@
         <!-- Controles de Navegación -->
         <div class="pt-6 border-t border-gray-100 flex items-center justify-between">
             @if($step > 1)
-                <button type="button" wire:click="prevStep" class="px-6 py-2.5 rounded-xl text-gray-500 font-bold hover:bg-gray-100 transition-colors">
+                <x-secondary-button type="button" wire:click="prevStep">
                     Atrás
-                </button>
+                </x-secondary-button>
             @else
                 <div></div> <!-- Spacer -->
             @endif

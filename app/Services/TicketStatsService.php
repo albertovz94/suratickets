@@ -28,23 +28,29 @@ class TicketStatsService
         $openData = [];
         $resolvedData = [];
 
+        $isSqlite = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite';
+
         if ($timeFilter === 'month') {
             $labels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
             $totalData = array_fill(0, 12, 0);
             $openData = array_fill(0, 12, 0);
             $resolvedData = array_fill(0, 12, 0);
 
+            $monthExpr = $isSqlite ? "CAST(strftime('%m', created_at) AS INTEGER)" : "MONTH(created_at)";
+
             $stats = (clone $baseQuery)
                 ->whereYear('created_at', date('Y'))
-                ->selectRaw('MONTH(created_at) as month, count(*) as total, sum(case when status = "abierto" then 1 else 0 end) as open_count, sum(case when status in ("resuelto", "cerrado") then 1 else 0 end) as resolved_count')
+                ->selectRaw("{$monthExpr} as month, count(*) as total, sum(case when status = 'abierto' then 1 else 0 end) as open_count, sum(case when status in ('resuelto', 'cerrado') then 1 else 0 end) as resolved_count")
                 ->groupBy('month')
                 ->get();
 
             foreach ($stats as $stat) {
-                $idx = $stat->month - 1;
-                $totalData[$idx] = (int)$stat->total;
-                $openData[$idx] = (int)$stat->open_count;
-                $resolvedData[$idx] = (int)$stat->resolved_count;
+                $idx = ((int)$stat->month) - 1;
+                if ($idx >= 0 && $idx < 12) {
+                    $totalData[$idx] = (int)$stat->total;
+                    $openData[$idx] = (int)$stat->open_count;
+                    $resolvedData[$idx] = (int)$stat->resolved_count;
+                }
             }
         } elseif ($timeFilter === 'week') {
             for ($i = 6; $i >= 0; $i--) {
@@ -54,9 +60,11 @@ class TicketStatsService
             $openData = array_fill(0, 7, 0);
             $resolvedData = array_fill(0, 7, 0);
 
+            $dateExpr = $isSqlite ? "strftime('%Y-%m-%d', created_at)" : "DATE(created_at)";
+
             $stats = (clone $baseQuery)
                 ->where('created_at', '>=', Carbon::now()->subDays(6)->startOfDay())
-                ->selectRaw('DATE(created_at) as date, count(*) as total, sum(case when status = "abierto" then 1 else 0 end) as open_count, sum(case when status in ("resuelto", "cerrado") then 1 else 0 end) as resolved_count')
+                ->selectRaw("{$dateExpr} as date, count(*) as total, sum(case when status = 'abierto' then 1 else 0 end) as open_count, sum(case when status in ('resuelto', 'cerrado') then 1 else 0 end) as resolved_count")
                 ->groupBy('date')
                 ->get();
 
@@ -75,9 +83,11 @@ class TicketStatsService
             $openData = array_fill(0, 6, 0);
             $resolvedData = array_fill(0, 6, 0);
 
+            $hourExpr = $isSqlite ? "CAST(CAST(strftime('%H', created_at) AS INTEGER) / 4 AS INTEGER)" : "FLOOR(HOUR(created_at) / 4)";
+
             $stats = (clone $baseQuery)
                 ->whereDate('created_at', Carbon::today())
-                ->selectRaw('FLOOR(HOUR(created_at) / 4) as time_group, count(*) as total, sum(case when status = "abierto" then 1 else 0 end) as open_count, sum(case when status in ("resuelto", "cerrado") then 1 else 0 end) as resolved_count')
+                ->selectRaw("{$hourExpr} as time_group, count(*) as total, sum(case when status = 'abierto' then 1 else 0 end) as open_count, sum(case when status in ('resuelto', 'cerrado') then 1 else 0 end) as resolved_count")
                 ->groupBy('time_group')
                 ->get();
 

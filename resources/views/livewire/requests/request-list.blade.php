@@ -255,10 +255,10 @@
                 @endif
             </div>
             
-            <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 rounded-b-2xl">
-                <button wire:click="closeActionModal" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 rounded-b-2xl items-center">
+                <x-secondary-button wire:click="closeActionModal">
                     Cancelar
-                </button>
+                </x-secondary-button>
                 <x-btn-panel wire:click="confirmAction" wire:loading.attr="disabled">
                     <span wire:loading.remove wire:target="confirmAction">Confirmar</span>
                     <span wire:loading wire:target="confirmAction">Procesando...</span>

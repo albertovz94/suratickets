@@ -1,0 +1,21 @@
+/* === Mobile Specific Styles (KISS Approach) === */
+@media (max-width: 768px) {
+    /* Optimizations for smaller screens */
+    .card-suraki {
+        @apply p-4 rounded-lg;
+    }
+
+    .input-suraki {
+        @apply text-base; /* Prevents auto-zoom on iOS Safari when focusing inputs */
+    }
+
+    /* Adjust modal sizing for mobile */
+    .glass-panel {
+        @apply rounded-xl shadow-lg;
+    }
+
+    /* Tweak blob button paddings slightly for mobile if needed */
+    .blob-btn {
+        @apply px-4 text-xs;
+    }
+}

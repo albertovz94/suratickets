@@ -158,7 +158,10 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end mt-8">
+                <div class="flex items-center justify-end mt-8 gap-4">
+                    <x-secondary-button href="{{ route('inventory.index') }}" wire:navigate>
+                        Cancelar
+                    </x-secondary-button>
                     <x-btn-panel type="submit" wire:loading.attr="disabled" class="w-full sm:w-auto" style="min-width: 200px;">
                         {{ __('Guardar Equipo') }}
                     </x-btn-panel>
