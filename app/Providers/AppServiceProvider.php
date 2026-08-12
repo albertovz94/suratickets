@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Añadir atributos SPA para Livewire wire:navigate
+        \Illuminate\Support\Facades\Vite::useStyleTagAttributes(['data-navigate-track' => 'reload']);
+        \Illuminate\Support\Facades\Vite::useScriptTagAttributes(['data-navigate-track' => 'reload']);
+        \Illuminate\Support\Facades\Vite::usePreloadTagAttributes(['data-navigate-track' => 'reload']);
+
         \Illuminate\Support\Facades\Blade::component('breadcrumbs', \App\View\Components\Breadcrumbs::class);
         \Illuminate\Support\Facades\Blade::component('badge', \App\View\Components\Badge::class);
 

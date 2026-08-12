@@ -37,8 +37,8 @@ class RequestList extends Component
 
     public function openActionModal($id, $action)
     {
-        $solicitud = EquipmentRequest::findOrFail($id);
-        if (auth()->user()->cannot('update', $solicitud)) {
+        $request = EquipmentRequest::findOrFail($id);
+        if (auth()->user()->cannot('update', $request)) {
             abort(403);
         }
 
@@ -62,8 +62,8 @@ class RequestList extends Component
 
     public function confirmAction()
     {
-        $solicitud = EquipmentRequest::findOrFail($this->selectedRequestId);
-        if (auth()->user()->cannot('update', $solicitud)) {
+        $request = EquipmentRequest::findOrFail($this->selectedRequestId);
+        if (auth()->user()->cannot('update', $request)) {
             abort(403);
         }
 
@@ -84,35 +84,35 @@ class RequestList extends Component
 
         if ($this->pendingAction === 'aprobar') {
             $newStatus = 'en_proceso';
-            $solicitud->admin_note = $this->adminNote;
+            $request->admin_note = $this->adminNote;
         } elseif ($this->pendingAction === 'rechazar') {
             $newStatus = 'rechazado';
-            $solicitud->admin_note = $this->adminNote;
+            $request->admin_note = $this->adminNote;
         } elseif ($this->pendingAction === 'entregar') {
             $newStatus = 'entregado';
             
             if ($this->proofPhoto) {
                 // Guardar la foto en el storage publico, carpeta 'proofs'
                 $path = $this->proofPhoto->store('proofs', 'public');
-                $solicitud->proof_photo_path = $path;
+                $request->proof_photo_path = $path;
             }
-            $solicitud->delivery_note = $this->deliveryNote;
-            $solicitud->delivered_at = now();
+            $request->delivery_note = $this->deliveryNote;
+            $request->delivered_at = now();
         }
 
-        $solicitud->status = $newStatus;
-        $solicitud->save();
+        $request->status = $newStatus;
+        $request->save();
         
-        $solicitud->user->notify(new \App\Notifications\EquipmentRequestStatusUpdated($solicitud, "Tu Solicitud IT #{$solicitud->id} ahora está: {$newStatus}."));
+        $request->user->notify(new \App\Notifications\EquipmentRequestStatusUpdated($request, "Tu Solicitud IT #{$request->id} ahora está: {$newStatus}."));
         
-        $this->dispatch('notify', message: "Solicitud #{$solicitud->id} actualizada a '{$newStatus}'.");
+        $this->dispatch('notify', message: "Solicitud #{$request->id} actualizada a '{$newStatus}'.");
         
         $this->closeActionModal();
     }
 
     public function openDetailModal($id)
     {
-        $this->selectedRequest = EquipmentRequest::with(['user', 'assignedTo', 'comments.user'])->findOrFail($id);
+        $this->selectedRequest = EquipmentRequest::with(['user.department', 'assignedTo', 'comments.user'])->findOrFail($id);
         $this->newCommentBody = ''; // Resetear campo de comentario al abrir
         $this->detailModalVisible = true;
     }
@@ -145,7 +145,7 @@ class RequestList extends Component
 
         $this->newCommentBody = '';
         // Recargar la solicitud para obtener los comentarios frescos
-        $this->selectedRequest = EquipmentRequest::with(['user', 'assignedTo', 'comments.user'])->findOrFail($this->selectedRequest->id);
+        $this->selectedRequest = EquipmentRequest::with(['user.department', 'assignedTo', 'comments.user'])->findOrFail($this->selectedRequest->id);
     }
 
     public function render()
@@ -156,13 +156,13 @@ class RequestList extends Component
         $query->where('status', $this->activeTab);
 
         if (auth()->user()->hasAdminAccess()) {
-            $solicitudes = $query->with('user', 'assignedTo')->latest()->paginate(15);
+            $requests = $query->with('user.department', 'assignedTo')->latest()->paginate(15);
         } else {
-            $solicitudes = $query->where('user_id', auth()->id())->with('user', 'assignedTo')->latest()->paginate(15);
+            $requests = $query->where('user_id', auth()->id())->with('user.department', 'assignedTo')->latest()->paginate(15);
         }
 
         return view('livewire.requests.request-list', [
-            'solicitudes' => $solicitudes
+            'requests' => $requests
         ])->layout('layouts.app');
     }
 }

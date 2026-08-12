@@ -28,7 +28,8 @@ class EquipmentRequestPolicy
             return true;
         }
 
-        return true; // Permitir a usuarios autenticados ver solicitudes si poseen el enlace
+        // Denegar acceso si no cumple las condiciones anteriores
+        return false;
     }
 
     /**

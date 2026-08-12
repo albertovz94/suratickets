@@ -54,12 +54,12 @@
                     </tr>
                 </thead>
                 <tbody wire:loading.class="hidden" class="divide-y divide-gray-100 dark:divide-zinc-800 text-gray-600 dark:text-zinc-300">
-                    @forelse($solicitudes as $solicitud)
-                        <tr wire:key="solicitud-{{ $solicitud->id }}" class="hover:bg-gray-50 dark:hover:bg-zinc-800/20 transition-colors">
+                    @forelse($requests as $request)
+                        <tr wire:key="request-{{ $request->id }}" class="hover:bg-gray-50 dark:hover:bg-zinc-800/20 transition-colors">
                             <!-- ID and Date -->
                             <td class="px-6 py-4">
-                                <div class="font-semibold text-gray-900 dark:text-zinc-100">#{{ $solicitud->id }}</div>
-                                <div class="text-xs text-gray-400 dark:text-zinc-500 mt-1">{{ $solicitud->created_at->format('d/m/Y') }}</div>
+                                <div class="font-semibold text-gray-900 dark:text-zinc-100">#{{ $request->id }}</div>
+                                <div class="text-xs text-gray-400 dark:text-zinc-500 mt-1">{{ $request->created_at->format('d/m/Y') }}</div>
                             </td>
                             
                             <!-- User & Depto -->
@@ -67,11 +67,11 @@
                                 <td class="px-6 py-4 hidden sm:table-cell">
                                     <div class="flex items-center gap-3">
                                         <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-zinc-800 flex items-center justify-center text-gray-600 dark:text-zinc-300 font-bold text-xs">
-                                            {{ substr($solicitud->user->name ?? 'U', 0, 1) }}
+                                            {{ substr($request->user->name ?? 'U', 0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="font-medium text-gray-900 dark:text-zinc-100">{{ $solicitud->user->name ?? 'N/A' }}</div>
-                                            <div class="text-xs text-gray-500 dark:text-zinc-400">{{ $solicitud->user->department->name ?? 'Sin Depto' }}</div>
+                                            <div class="font-medium text-gray-900 dark:text-zinc-100">{{ $request->user->name ?? 'N/A' }}</div>
+                                            <div class="text-xs text-gray-500 dark:text-zinc-400">{{ $request->user->department->name ?? 'Sin Depto' }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -79,39 +79,39 @@
                             
                             <!-- Device & Urgency -->
                             <td class="px-6 py-4">
-                                <div class="font-semibold text-suraki-primary">{{ $solicitud->device_type }}</div>
+                                <div class="font-semibold text-suraki-primary">{{ $request->device_type }}</div>
                                 <div class="mt-1">
-                                    <x-badge type="priority" :value="$solicitud->urgency" />
+                                    <x-badge type="priority" :value="$request->urgency" />
                                 </div>
                             </td>
                             
                             <!-- Assigned -->
                             <td class="px-6 py-4 font-medium text-gray-700 dark:text-zinc-300 hidden md:table-cell">
-                                {{ $solicitud->assignedTo->name ?? 'Sin asignar' }}
+                                {{ $request->assignedTo->name ?? 'Sin asignar' }}
                             </td>
                             
                             <!-- Status -->
                             <td class="px-6 py-4">
-                                <x-badge type="status" :value="$solicitud->status" />
+                                <x-badge type="status" :value="$request->status" />
                             </td>
 
                             <!-- Actions -->
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button wire:click="openDetailModal({{ $solicitud->id }})" class="p-1.5 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition" title="Ver Detalles">
+                                    <button wire:click="openDetailModal({{ $request->id }})" class="p-1.5 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition" title="Ver Detalles">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     </button>
 
                                     @if(auth()->user()->hasAdminAccess())
-                                        @if($solicitud->status === 'pendiente')
-                                            <button wire:click="openActionModal({{ $solicitud->id }}, 'aprobar')" class="p-1.5 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition" title="Aprobar / Iniciar Proceso">
+                                        @if($request->status === 'pendiente')
+                                            <button wire:click="openActionModal({{ $request->id }}, 'aprobar')" class="p-1.5 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition" title="Aprobar / Iniciar Proceso">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                             </button>
-                                            <button wire:click="openActionModal({{ $solicitud->id }}, 'rechazar')" class="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 transition" title="Rechazar">
+                                            <button wire:click="openActionModal({{ $request->id }}, 'rechazar')" class="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 transition" title="Rechazar">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                             </button>
-                                        @elseif($solicitud->status === 'en_proceso')
-                                            <button wire:click="openActionModal({{ $solicitud->id }}, 'entregar')" class="p-1.5 bg-green-50 text-green-600 rounded hover:bg-green-100 transition flex gap-1 items-center px-3" title="Marcar como entregado">
+                                        @elseif($request->status === 'en_proceso')
+                                            <button wire:click="openActionModal({{ $request->id }}, 'entregar')" class="p-1.5 bg-green-50 text-green-600 rounded hover:bg-green-100 transition flex gap-1 items-center px-3" title="Marcar como entregado">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                                 <span class="text-xs font-bold">Entregar</span>
                                             </button>
@@ -177,7 +177,7 @@
             </table>
         </div>
         <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
-            {{ $solicitudes->links() }}
+            {{ $requests->links() }}
         </div>
     </div>
 

@@ -1,5 +1,5 @@
 # 🔍 Auditoría Profunda — Suraki HelpDesk
-> **Fecha:** 30 de Junio 2026 | **Versión del Stack:** Laravel 13.8 / Livewire 3.6 / PHP 8.3+ / MySQL  
+> **Fecha:** 12 de Agosto 2026 | **Versión del Stack:** Laravel 13.8 / Livewire 3.6.4 / PHP 8.3+ / MySQL  
 > **Auditor:** Antigravity AI Agent
 
 ---
@@ -332,6 +332,9 @@ graph TB
 |---|---------|-------|----------|
 | 1 | [RequestList.php](file:///c:/Users/Pagina-Web1/Desktop/Suraki_HelpDesk/app/Livewire/Requests/RequestList.php#L140) | 140 | `$user->id` — variable `$user` no definida. Debería ser `auth()->id()`. **Error fatal al comentar** |
 | 2 | [InventoryList.php](file:///c:/Users/Pagina-Web1/Desktop/Suraki_HelpDesk/app/Livewire/Inventory/InventoryList.php#L76-L77) | 76-77 | `Cache::forget()` en cada `render()` anula completamente el caching de stats/dropdowns |
+| 3 | [TicketPolicy.php](file:///c:/Users/Pagina-Web1/Desktop/Suraki_HelpDesk/app/Policies/TicketPolicy.php#L48-L49) | 48-49 | **Vulnerabilidad IDOR:** Retorna `true` incondicionalmente, permitiendo a cualquier usuario autenticado ver cualquier ticket si conoce el ID. |
+| 4 | [EquipmentRequestPolicy.php](file:///c:/Users/Pagina-Web1/Desktop/Suraki_HelpDesk/app/Policies/EquipmentRequestPolicy.php#L31) | 31 | **Vulnerabilidad IDOR:** Retorna `true` incondicionalmente, exponiendo solicitudes de equipos a cualquier usuario. |
+| 5 | [UserForm.php](file:///c:/Users/Pagina-Web1/Desktop/Suraki_HelpDesk/app/Livewire/Users/UserForm.php) | N/A | **Escalada de Privilegios:** Roles `outsourcing` pueden editar perfiles, contraseñas y roles de administradores sin validación. |
 
 ### 🟡 Advertencias
 
@@ -384,6 +387,8 @@ erDiagram
 
 | Prioridad | Acción | Detalle |
 |-----------|--------|---------|
+| 🔴 Alta | **Parchear IDOR en Policies** | Eliminar el `return true;` incondicional al final de `TicketPolicy::view()` y `EquipmentRequestPolicy::view()` |
+| 🔴 Alta | **Mitigar Escalada de Privilegios** | Añadir validación en `UserForm` para impedir que roles menores modifiquen a admins |
 | 🔴 Alta | **Encriptar sesiones** | Cambiar `SESSION_ENCRYPT=true` en `.env` |
 | 🔴 Alta | **Contraseña BD** | Configurar contraseña fuerte para MySQL en producción |
 | 🔴 Alta | **APP_DEBUG=false** | Desactivar debug mode en producción |

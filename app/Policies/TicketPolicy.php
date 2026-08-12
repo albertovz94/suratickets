@@ -45,8 +45,8 @@ class TicketPolicy
             return true;
         }
 
-        // Permitir a cualquier usuario autenticado ver tickets si posee el enlace directo
-        return true;
+        // Denegar acceso si no cumple ninguna de las condiciones anteriores
+        return false;
     }
 
     /**

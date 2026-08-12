@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
       class="light"
-      x-data="{ 
-          shortcutsModalOpen: false
-      }"
       x-on:keydown.window="
           if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) return;
           
           if ($event.key === '?') {
-              shortcutsModalOpen = !shortcutsModalOpen;
+              window.dispatchEvent(new CustomEvent('toggle-shortcuts-modal'));
           } else if ($event.key === 'Escape') {
-              shortcutsModalOpen = false;
+              window.dispatchEvent(new CustomEvent('close-shortcuts-modal'));
           } else if ($event.key === '/') {
               $event.preventDefault();
               document.getElementById('topbar-search')?.focus();
@@ -59,7 +56,6 @@
 
         <title>Suraki Tickets</title>
 
-        <!-- Fonts -->
         <link rel="icon" type="image/png" href="{{ asset('icono.png') }}">
 
         <!-- Scripts -->

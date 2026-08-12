@@ -8,7 +8,7 @@
         <title>{{ config('app.name', 'Suraki Soporte TI') }}</title>
 
         <!-- Fonts -->
-        <link rel="icon" type="image/png" href="{{ asset('build/assets/icono.png') }}">
+        <link rel="icon" type="image/png" href="{{ asset('icono.png') }}">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])

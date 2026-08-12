@@ -23,13 +23,13 @@ class TelegramService
         $appUrl = config('app.url', 'https://sistemassuraki.suraki.net');
         $ticketUrl = rtrim($appUrl, '/') . '/tickets';
 
-        $sucursal = $ticket->sucursal->nombre ?? 'N/A';
-        $area = $ticket->area_departamento ?? 'N/A';
-        $equipo = $ticket->equipo_afectado ?? 'No especificado';
-        $creador = $ticket->creator->name ?? 'Usuario';
-        $tecnico = $ticket->assignedTo->name ?? 'Sin asignar';
+        $branch = $ticket->sucursal->nombre ?? 'N/A';
+        $department = $ticket->area_departamento ?? 'N/A';
+        $device = $ticket->equipo_afectado ?? 'No especificado';
+        $creator = $ticket->creator->name ?? 'Usuario';
+        $technician = $ticket->assignedTo->name ?? 'Sin asignar';
 
-        $emojiPrioridad = match($ticket->priority) {
+        $priorityEmoji = match($ticket->priority) {
             'critica' => '🚨🔥 CRÍTICA',
             'alta' => '🔴 ALTA',
             'media' => '🟡 MEDIA',
@@ -48,12 +48,12 @@ class TelegramService
         }
 
         $message = "{$title}\n\n";
-        $message .= "🏢 <b>Sucursal:</b> {$sucursal}\n";
-        $message .= "📍 <b>Área / Depto:</b> {$area}\n";
-        $message .= "💻 <b>Equipo Afectado:</b> {$equipo}\n";
-        $message .= "⚡ <b>Prioridad:</b> {$emojiPrioridad}\n";
-        $message .= "👤 <b>Reportado por:</b> {$creador}\n";
-        $message .= "🛠 <b>Técnico Asignado:</b> {$tecnico}\n";
+        $message .= "🏢 <b>Sucursal:</b> {$branch}\n";
+        $message .= "📍 <b>Área / Depto:</b> {$department}\n";
+        $message .= "💻 <b>Equipo Afectado:</b> {$device}\n";
+        $message .= "⚡ <b>Prioridad:</b> {$priorityEmoji}\n";
+        $message .= "👤 <b>Reportado por:</b> {$creator}\n";
+        $message .= "🛠 <b>Técnico Asignado:</b> {$technician}\n";
         $message .= "📌 <b>Estado:</b> {$statusText}\n\n";
         $message .= "📝 <b>Detalle del Asunto:</b> {$ticket->title}\n";
         if ($ticket->description) {
