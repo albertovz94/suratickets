@@ -85,6 +85,61 @@ class UserList extends Component
         \App\Services\ActivityLogger::log('toggle_user_status', $user, "Cambió el estado del usuario {$user->name} a {$user->status}");
     }
 
+    public function export()
+    {
+        $query = User::with(['department']);
+
+        if (!empty($this->search)) {
+            $query->where(function($q) {
+                $q->where('name', 'like', '%' . $this->search . '%')
+                  ->orWhere('email', 'like', '%' . $this->search . '%')
+                  ->orWhere('username', 'like', '%' . $this->search . '%');
+            });
+        }
+
+        if (!empty($this->roleFilter)) {
+            $query->where('role', $this->roleFilter);
+        }
+
+        if (!empty($this->statusFilter)) {
+            $query->where('status', $this->statusFilter);
+        }
+
+        if (!empty($this->departmentFilter)) {
+            $query->where('department_id', $this->departmentFilter);
+        }
+
+        $users = $query->get();
+
+        $filename = 'usuarios_suraki_' . now()->format('Ymd_His') . '.csv';
+        $path = storage_path('app/public/' . $filename);
+        
+        $file = fopen($path, 'w');
+        // Add BOM for proper UTF-8 handling in Excel
+        fputs($file, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
+        
+        // CSV Headers
+        fputcsv($file, [
+            'Nombre', 'Apellido', 'Usuario', 'Correo', 'Rol', 'Estado', 'Sucursal', 'Departamento'
+        ]);
+
+        foreach ($users as $user) {
+            fputcsv($file, [
+                $user->name,
+                $user->last_name,
+                $user->username,
+                $user->email,
+                ucfirst($user->role),
+                $user->status,
+                optional($user->branch)->name ?? 'Sin Sucursal',
+                optional($user->department)->name ?? 'Sin Departamento'
+            ]);
+        }
+        fclose($file);
+
+        return response()->download($path)->deleteFileAfterSend(true);
+    }
+
     public function render()
     {
         $query = User::with(['department'])->withCount('assignedDevices');

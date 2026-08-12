@@ -3,12 +3,14 @@
 namespace App\Livewire\Inventory;
 
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use App\Models\Device;
 use App\Models\Department;
 use App\Models\Branch;
 
 class InventoryForm extends Component
 {
+    use WithFileUploads;
     public $device_id;
     public $name = '';
     public $specs = '';
@@ -19,6 +21,12 @@ class InventoryForm extends Component
     public $status = 'Activo';
     public $assigned_to = null;
     public $userSearch = '';
+    public $ram = '';
+    public $cpu = '';
+    public $cpu_generation = '';
+    public $storage = '';
+    public $qr_code;
+    public $existing_qr_code_path = null;
 
     protected function rules()
     {
@@ -31,6 +39,11 @@ class InventoryForm extends Component
             'department_id' => 'nullable|exists:departments,id',
             'status' => 'required|in:Activo,En reparacion,De baja',
             'assigned_to' => 'nullable|exists:users,id',
+            'ram' => 'nullable|string|max:50',
+            'cpu' => 'nullable|string|max:100',
+            'cpu_generation' => 'nullable|string|max:100',
+            'storage' => 'nullable|string|max:50',
+            'qr_code' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ];
     }
 
@@ -47,6 +60,11 @@ class InventoryForm extends Component
             $this->department_id = $device->department_id;
             $this->status = $device->status;
             $this->assigned_to = $device->assigned_to;
+            $this->ram = $device->ram;
+            $this->cpu = $device->cpu;
+            $this->cpu_generation = $device->cpu_generation;
+            $this->storage = $device->storage;
+            $this->existing_qr_code_path = $device->qr_code_path;
             
             if ($device->assigned_to && $device->assignee) {
                 $this->userSearch = trim($device->assignee->name . ' ' . ($device->assignee->last_name ?? ''));
@@ -60,7 +78,11 @@ class InventoryForm extends Component
 
         $data = [
             'name' => $this->name,
-            'specs' => $this->specs,
+            'specs' => in_array($this->type, ['Laptop', 'Desktop', 'Servidor']) ? null : $this->specs,
+            'ram' => in_array($this->type, ['Laptop', 'Desktop', 'Servidor']) ? $this->ram : null,
+            'cpu' => in_array($this->type, ['Laptop', 'Desktop', 'Servidor']) ? $this->cpu : null,
+            'cpu_generation' => in_array($this->type, ['Laptop', 'Desktop', 'Servidor']) ? $this->cpu_generation : null,
+            'storage' => in_array($this->type, ['Laptop', 'Desktop', 'Servidor']) ? $this->storage : null,
             'type' => $this->type,
             'serial_number' => $this->serial_number,
             'branch_id' => $this->branch_id ?: null,
@@ -68,6 +90,10 @@ class InventoryForm extends Component
             'status' => $this->status,
             'assigned_to' => $this->assigned_to ?: null,
         ];
+
+        if ($this->qr_code) {
+            $data['qr_code_path'] = $this->qr_code->store('inventory/qrcodes', 'public');
+        }
 
         if ($this->device_id) {
             Device::where('id', $this->device_id)->update($data);

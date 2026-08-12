@@ -5,15 +5,12 @@
             <p class="text-sm text-gray-500">Gestiona las solicitudes de hardware y equipo de los usuarios.</p>
         </div>
         <div>
-            <a href="{{ route('requests.create') }}" wire:navigate class="blob-btn shadow-sm" style="width: 220px; padding: 10px 20px;">
-                <span style="position:relative; z-index: 10;" class="flex items-center gap-2 text-sm whitespace-nowrap">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    Nueva Solicitud
-                </span>
-                <span class="blob-btn__inner"><span class="blob-btn__blobs"><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span></span></span>
-            </a>
+            <x-primary-button href="{{ route('requests.create') }}" wire:navigate class="h-10 px-5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Nueva Solicitud
+            </x-primary-button>
         </div>
     </div>
 

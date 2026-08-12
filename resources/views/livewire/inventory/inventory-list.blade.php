@@ -9,17 +9,14 @@
             </div>
             
             <div class="flex gap-3">
-                <x-secondary-button class="flex items-center gap-2">
+                <x-secondary-button class="h-10 px-5">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     Exportar
                 </x-secondary-button>
-                <a href="{{ route('inventory.create') }}" wire:navigate class="blob-btn shadow-sm" style="width: 220px; padding: 10px 20px;">
-                    <span style="position:relative; z-index: 10;" class="flex items-center gap-2 text-sm whitespace-nowrap">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                        Nuevo Equipo
-                    </span>
-                    <span class="blob-btn__inner"><span class="blob-btn__blobs"><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span><span class="blob-btn__blob"></span></span></span>
-                </a>
+                <x-primary-button href="{{ route('inventory.create') }}" wire:navigate class="h-10 px-5">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    Nuevo Equipo
+                </x-primary-button>
             </div>
         </div>
     </x-slot>
@@ -198,18 +195,32 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-lg {{ $device->type === 'Laptop' ? 'bg-red-50 text-red-500 dark:bg-red-950/20 dark:text-red-400' : ($device->type === 'Desktop' ? 'bg-blue-50 text-blue-500 dark:bg-blue-950/20 dark:text-blue-400' : ($device->type === 'Servidor' ? 'bg-purple-50 text-purple-500 dark:bg-purple-950/20 dark:text-purple-400' : 'bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-zinc-400')) }} flex items-center justify-center flex-shrink-0">
-                                        @if($device->type === 'Laptop' || $device->type === 'Desktop')
-                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                        @elseif($device->type === 'Servidor')
-                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
-                                        @else
-                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
-                                        @endif
-                                    </div>
+                                    @if($device->qr_code_path)
+                                        <div class="w-10 h-10 rounded-lg border border-gray-200 dark:border-zinc-700 overflow-hidden flex-shrink-0 bg-white shadow-sm flex items-center justify-center p-0.5">
+                                            <img src="{{ asset('storage/' . $device->qr_code_path) }}" alt="QR" class="w-full h-full object-contain mix-blend-multiply">
+                                        </div>
+                                    @else
+                                        <div class="w-10 h-10 rounded-lg {{ $device->type === 'Laptop' ? 'bg-red-50 text-red-500 dark:bg-red-950/20 dark:text-red-400' : ($device->type === 'Desktop' ? 'bg-blue-50 text-blue-500 dark:bg-blue-950/20 dark:text-blue-400' : ($device->type === 'Servidor' ? 'bg-purple-50 text-purple-500 dark:bg-purple-950/20 dark:text-purple-400' : 'bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-zinc-400')) }} flex items-center justify-center flex-shrink-0">
+                                            @if($device->type === 'Laptop' || $device->type === 'Desktop')
+                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                            @elseif($device->type === 'Servidor')
+                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
+                                            @else
+                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
+                                            @endif
+                                        </div>
+                                    @endif
                                     <div>
                                         <p class="text-sm font-bold text-suraki-secondary dark:text-zinc-100">{{ $device->name }}</p>
-                                        <p class="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">{{ $device->specs }}</p>
+                                        @if(in_array($device->type, ['Laptop', 'Desktop', 'Servidor']) && ($device->ram || $device->cpu || $device->storage))
+                                            <p class="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+                                                {{ $device->ram ? $device->ram . ' RAM' : '' }} 
+                                                {{ $device->cpu ? '| ' . $device->cpu . ' ' . $device->cpu_generation : '' }} 
+                                                {{ $device->storage ? '| ' . $device->storage : '' }}
+                                            </p>
+                                        @else
+                                            <p class="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">{{ $device->specs ?: '--' }}</p>
+                                        @endif
                                     </div>
                                 </div>
                             </td>
